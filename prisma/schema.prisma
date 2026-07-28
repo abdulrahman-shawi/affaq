@@ -1,0 +1,164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String
+  role          String         // "admin", "teacher", "parent", "student"
+  phone         String?
+  createdAt     DateTime       @default(now())
+
+  teacher       Teacher?
+  parent        Parent?
+  student       Student?
+  notifications Notification[]
+}
+
+model Parent {
+  id       String    @id @default(uuid())
+  userId   String    @unique
+  user     User      @relation(fields: [userId], references: [id])
+
+  children Student[] @relation("ParentChildren")
+}
+
+model Student {
+  id          String       @id @default(uuid())
+  userId      String       @unique
+  user        User         @relation(fields: [userId], references: [id])
+  parentId    String?
+  parent      Parent?      @relation("ParentChildren", fields: [parentId], references: [id])
+  grade       Int
+  status      String       @default("active")
+  subEndDate  DateTime?
+
+  payments    Payment[]
+  attendance  Attendance[]
+  submissions Submission[]
+  grades      Grade[]
+  messages    Message[]
+}
+
+model Teacher {
+  id       String    @id @default(uuid())
+  userId   String    @unique
+  user     User      @relation(fields: [userId], references: [id])
+  subjects String[]
+  grades   Int[]
+
+  sessions Session[]
+  messages Message[]
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  amount    Float
+  date      DateTime @default(now())
+  method    String   // "bank", "cash"
+  period    String   // "year", "semester", "monthly"
+  months    Int?
+  note      String?
+}
+
+model Session {
+  id        String       @id @default(uuid())
+  teacherId String
+  teacher   Teacher      @relation(fields: [teacherId], references: [id])
+  grade     Int
+  subject   String
+  date      DateTime
+
+  attendance Attendance[]
+  messages   Message[]
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  status    String   // "present", "absent", "late"
+  note      String?
+}
+
+model Assignment {
+  id       String       @id @default(uuid())
+  title    String
+  subject  String
+  grade    Int
+  dueDate  DateTime
+
+  submissions Submission[]
+  messages    Message[]
+}
+
+model Submission {
+  id           String     @id @default(uuid())
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  studentId    String
+  student      Student    @relation(fields: [studentId], references: [id])
+  fileUrl      String?
+  text         String?
+  grade        Float?
+  feedback     String?
+  submittedAt  DateTime   @default(now())
+}
+
+model Grade {
+  id        String   @id @default(uuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  subject   String
+  type      String   // "quiz", "exam", "homework"
+  score     Float
+  maxScore  Float
+  date      DateTime @default(now())
+  note      String?
+}
+
+model Message {
+  id           String      @id @default(uuid())
+  content      String
+  senderType   String      // "teacher", "student", "parent"
+  senderId     String
+  studentId    String?
+  student      Student?    @relation(fields: [studentId], references: [id])
+  teacherId    String?
+  teacher      Teacher?    @relation(fields: [teacherId], references: [id])
+  sessionId    String?
+  session      Session?    @relation(fields: [sessionId], references: [id])
+  assignmentId String?
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
+  createdAt    DateTime    @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  body      String
+  type      String   // "subscription", "assignment", "grade", "attendance", "message"
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
