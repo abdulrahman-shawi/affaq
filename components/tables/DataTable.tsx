@@ -64,7 +64,7 @@ export default function DataTable<T>({
   // إزالة الصفوف المحددة التي لم تعد موجودة في البيانات
   useEffect(() => {
     setSelected((prev) => {
-      const next = new Set([...prev].filter((r) => data.includes(r)));
+      const next = new Set(Array.from(prev).filter((r) => data.includes(r)));
       return next.size === prev.size ? prev : next;
     });
   }, [data]);
@@ -155,7 +155,7 @@ export default function DataTable<T>({
                 {selected.size === 1 ? "صف" : "صفوف"}
               </p>
               <div className="flex items-center gap-2">
-                {bulkActions?.([...selected], clearSelection)}
+                {bulkActions?.(Array.from(selected), clearSelection)}
               </div>
             </div>
           )}
