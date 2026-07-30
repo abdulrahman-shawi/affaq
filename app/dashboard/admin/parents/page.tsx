@@ -1,14 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toaster";
 import DataTable from "@/components/tables/DataTable";
 import { parentColumns } from "@/components/tables/Columns";
 import ParentForm from "@/components/forms/ParentForm";
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import type { ParentDTO } from "@/types";
 
 export default function AdminParentsPage() {
+  const { toast } = useToast();
   const [parents, setParents] = useState<ParentDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,6 +30,26 @@ export default function AdminParentsPage() {
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  async function handleDelete(parent: ParentDTO) {
+    try {
+      const res = await fetch(`/api/parents/${parent.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? "فشل في حذف ولي الأمر");
+      }
+      toast({ variant: "success", title: "تم حذف ولي الأمر بنجاح" });
+      refetch();
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "فشل الحذف",
+        description: err instanceof Error ? err.message : "حدث خطأ غير متوقع",
+      });
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -52,6 +75,30 @@ export default function AdminParentsPage() {
           [p.user?.name, p.user?.email, p.user?.phone].filter(Boolean).join(" ")
         }
         searchPlaceholder="ابحث بالاسم أو البريد أو الهاتف..."
+        actions={(p) => (
+          <>
+            <ParentForm
+              parent={p}
+              onSuccess={refetch}
+              trigger={
+                <Button size="icon" variant="outline" title="تعديل">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <ConfirmDialog
+              title="حذف ولي الأمر"
+              description={`هل أنت متأكد من حذف "${p.user?.name ?? ""}"؟ لا يمكن التراجع عن هذا الإجراء.`}
+              confirmLabel="حذف"
+              onConfirm={() => handleDelete(p)}
+              trigger={
+                <Button size="icon" variant="destructive" title="حذف">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              }
+            />
+          </>
+        )}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,45 +11,73 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/toaster";
+import type { ParentDTO } from "@/types";
+
+const emptyForm = { name: "", email: "", password: "", phone: "" };
 
 export default function ParentForm({
   trigger,
+  parent,
   onSuccess,
 }: {
   trigger: React.ReactNode;
+  /** عند تمريره يعمل النموذج في وضع التعديل */
+  parent?: ParentDTO;
   onSuccess?: () => void;
 }) {
+  const isEdit = Boolean(parent);
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    phone: "",
-  });
+  const [form, setForm] = useState(emptyForm);
+
+  useEffect(() => {
+    if (open) {
+      setError(null);
+      setForm(
+        parent
+          ? {
+              name: parent.user?.name ?? "",
+              email: parent.user?.email ?? "",
+              password: "",
+              phone: parent.user?.phone ?? "",
+            }
+          : emptyForm
+      );
+    }
+  }, [open, parent]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/parents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password || undefined,
-          phone: form.phone || undefined,
-        }),
-      });
+      const res = await fetch(
+        isEdit ? `/api/parents/${parent!.id}` : "/api/parents",
+        {
+          method: isEdit ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            password: form.password || undefined,
+            phone: form.phone || undefined,
+          }),
+        }
+      );
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "فشل في إضافة ولي الأمر");
+        throw new Error(
+          body?.error ?? (isEdit ? "فشل في تعديل ولي الأمر" : "فشل في إضافة ولي الأمر")
+        );
       }
       setOpen(false);
-      setForm({ name: "", email: "", password: "", phone: "" });
+      toast({
+        variant: "success",
+        title: isEdit ? "تم تعديل ولي الأمر بنجاح" : "تمت إضافة ولي الأمر بنجاح",
+      });
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
@@ -63,7 +91,9 @@ export default function ParentForm({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>إضافة ولي أمر جديد</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "تعديل ولي الأمر" : "إضافة ولي أمر جديد"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -92,7 +122,9 @@ export default function ParentForm({
               id="parent-password"
               type="password"
               dir="ltr"
-              placeholder="123456 افتراضيًا"
+              placeholder={
+                isEdit ? "اتركه فارغًا للإبقاء على الحالية" : "123456 افتراضيًا"
+              }
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
@@ -109,7 +141,11 @@ export default function ParentForm({
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "جارٍ الحفظ..." : "إضافة ولي الأمر"}
+            {submitting
+              ? "جارٍ الحفظ..."
+              : isEdit
+                ? "حفظ التعديلات"
+                : "إضافة ولي الأمر"}
           </Button>
         </form>
       </DialogContent>
