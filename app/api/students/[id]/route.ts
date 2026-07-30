@@ -24,18 +24,19 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, email, phone, password, grade, subEndDate } = body;
+    const { name, email, phone, password, classId, subEndDate } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    const gradeNum = Number(grade);
-    if (!Number.isInteger(gradeNum) || gradeNum < 1 || gradeNum > 8) {
-      return NextResponse.json(
-        { error: "الصف يجب أن يكون بين 1 و 8" },
-        { status: 400 }
-      );
+    if (classId) {
+      const classExists = await prisma.classLevel.findUnique({
+        where: { id: classId },
+      });
+      if (!classExists) {
+        return NextResponse.json({ error: "الصف غير موجود" }, { status: 400 });
+      }
     }
 
     const emailOwner = await prisma.user.findUnique({ where: { email } });
@@ -56,7 +57,7 @@ export async function PATCH(
     const updated = await prisma.student.update({
       where: { id: params.id },
       data: {
-        grade: gradeNum,
+        classId: classId || null,
         subEndDate: subEndDate ? new Date(subEndDate) : null,
         user: {
           update: {
@@ -67,7 +68,7 @@ export async function PATCH(
           },
         },
       },
-      include: { user: true, parent: { include: { user: true } } },
+      include: { user: true, parent: { include: { user: true } }, class: true },
     });
 
     return NextResponse.json(updated);

@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const students = await prisma.student.findMany({
-      include: { user: true, parent: { include: { user: true } } },
+      include: { user: true, parent: { include: { user: true } }, class: true },
       orderBy: { user: { name: "asc" } },
     });
     return NextResponse.json(students);
@@ -27,19 +27,19 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, phone, password, grade, subEndDate } = body;
+    const { name, email, phone, password, classId, subEndDate } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    // القيود: الصف من 1 إلى 8
-    const gradeNum = Number(grade);
-    if (!Number.isInteger(gradeNum) || gradeNum < 1 || gradeNum > 8) {
-      return NextResponse.json(
-        { error: "الصف يجب أن يكون بين 1 و 8" },
-        { status: 400 }
-      );
+    if (classId) {
+      const classExists = await prisma.classLevel.findUnique({
+        where: { id: classId },
+      });
+      if (!classExists) {
+        return NextResponse.json({ error: "الصف غير موجود" }, { status: 400 });
+      }
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     const hashed = await bcrypt.hash(password || "123456", 10);
     const student = await prisma.student.create({
       data: {
-        grade: gradeNum,
+        classId: classId || null,
         subEndDate: subEndDate ? new Date(subEndDate) : null,
         user: {
           create: {
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
           },
         },
       },
-      include: { user: true, parent: { include: { user: true } } },
+      include: { user: true, parent: { include: { user: true } }, class: true },
     });
 
     return NextResponse.json(student, { status: 201 });

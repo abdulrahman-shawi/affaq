@@ -37,7 +37,8 @@ export interface StudentDTO {
   user?: UserDTO;
   parentId?: string | null;
   parent?: ParentDTO | null;
-  grade: number;
+  classId?: string | null;
+  class?: { id: string; name: string } | null;
   status: string;
   subEndDate?: string | null;
 }
@@ -46,8 +47,8 @@ export interface TeacherDTO {
   id: string;
   userId: string;
   user?: UserDTO;
-  subjects: string[];
-  grades: number[];
+  subjects: { id: string; name: string }[];
+  classes: { id: string; name: string }[];
 }
 
 export interface PaymentDTO {
@@ -160,7 +161,7 @@ export interface CreateStudentInput {
   email: string;
   phone?: string;
   password?: string;
-  grade: number;
+  classId?: string;
   subEndDate?: string;
 }
 
@@ -169,8 +170,8 @@ export interface CreateTeacherInput {
   email: string;
   password?: string;
   phone?: string;
-  subjects: string[];
-  grades: number[];
+  subjectIds?: string[];
+  classIds?: string[];
 }
 
 export interface CreatePaymentInput {

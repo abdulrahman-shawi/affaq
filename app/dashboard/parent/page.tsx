@@ -50,7 +50,7 @@ export default function ParentDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>الصف: {child.grade}</p>
+              <p>الصف: {child.class?.name ?? "—"}</p>
               <p>نهاية الاشتراك: {formatDate(child.subEndDate)}</p>
             </CardContent>
           </Card>

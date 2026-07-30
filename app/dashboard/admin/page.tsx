@@ -30,7 +30,7 @@ export default function AdminDashboard() {
 
   const gradeDistribution = Object.entries(
     students.reduce<Record<string, number>>((acc, s) => {
-      const key = `الصف ${s.grade}`;
+      const key = s.class?.name ?? "بدون صف";
       acc[key] = (acc[key] ?? 0) + 1;
       return acc;
     }, {})

@@ -44,7 +44,8 @@ model Student {
   user        User         @relation(fields: [userId], references: [id])
   parentId    String?
   parent      Parent?      @relation("ParentChildren", fields: [parentId], references: [id])
-  grade       Int
+  classId     String?
+  class       ClassLevel?  @relation(fields: [classId], references: [id], onDelete: SetNull)
   status      String       @default("active")
   subEndDate  DateTime?
 
@@ -56,11 +57,11 @@ model Student {
 }
 
 model Teacher {
-  id       String    @id @default(uuid())
-  userId   String    @unique
-  user     User      @relation(fields: [userId], references: [id])
-  subjects String[]
-  grades   Int[]
+  id       String       @id @default(uuid())
+  userId   String       @unique
+  user     User         @relation(fields: [userId], references: [id])
+  subjects Subject[]
+  classes  ClassLevel[]
 
   sessions Session[]
   messages Message[]
@@ -157,6 +158,8 @@ model ClassLevel {
   name      String    @unique
   order     Int       @default(0)
   subjects  Subject[]
+  students  Student[]
+  teachers  Teacher[]
   createdAt DateTime  @default(now())
 }
 
@@ -164,6 +167,7 @@ model Subject {
   id        String       @id @default(uuid())
   name      String       @unique
   classes   ClassLevel[]
+  teachers  Teacher[]
   createdAt DateTime     @default(now())
 }
 

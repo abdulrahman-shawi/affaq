@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const teachers = await prisma.teacher.findMany({
-      include: { user: true },
+      include: { user: true, subjects: true, classes: true },
       orderBy: { user: { name: "asc" } },
     });
     return NextResponse.json(teachers);
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, password, phone, subjects, grades } = body;
+    const { name, email, password, phone, subjectIds, classIds } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -50,8 +50,12 @@ export async function POST(req: Request) {
     const hashed = await bcrypt.hash(password || "123456", 10);
     const teacher = await prisma.teacher.create({
       data: {
-        subjects: Array.isArray(subjects) ? subjects : [],
-        grades: Array.isArray(grades) ? grades.map(Number) : [],
+        ...(Array.isArray(subjectIds) && subjectIds.length > 0
+          ? { subjects: { connect: subjectIds.map((id: string) => ({ id })) } }
+          : {}),
+        ...(Array.isArray(classIds) && classIds.length > 0
+          ? { classes: { connect: classIds.map((id: string) => ({ id })) } }
+          : {}),
         user: {
           create: {
             name,
@@ -62,7 +66,7 @@ export async function POST(req: Request) {
           },
         },
       },
-      include: { user: true },
+      include: { user: true, subjects: true, classes: true },
     });
 
     return NextResponse.json(teacher, { status: 201 });

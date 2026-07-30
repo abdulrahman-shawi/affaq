@@ -12,14 +12,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toaster";
-import type { CreateStudentInput, StudentDTO } from "@/types";
+import type { ClassLevelDTO, CreateStudentInput, StudentDTO } from "@/types";
 
 const initialForm: CreateStudentInput = {
   name: "",
   email: "",
   phone: "",
   password: "",
-  grade: 1,
+  classId: "",
   subEndDate: "",
 };
 
@@ -44,6 +44,7 @@ export default function StudentForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<CreateStudentInput>(initialForm);
+  const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -55,15 +56,19 @@ export default function StudentForm({
               email: student.user?.email ?? "",
               phone: student.user?.phone ?? "",
               password: "",
-              grade: student.grade,
+              classId: student.classId ?? "",
               subEndDate: toDateInput(student.subEndDate),
             }
           : initialForm
       );
+      fetch("/api/classes")
+        .then((res) => (res.ok ? res.json() : []))
+        .then(setClasses)
+        .catch(() => setClasses([]));
     }
   }, [open, student]);
 
-  const set = (key: keyof CreateStudentInput, value: string | number) =>
+  const set = (key: keyof CreateStudentInput, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
 
   async function handleSubmit(e: React.FormEvent) {
@@ -81,7 +86,7 @@ export default function StudentForm({
             email: form.email,
             phone: form.phone || undefined,
             password: form.password || undefined,
-            grade: form.grade,
+            classId: form.classId || undefined,
             subEndDate: form.subEndDate || undefined,
           }),
         }
@@ -159,16 +164,20 @@ export default function StudentForm({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="student-grade">الصف (1 - 8)</Label>
-              <Input
-                id="student-grade"
-                type="number"
-                min={1}
-                max={8}
-                required
-                value={form.grade}
-                onChange={(e) => set("grade", Number(e.target.value))}
-              />
+              <Label htmlFor="student-class">الصف</Label>
+              <select
+                id="student-class"
+                value={form.classId}
+                onChange={(e) => set("classId", e.target.value)}
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">بدون صف</option>
+                {classes.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="student-subend">نهاية الاشتراك</Label>

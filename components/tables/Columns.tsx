@@ -31,7 +31,7 @@ export function studentColumns(): Column<StudentDTO>[] {
     { header: "الاسم", cell: (s) => s.user?.name ?? "—" },
     { header: "البريد الإلكتروني", cell: (s) => s.user?.email ?? "—" },
     { header: "رقم الهاتف", cell: (s) => s.user?.phone ?? "—" },
-    { header: "الصف", cell: (s) => `الصف ${s.grade}` },
+    { header: "الصف", cell: (s) => s.class?.name ?? "—" },
     {
       header: "ولي الأمر",
       cell: (s) => s.parent?.user?.name ?? "—",
@@ -55,10 +55,13 @@ export function teacherColumns(): Column<TeacherDTO>[] {
   return [
     { header: "الاسم", cell: (t) => t.user?.name ?? "—" },
     { header: "البريد الإلكتروني", cell: (t) => t.user?.email ?? "—" },
-    { header: "المواد", cell: (t) => t.subjects.join("، ") || "—" },
+    {
+      header: "المواد",
+      cell: (t) => t.subjects?.map((s) => s.name).join("، ") || "—",
+    },
     {
       header: "الصفوف",
-      cell: (t) => t.grades.map((g) => `الصف ${g}`).join("، ") || "—",
+      cell: (t) => t.classes?.map((c) => c.name).join("، ") || "—",
     },
   ];
 }
