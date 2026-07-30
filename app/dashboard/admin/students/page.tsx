@@ -1,15 +1,39 @@
 "use client";
 
-import { Plus, UserPlus } from "lucide-react";
+import { Pencil, Plus, Trash2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toaster";
 import DataTable from "@/components/tables/DataTable";
 import { studentColumns } from "@/components/tables/Columns";
 import StudentForm from "@/components/forms/StudentForm";
 import AssignParentDialog from "@/components/forms/AssignParentDialog";
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import { useStudents } from "@/hooks/useStudents";
+import type { StudentDTO } from "@/types";
 
 export default function AdminStudentsPage() {
   const { students, loading, refetch } = useStudents();
+  const { toast } = useToast();
+
+  async function handleDelete(student: StudentDTO) {
+    try {
+      const res = await fetch(`/api/students/${student.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? "فشل في حذف الطالب");
+      }
+      toast({ variant: "success", title: "تم حذف الطالب بنجاح" });
+      refetch();
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "فشل الحذف",
+        description: err instanceof Error ? err.message : "حدث خطأ غير متوقع",
+      });
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -54,15 +78,37 @@ export default function AdminStudentsPage() {
           />
         )}
         actions={(s) => (
-          <AssignParentDialog
-            studentIds={[s.id]}
-            onSuccess={refetch}
-            trigger={
-              <Button size="icon" variant="outline" title="تعيين ولي أمر">
-                <UserPlus className="h-4 w-4" />
-              </Button>
-            }
-          />
+          <>
+            <AssignParentDialog
+              studentIds={[s.id]}
+              onSuccess={refetch}
+              trigger={
+                <Button size="icon" variant="outline" title="تعيين ولي أمر">
+                  <UserPlus className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <StudentForm
+              student={s}
+              onSuccess={refetch}
+              trigger={
+                <Button size="icon" variant="outline" title="تعديل">
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <ConfirmDialog
+              title="حذف الطالب"
+              description={`هل أنت متأكد من حذف "${s.user?.name ?? ""}"؟ سيتم حذف جميع بياناته (مدفوعات، حضور، درجات) ولا يمكن التراجع.`}
+              confirmLabel="حذف"
+              onConfirm={() => handleDelete(s)}
+              trigger={
+                <Button size="icon" variant="destructive" title="حذف">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              }
+            />
+          </>
         )}
       />
     </div>

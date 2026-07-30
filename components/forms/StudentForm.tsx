@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toaster";
-import type { CreateStudentInput } from "@/types";
+import type { CreateStudentInput, StudentDTO } from "@/types";
 
 const initialForm: CreateStudentInput = {
   name: "",
@@ -23,18 +23,45 @@ const initialForm: CreateStudentInput = {
   subEndDate: "",
 };
 
+function toDateInput(date?: string | null): string {
+  if (!date) return "";
+  return new Date(date).toISOString().slice(0, 10);
+}
+
 export default function StudentForm({
   trigger,
+  student,
   onSuccess,
 }: {
   trigger: React.ReactNode;
+  /** عند تمريره يعمل النموذج في وضع التعديل */
+  student?: StudentDTO;
   onSuccess?: () => void;
 }) {
+  const isEdit = Boolean(student);
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<CreateStudentInput>(initialForm);
+
+  useEffect(() => {
+    if (open) {
+      setError(null);
+      setForm(
+        student
+          ? {
+              name: student.user?.name ?? "",
+              email: student.user?.email ?? "",
+              phone: student.user?.phone ?? "",
+              password: "",
+              grade: student.grade,
+              subEndDate: toDateInput(student.subEndDate),
+            }
+          : initialForm
+      );
+    }
+  }, [open, student]);
 
   const set = (key: keyof CreateStudentInput, value: string | number) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -44,25 +71,31 @@ export default function StudentForm({
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/students", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone || undefined,
-          password: form.password || undefined,
-          grade: form.grade,
-          subEndDate: form.subEndDate || undefined,
-        }),
-      });
+      const res = await fetch(
+        isEdit ? `/api/students/${student!.id}` : "/api/students",
+        {
+          method: isEdit ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            phone: form.phone || undefined,
+            password: form.password || undefined,
+            grade: form.grade,
+            subEndDate: form.subEndDate || undefined,
+          }),
+        }
+      );
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "فشل في إضافة الطالب");
+        throw new Error(body?.error ?? "فشل في حفظ الطالب");
       }
       setOpen(false);
-      setForm(initialForm);
-      toast({ variant: "success", title: "تمت إضافة الطالب بنجاح" });
+      if (!isEdit) setForm(initialForm);
+      toast({
+        variant: "success",
+        title: isEdit ? "تم تعديل الطالب بنجاح" : "تمت إضافة الطالب بنجاح",
+      });
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
@@ -76,7 +109,7 @@ export default function StudentForm({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>إضافة طالب جديد</DialogTitle>
+          <DialogTitle>{isEdit ? "تعديل الطالب" : "إضافة طالب جديد"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -116,7 +149,9 @@ export default function StudentForm({
                 id="student-password"
                 type="password"
                 dir="ltr"
-                placeholder="123456 افتراضيًا"
+                placeholder={
+                  isEdit ? "اتركه فارغًا للإبقاء على الحالية" : "123456 افتراضيًا"
+                }
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
               />
@@ -148,7 +183,11 @@ export default function StudentForm({
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "جارٍ الحفظ..." : "إضافة الطالب"}
+            {submitting
+              ? "جارٍ الحفظ..."
+              : isEdit
+                ? "حفظ التعديلات"
+                : "إضافة الطالب"}
           </Button>
         </form>
       </DialogContent>

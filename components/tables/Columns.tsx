@@ -1,6 +1,6 @@
 import type { Column } from "./DataTable";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, formatDate } from "@/app/lib/utils";
+import { formatCurrency, formatDate, getSubscriptionStatus } from "@/app/lib/utils";
 import type {
   StudentDTO,
   TeacherDTO,
@@ -12,14 +12,16 @@ import type {
 
 const statusLabels: Record<string, string> = {
   active: "نشط",
+  warning: "ينتهي قريبًا",
   expired: "منتهي",
   suspended: "موقوف",
 };
 
 const statusVariants: Record<string, "success" | "destructive" | "warning"> = {
   active: "success",
+  warning: "warning",
   expired: "destructive",
-  suspended: "warning",
+  suspended: "destructive",
 };
 
 export function studentColumns(): Column<StudentDTO>[] {
@@ -34,11 +36,14 @@ export function studentColumns(): Column<StudentDTO>[] {
     },
     {
       header: "الحالة",
-      cell: (s) => (
-        <Badge variant={statusVariants[s.status] ?? "secondary"}>
-          {statusLabels[s.status] ?? s.status}
-        </Badge>
-      ),
+      cell: (s) => {
+        const status = getSubscriptionStatus(s.subEndDate) ?? s.status;
+        return (
+          <Badge variant={statusVariants[status] ?? "secondary"}>
+            {statusLabels[status] ?? status}
+          </Badge>
+        );
+      },
     },
     { header: "نهاية الاشتراك", cell: (s) => formatDate(s.subEndDate) },
   ];
