@@ -48,6 +48,10 @@ export default function AdminParentsPage() {
         loading={loading}
         emptyTitle="لا يوجد أولياء أمور"
         emptyMessage="ابدأ بإضافة أول ولي أمر"
+        searchValue={(p) =>
+          [p.user?.name, p.user?.email, p.user?.phone].filter(Boolean).join(" ")
+        }
+        searchPlaceholder="ابحث بالاسم أو البريد أو الهاتف..."
       />
     </div>
   );
