@@ -73,6 +73,16 @@ export type Grade = Prisma.GradeModel
  */
 export type Message = Prisma.MessageModel
 /**
+ * Model ClassLevel
+ * 
+ */
+export type ClassLevel = Prisma.ClassLevelModel
+/**
+ * Model Subject
+ * 
+ */
+export type Subject = Prisma.SubjectModel
+/**
  * Model Notification
  * 
  */

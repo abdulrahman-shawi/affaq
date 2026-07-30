@@ -138,6 +138,21 @@ export interface NotificationDTO {
   createdAt: string;
 }
 
+export interface ClassLevelDTO {
+  id: string;
+  name: string;
+  order: number;
+  createdAt: string;
+  subjects: { id: string; name: string }[];
+}
+
+export interface SubjectDTO {
+  id: string;
+  name: string;
+  createdAt: string;
+  classes: { id: string; name: string }[];
+}
+
 // API input DTOs
 
 export interface CreateStudentInput {
@@ -216,4 +231,15 @@ export interface CreateSessionInput {
   grade: number;
   subject: string;
   date: string;
+}
+
+export interface CreateClassInput {
+  name: string;
+  order?: number;
+  subjectIds?: string[];
+}
+
+export interface CreateSubjectInput {
+  name: string;
+  classIds?: string[];
 }

@@ -20,7 +20,7 @@ model User {
   password      String
   name          String
   role          String         // "admin", "teacher", "parent", "student"
-  phone         String?
+  phone         String?        @unique
   createdAt     DateTime       @default(now())
 
   teacher       Teacher?
@@ -150,6 +150,21 @@ model Message {
   assignmentId String?
   assignment   Assignment? @relation(fields: [assignmentId], references: [id])
   createdAt    DateTime    @default(now())
+}
+
+model ClassLevel {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  order     Int       @default(0)
+  subjects  Subject[]
+  createdAt DateTime  @default(now())
+}
+
+model Subject {
+  id        String       @id @default(uuid())
+  name      String       @unique
+  classes   ClassLevel[]
+  createdAt DateTime     @default(now())
 }
 
 model Notification {

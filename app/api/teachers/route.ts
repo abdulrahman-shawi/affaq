@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { isPhoneTaken } from "@/app/lib/phone";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,13 @@ export async function POST(req: Request) {
     if (existing) {
       return NextResponse.json(
         { error: "البريد الإلكتروني مستخدم مسبقًا" },
+        { status: 409 }
+      );
+    }
+
+    if (phone && (await isPhoneTaken(phone))) {
+      return NextResponse.json(
+        { error: "رقم الهاتف مستخدم مسبقًا" },
         { status: 409 }
       );
     }

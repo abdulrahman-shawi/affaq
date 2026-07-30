@@ -8,6 +8,8 @@ import type {
   PaymentDTO,
   AttendanceDTO,
   GradeDTO,
+  ClassLevelDTO,
+  SubjectDTO,
 } from "@/types";
 
 const statusLabels: Record<string, string> = {
@@ -137,6 +139,49 @@ export function gradeColumns(): Column<GradeDTO>[] {
     { header: "الدرجة", cell: (g) => `${g.score} / ${g.maxScore}` },
     { header: "التاريخ", cell: (g) => formatDate(g.date) },
     { header: "ملاحظة", cell: (g) => g.note ?? "—" },
+  ];
+}
+
+export function classColumns(): Column<ClassLevelDTO>[] {
+  return [
+    { header: "الاسم", cell: (c) => c.name },
+    { header: "الترتيب", cell: (c) => c.order },
+    {
+      header: "المواد",
+      cell: (c) =>
+        c.subjects?.length ? (
+          <div className="flex flex-wrap gap-1">
+            {c.subjects.map((s) => (
+              <Badge key={s.id} variant="secondary">
+                {s.name}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          "—"
+        ),
+    },
+  ];
+}
+
+export function subjectColumns(): Column<SubjectDTO>[] {
+  return [
+    { header: "الاسم", cell: (s) => s.name },
+    {
+      header: "الصفوف",
+      cell: (s) =>
+        s.classes?.length ? (
+          <div className="flex flex-wrap gap-1">
+            {s.classes.map((c) => (
+              <Badge key={c.id} variant="secondary">
+                {c.name}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          "—"
+        ),
+    },
   ];
 }
 
