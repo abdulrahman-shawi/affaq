@@ -4,6 +4,7 @@ import { formatCurrency, formatDate } from "@/app/lib/utils";
 import type {
   StudentDTO,
   TeacherDTO,
+  ParentDTO,
   PaymentDTO,
   AttendanceDTO,
   GradeDTO,
@@ -46,6 +47,21 @@ export function teacherColumns(): Column<TeacherDTO>[] {
     {
       header: "الصفوف",
       cell: (t) => t.grades.map((g) => `الصف ${g}`).join("، ") || "—",
+    },
+  ];
+}
+
+export function parentColumns(): Column<ParentDTO>[] {
+  return [
+    { header: "الاسم", cell: (p) => p.user?.name ?? "—" },
+    { header: "البريد الإلكتروني", cell: (p) => p.user?.email ?? "—" },
+    { header: "رقم الهاتف", cell: (p) => p.user?.phone ?? "—" },
+    {
+      header: "الأبناء",
+      cell: (p) =>
+        p.children?.length
+          ? p.children.map((c) => c.user?.name ?? "—").join("، ")
+          : "—",
     },
   ];
 }

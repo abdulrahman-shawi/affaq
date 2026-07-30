@@ -31,6 +31,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/admin", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/dashboard/admin/students", label: "الطلاب", icon: GraduationCap },
     { href: "/dashboard/admin/teachers", label: "المعلمون", icon: Users },
+    { href: "/dashboard/admin/parents", label: "أولياء الأمور", icon: Baby },
     { href: "/dashboard/admin/payments", label: "المدفوعات", icon: CreditCard },
     { href: "/dashboard/admin/attendance", label: "الحضور", icon: CalendarCheck },
     { href: "/dashboard/admin/grades", label: "الدرجات", icon: ClipboardList },

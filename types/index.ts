@@ -28,6 +28,7 @@ export interface ParentDTO {
   id: string;
   userId: string;
   user?: UserDTO;
+  children?: StudentDTO[];
 }
 
 export interface StudentDTO {
@@ -141,11 +142,10 @@ export interface NotificationDTO {
 
 export interface CreateStudentInput {
   name: string;
-  email: string;
-  password?: string;
-  phone?: string;
   grade: number;
-  parentId?: string;
+  parentPhone: string;
+  parentEmail: string;
+  subEndDate?: string;
 }
 
 export interface CreateTeacherInput {
