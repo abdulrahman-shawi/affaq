@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Search } from "lucide-react";
 import {
   Table,
@@ -35,6 +35,8 @@ export default function DataTable<T>({
   searchPlaceholder = "بحث...",
   actions,
   actionsHeader = "الإجراءات",
+  selectable = false,
+  bulkActions,
 }: {
   columns: Column<T>[];
   data: T[];
@@ -49,10 +51,23 @@ export default function DataTable<T>({
   /** إجراءات كل صف — يمكن تمرير أكثر من زر داخلها */
   actions?: (row: T) => ReactNode;
   actionsHeader?: string;
+  /** يفعّل checkbox بجانب كل صف */
+  selectable?: boolean;
+  /** شريط يظهر عند وجود صفوف محددة (إجراءات جماعية) */
+  bulkActions?: (selected: T[], clear: () => void) => ReactNode;
 }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<Set<T>>(new Set());
+
+  // إزالة الصفوف المحددة التي لم تعد موجودة في البيانات
+  useEffect(() => {
+    setSelected((prev) => {
+      const next = new Set([...prev].filter((r) => data.includes(r)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [data]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -67,6 +82,24 @@ export default function DataTable<T>({
     () => filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize),
     [filtered, currentPage, pageSize]
   );
+
+  const allFilteredSelected =
+    filtered.length > 0 && filtered.every((row) => selected.has(row));
+
+  function toggleRow(row: T) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(row)) next.delete(row);
+      else next.add(row);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    setSelected(allFilteredSelected ? new Set() : new Set(filtered));
+  }
+
+  const clearSelection = () => setSelected(new Set());
 
   if (loading) return <Loading />;
   if (data.length === 0)
@@ -114,9 +147,32 @@ export default function DataTable<T>({
       {filtered.length === 0 ? (
         <EmptyState title="لا توجد نتائج" message={`لا نتائج مطابقة لـ "${query}"`} />
       ) : (
+        <>
+          {selectable && selected.size > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border bg-muted/40 px-4 py-2">
+              <p className="text-sm font-medium">
+                تم تحديد {selected.size}{" "}
+                {selected.size === 1 ? "صف" : "صفوف"}
+              </p>
+              <div className="flex items-center gap-2">
+                {bulkActions?.([...selected], clearSelection)}
+              </div>
+            </div>
+          )}
         <Table>
           <TableHeader>
             <TableRow>
+              {selectable && (
+                <TableHead className="w-10">
+                  <input
+                    type="checkbox"
+                    checked={allFilteredSelected}
+                    onChange={toggleAll}
+                    className="h-4 w-4 accent-primary"
+                    aria-label="تحديد الكل"
+                  />
+                </TableHead>
+              )}
               {columns.map((col) => (
                 <TableHead key={col.header} className={col.className}>
                   {col.header}
@@ -128,6 +184,17 @@ export default function DataTable<T>({
           <TableBody>
             {pageData.map((row, i) => (
               <TableRow key={i}>
+                {selectable && (
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      checked={selected.has(row)}
+                      onChange={() => toggleRow(row)}
+                      className="h-4 w-4 accent-primary"
+                      aria-label="تحديد الصف"
+                    />
+                  </TableCell>
+                )}
                 {columns.map((col) => (
                   <TableCell key={col.header} className={col.className}>
                     {col.cell(row)}
@@ -142,6 +209,7 @@ export default function DataTable<T>({
             ))}
           </TableBody>
         </Table>
+        </>
       )}
 
       <Pagination

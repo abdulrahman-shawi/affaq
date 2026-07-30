@@ -26,7 +26,12 @@ export function studentColumns(): Column<StudentDTO>[] {
   return [
     { header: "الاسم", cell: (s) => s.user?.name ?? "—" },
     { header: "البريد الإلكتروني", cell: (s) => s.user?.email ?? "—" },
+    { header: "رقم الهاتف", cell: (s) => s.user?.phone ?? "—" },
     { header: "الصف", cell: (s) => `الصف ${s.grade}` },
+    {
+      header: "ولي الأمر",
+      cell: (s) => s.parent?.user?.name ?? "—",
+    },
     {
       header: "الحالة",
       cell: (s) => (

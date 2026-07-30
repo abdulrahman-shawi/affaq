@@ -142,9 +142,10 @@ export interface NotificationDTO {
 
 export interface CreateStudentInput {
   name: string;
+  email: string;
+  phone?: string;
+  password?: string;
   grade: number;
-  parentPhone: string;
-  parentEmail: string;
   subEndDate?: string;
 }
 
