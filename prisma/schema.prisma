@@ -37,6 +37,7 @@ model Parent {
   children Student[] @relation("ParentChildren")
 }
 
+
 model Student {
   id          String       @id @default(uuid())
   userId      String       @unique
