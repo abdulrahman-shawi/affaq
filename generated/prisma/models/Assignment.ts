@@ -40,6 +40,8 @@ export type AssignmentMinAggregateOutputType = {
   subject: string | null
   grade: number | null
   dueDate: Date | null
+  fileUrl: string | null
+  fileName: string | null
 }
 
 export type AssignmentMaxAggregateOutputType = {
@@ -48,6 +50,8 @@ export type AssignmentMaxAggregateOutputType = {
   subject: string | null
   grade: number | null
   dueDate: Date | null
+  fileUrl: string | null
+  fileName: string | null
 }
 
 export type AssignmentCountAggregateOutputType = {
@@ -56,6 +60,8 @@ export type AssignmentCountAggregateOutputType = {
   subject: number
   grade: number
   dueDate: number
+  fileUrl: number
+  fileName: number
   _all: number
 }
 
@@ -74,6 +80,8 @@ export type AssignmentMinAggregateInputType = {
   subject?: true
   grade?: true
   dueDate?: true
+  fileUrl?: true
+  fileName?: true
 }
 
 export type AssignmentMaxAggregateInputType = {
@@ -82,6 +90,8 @@ export type AssignmentMaxAggregateInputType = {
   subject?: true
   grade?: true
   dueDate?: true
+  fileUrl?: true
+  fileName?: true
 }
 
 export type AssignmentCountAggregateInputType = {
@@ -90,6 +100,8 @@ export type AssignmentCountAggregateInputType = {
   subject?: true
   grade?: true
   dueDate?: true
+  fileUrl?: true
+  fileName?: true
   _all?: true
 }
 
@@ -185,6 +197,8 @@ export type AssignmentGroupByOutputType = {
   subject: string
   grade: number
   dueDate: Date
+  fileUrl: string | null
+  fileName: string | null
   _count: AssignmentCountAggregateOutputType | null
   _avg: AssignmentAvgAggregateOutputType | null
   _sum: AssignmentSumAggregateOutputType | null
@@ -216,6 +230,8 @@ export type AssignmentWhereInput = {
   subject?: Prisma.StringFilter<"Assignment"> | string
   grade?: Prisma.IntFilter<"Assignment"> | number
   dueDate?: Prisma.DateTimeFilter<"Assignment"> | Date | string
+  fileUrl?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  fileName?: Prisma.StringNullableFilter<"Assignment"> | string | null
   submissions?: Prisma.SubmissionListRelationFilter
   messages?: Prisma.MessageListRelationFilter
 }
@@ -226,6 +242,8 @@ export type AssignmentOrderByWithRelationInput = {
   subject?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
+  fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  fileName?: Prisma.SortOrderInput | Prisma.SortOrder
   submissions?: Prisma.SubmissionOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
 }
@@ -239,6 +257,8 @@ export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
   subject?: Prisma.StringFilter<"Assignment"> | string
   grade?: Prisma.IntFilter<"Assignment"> | number
   dueDate?: Prisma.DateTimeFilter<"Assignment"> | Date | string
+  fileUrl?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  fileName?: Prisma.StringNullableFilter<"Assignment"> | string | null
   submissions?: Prisma.SubmissionListRelationFilter
   messages?: Prisma.MessageListRelationFilter
 }, "id">
@@ -249,6 +269,8 @@ export type AssignmentOrderByWithAggregationInput = {
   subject?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
+  fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  fileName?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AssignmentCountOrderByAggregateInput
   _avg?: Prisma.AssignmentAvgOrderByAggregateInput
   _max?: Prisma.AssignmentMaxOrderByAggregateInput
@@ -265,6 +287,8 @@ export type AssignmentScalarWhereWithAggregatesInput = {
   subject?: Prisma.StringWithAggregatesFilter<"Assignment"> | string
   grade?: Prisma.IntWithAggregatesFilter<"Assignment"> | number
   dueDate?: Prisma.DateTimeWithAggregatesFilter<"Assignment"> | Date | string
+  fileUrl?: Prisma.StringNullableWithAggregatesFilter<"Assignment"> | string | null
+  fileName?: Prisma.StringNullableWithAggregatesFilter<"Assignment"> | string | null
 }
 
 export type AssignmentCreateInput = {
@@ -273,6 +297,8 @@ export type AssignmentCreateInput = {
   subject: string
   grade: number
   dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
   submissions?: Prisma.SubmissionCreateNestedManyWithoutAssignmentInput
   messages?: Prisma.MessageCreateNestedManyWithoutAssignmentInput
 }
@@ -283,6 +309,8 @@ export type AssignmentUncheckedCreateInput = {
   subject: string
   grade: number
   dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAssignmentInput
 }
@@ -293,6 +321,8 @@ export type AssignmentUpdateInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissions?: Prisma.SubmissionUpdateManyWithoutAssignmentNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAssignmentNestedInput
 }
@@ -303,6 +333,8 @@ export type AssignmentUncheckedUpdateInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAssignmentNestedInput
 }
@@ -313,6 +345,8 @@ export type AssignmentCreateManyInput = {
   subject: string
   grade: number
   dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
 }
 
 export type AssignmentUpdateManyMutationInput = {
@@ -321,6 +355,8 @@ export type AssignmentUpdateManyMutationInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssignmentUncheckedUpdateManyInput = {
@@ -329,6 +365,8 @@ export type AssignmentUncheckedUpdateManyInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssignmentCountOrderByAggregateInput = {
@@ -337,6 +375,8 @@ export type AssignmentCountOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
+  fileUrl?: Prisma.SortOrder
+  fileName?: Prisma.SortOrder
 }
 
 export type AssignmentAvgOrderByAggregateInput = {
@@ -349,6 +389,8 @@ export type AssignmentMaxOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
+  fileUrl?: Prisma.SortOrder
+  fileName?: Prisma.SortOrder
 }
 
 export type AssignmentMinOrderByAggregateInput = {
@@ -357,6 +399,8 @@ export type AssignmentMinOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
+  fileUrl?: Prisma.SortOrder
+  fileName?: Prisma.SortOrder
 }
 
 export type AssignmentSumOrderByAggregateInput = {
@@ -409,6 +453,8 @@ export type AssignmentCreateWithoutSubmissionsInput = {
   subject: string
   grade: number
   dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
   messages?: Prisma.MessageCreateNestedManyWithoutAssignmentInput
 }
 
@@ -418,6 +464,8 @@ export type AssignmentUncheckedCreateWithoutSubmissionsInput = {
   subject: string
   grade: number
   dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAssignmentInput
 }
 
@@ -443,6 +491,8 @@ export type AssignmentUpdateWithoutSubmissionsInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messages?: Prisma.MessageUpdateManyWithoutAssignmentNestedInput
 }
 
@@ -452,6 +502,8 @@ export type AssignmentUncheckedUpdateWithoutSubmissionsInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAssignmentNestedInput
 }
 
@@ -461,6 +513,8 @@ export type AssignmentCreateWithoutMessagesInput = {
   subject: string
   grade: number
   dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
   submissions?: Prisma.SubmissionCreateNestedManyWithoutAssignmentInput
 }
 
@@ -470,6 +524,8 @@ export type AssignmentUncheckedCreateWithoutMessagesInput = {
   subject: string
   grade: number
   dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
 }
 
@@ -495,6 +551,8 @@ export type AssignmentUpdateWithoutMessagesInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissions?: Prisma.SubmissionUpdateManyWithoutAssignmentNestedInput
 }
 
@@ -504,6 +562,8 @@ export type AssignmentUncheckedUpdateWithoutMessagesInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
 }
 
@@ -553,6 +613,8 @@ export type AssignmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   subject?: boolean
   grade?: boolean
   dueDate?: boolean
+  fileUrl?: boolean
+  fileName?: boolean
   submissions?: boolean | Prisma.Assignment$submissionsArgs<ExtArgs>
   messages?: boolean | Prisma.Assignment$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.AssignmentCountOutputTypeDefaultArgs<ExtArgs>
@@ -564,6 +626,8 @@ export type AssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   subject?: boolean
   grade?: boolean
   dueDate?: boolean
+  fileUrl?: boolean
+  fileName?: boolean
 }, ExtArgs["result"]["assignment"]>
 
 export type AssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -572,6 +636,8 @@ export type AssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   subject?: boolean
   grade?: boolean
   dueDate?: boolean
+  fileUrl?: boolean
+  fileName?: boolean
 }, ExtArgs["result"]["assignment"]>
 
 export type AssignmentSelectScalar = {
@@ -580,9 +646,11 @@ export type AssignmentSelectScalar = {
   subject?: boolean
   grade?: boolean
   dueDate?: boolean
+  fileUrl?: boolean
+  fileName?: boolean
 }
 
-export type AssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subject" | "grade" | "dueDate", ExtArgs["result"]["assignment"]>
+export type AssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subject" | "grade" | "dueDate" | "fileUrl" | "fileName", ExtArgs["result"]["assignment"]>
 export type AssignmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   submissions?: boolean | Prisma.Assignment$submissionsArgs<ExtArgs>
   messages?: boolean | Prisma.Assignment$messagesArgs<ExtArgs>
@@ -603,6 +671,8 @@ export type $AssignmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     subject: string
     grade: number
     dueDate: Date
+    fileUrl: string | null
+    fileName: string | null
   }, ExtArgs["result"]["assignment"]>
   composites: {}
 }
@@ -1033,6 +1103,8 @@ export interface AssignmentFieldRefs {
   readonly subject: Prisma.FieldRef<"Assignment", 'String'>
   readonly grade: Prisma.FieldRef<"Assignment", 'Int'>
   readonly dueDate: Prisma.FieldRef<"Assignment", 'DateTime'>
+  readonly fileUrl: Prisma.FieldRef<"Assignment", 'String'>
+  readonly fileName: Prisma.FieldRef<"Assignment", 'String'>
 }
     
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Upload } from "lucide-react";
+import { Paperclip, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -63,6 +63,23 @@ export default function StudentAssignmentsPage() {
     { header: "العنوان", cell: (a) => a.title },
     { header: "المادة", cell: (a) => a.subject },
     { header: "تاريخ التسليم", cell: (a) => formatDate(a.dueDate) },
+    {
+      header: "الملف",
+      cell: (a) =>
+        a.fileUrl ? (
+          <a
+            href={a.fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline"
+          >
+            <Paperclip className="h-4 w-4" />
+            {a.fileName ?? "عرض الملف"}
+          </a>
+        ) : (
+          "—"
+        ),
+    },
     {
       header: "الحالة",
       cell: (a) => {

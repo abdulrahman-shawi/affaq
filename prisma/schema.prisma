@@ -107,6 +107,8 @@ model Assignment {
   subject  String
   grade    Int
   dueDate  DateTime
+  fileUrl  String?
+  fileName String?
 
   submissions Submission[]
   messages    Message[]

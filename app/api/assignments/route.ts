@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, subject, grade, dueDate } = body;
+    const { title, subject, grade, dueDate, fileUrl, fileName } = body;
 
     if (!title || !subject || !grade || !dueDate) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -36,6 +36,8 @@ export async function POST(req: Request) {
         subject,
         grade: Number(grade),
         dueDate: new Date(dueDate),
+        fileUrl: fileUrl || null,
+        fileName: fileName || null,
       },
     });
 

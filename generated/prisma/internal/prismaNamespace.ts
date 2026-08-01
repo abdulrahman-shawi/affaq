@@ -1587,7 +1587,9 @@ export const AssignmentScalarFieldEnum = {
   title: 'title',
   subject: 'subject',
   grade: 'grade',
-  dueDate: 'dueDate'
+  dueDate: 'dueDate',
+  fileUrl: 'fileUrl',
+  fileName: 'fileName'
 } as const
 
 export type AssignmentScalarFieldEnum = (typeof AssignmentScalarFieldEnum)[keyof typeof AssignmentScalarFieldEnum]

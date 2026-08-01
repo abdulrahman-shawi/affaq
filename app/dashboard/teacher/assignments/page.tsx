@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Paperclip, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DataTable, { type Column } from "@/components/tables/DataTable";
@@ -14,6 +14,23 @@ const columns: Column<AssignmentDTO>[] = [
   { header: "المادة", cell: (a) => a.subject },
   { header: "الصف", cell: (a) => `الصف ${a.grade}` },
   { header: "تاريخ التسليم", cell: (a) => formatDate(a.dueDate) },
+  {
+    header: "الملف",
+    cell: (a) =>
+      a.fileUrl ? (
+        <a
+          href={a.fileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline"
+        >
+          <Paperclip className="h-4 w-4" />
+          {a.fileName ?? "عرض الملف"}
+        </a>
+      ) : (
+        "—"
+      ),
+  },
   {
     header: "التسليمات",
     cell: (a) => <Badge variant="secondary">{a.submissions?.length ?? 0}</Badge>,

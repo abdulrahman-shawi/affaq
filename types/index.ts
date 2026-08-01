@@ -88,6 +88,8 @@ export interface AssignmentDTO {
   subject: string;
   grade: number;
   dueDate: string;
+  fileUrl?: string | null;
+  fileName?: string | null;
   submissions?: SubmissionDTO[];
 }
 
@@ -195,6 +197,8 @@ export interface CreateAssignmentInput {
   subject: string;
   grade: number;
   dueDate: string;
+  fileUrl?: string;
+  fileName?: string;
 }
 
 export interface CreateSubmissionInput {
