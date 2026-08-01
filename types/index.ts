@@ -48,7 +48,7 @@ export interface TeacherDTO {
   userId: string;
   user?: UserDTO;
   subjects: { id: string; name: string }[];
-  classes: { id: string; name: string }[];
+  classes: { id: string; name: string; order: number }[];
 }
 
 export interface PaymentDTO {
