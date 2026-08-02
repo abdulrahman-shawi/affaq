@@ -35,7 +35,24 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { sessionId, studentId, status, note } = body;
+    const { sessionId, studentId, status, note, records } = body;
+
+    // تسجيل جماعي: استبدال سجلات الحصة بالكامل (لشاشة تسجيل حضور الصف)
+    if (sessionId && Array.isArray(records)) {
+      const data = records
+        .filter((r: { studentId?: string; status?: string }) => r.studentId && r.status)
+        .map((r: { studentId: string; status: string; note?: string }) => ({
+          sessionId,
+          studentId: r.studentId,
+          status: r.status,
+          note: r.note || null,
+        }));
+      const [, created] = await prisma.$transaction([
+        prisma.attendance.deleteMany({ where: { sessionId } }),
+        prisma.attendance.createMany({ data }),
+      ]);
+      return NextResponse.json({ count: created.count }, { status: 201 });
+    }
 
     if (!sessionId || !studentId || !status) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
