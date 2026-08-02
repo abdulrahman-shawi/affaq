@@ -57,7 +57,7 @@ export async function PATCH(
     const updated = await prisma.student.update({
       where: { id: params.id },
       data: {
-        classId: classId || null,
+        class: classId ? { connect: { id: classId } } : { disconnect: true },
         subEndDate: subEndDate ? new Date(subEndDate) : null,
         user: {
           update: {

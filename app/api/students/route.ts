@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     const hashed = await bcrypt.hash(password || "123456", 10);
     const student = await prisma.student.create({
       data: {
-        classId: classId || null,
+        class: classId ? { connect: { id: classId } } : undefined,
         subEndDate: subEndDate ? new Date(subEndDate) : null,
         user: {
           create: {
