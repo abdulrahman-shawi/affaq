@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { StudentDTO } from "@/types";
+import type { ClassLevelDTO, StudentDTO } from "@/types";
 
 /**
  * Two modes:
@@ -33,8 +33,10 @@ export default function GradeForm({
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
   const [students, setStudents] = useState<StudentDTO[]>([]);
   const [form, setForm] = useState({
+    classId: "",
     studentId: "",
     subject: "",
     type: "quiz" as "quiz" | "exam" | "homework",
@@ -45,11 +47,23 @@ export default function GradeForm({
 
   useEffect(() => {
     if (!open || submissionId) return;
-    fetch("/api/students")
-      .then((res) => (res.ok ? res.json() : []))
-      .then(setStudents)
-      .catch(() => setStudents([]));
+    Promise.all([fetch("/api/classes"), fetch("/api/students")])
+      .then(async ([classesRes, studentsRes]) => {
+        setClasses(classesRes.ok ? await classesRes.json() : []);
+        setStudents(studentsRes.ok ? await studentsRes.json() : []);
+      })
+      .catch(() => {
+        setClasses([]);
+        setStudents([]);
+      });
   }, [open, submissionId]);
+
+  // مواد الصف المختار وطلابه
+  const selectedClass = classes.find((c) => c.id === form.classId);
+  const classSubjects = selectedClass?.subjects ?? [];
+  const classStudents = form.classId
+    ? students.filter((s) => s.classId === form.classId)
+    : [];
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,14 +83,21 @@ export default function GradeForm({
         : await fetch("/api/grades", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form),
+            body: JSON.stringify({
+              studentId: form.studentId,
+              subject: form.subject,
+              type: form.type,
+              score: form.score,
+              maxScore: form.maxScore,
+              note: form.note,
+            }),
           });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
         throw new Error(body?.error ?? "فشل في حفظ الدرجة");
       }
       setOpen(false);
-      setForm({ studentId: "", subject: "", type: "quiz", score: 0, maxScore: 100, note: "" });
+      setForm({ classId: "", studentId: "", subject: "", type: "quiz", score: 0, maxScore: 100, note: "" });
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
@@ -104,6 +125,30 @@ export default function GradeForm({
           ) : (
             <>
               <div className="space-y-2">
+                <Label htmlFor="grade-class">الصف</Label>
+                <select
+                  id="grade-class"
+                  required
+                  className={selectClass}
+                  value={form.classId}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      classId: e.target.value,
+                      studentId: "",
+                      subject: "",
+                    })
+                  }
+                >
+                  <option value="">اختر الصف</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="grade-student">الطالب</Label>
                 <select
                   id="grade-student"
@@ -111,9 +156,12 @@ export default function GradeForm({
                   className={selectClass}
                   value={form.studentId}
                   onChange={(e) => setForm({ ...form, studentId: e.target.value })}
+                  disabled={!form.classId}
                 >
-                  <option value="">اختر الطالب</option>
-                  {students.map((s) => (
+                  <option value="">
+                    {form.classId ? "اختر الطالب" : "اختر الصف أولًا"}
+                  </option>
+                  {classStudents.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.user?.name ?? s.id}
                     </option>
@@ -123,12 +171,23 @@ export default function GradeForm({
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="grade-subject">المادة</Label>
-                  <Input
+                  <select
                     id="grade-subject"
                     required
+                    className={selectClass}
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                  />
+                    disabled={!form.classId}
+                  >
+                    <option value="">
+                      {form.classId ? "اختر المادة" : "اختر الصف أولًا"}
+                    </option>
+                    {classSubjects.map((s) => (
+                      <option key={s.id} value={s.name}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="grade-type">النوع</Label>
@@ -149,6 +208,16 @@ export default function GradeForm({
                   </select>
                 </div>
               </div>
+              {form.classId && classSubjects.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  لا توجد مواد مرتبطة بهذا الصف — تواصل مع الإدارة لربط المواد.
+                </p>
+              )}
+              {form.classId && classStudents.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  لا يوجد طلاب مسجلون في هذا الصف.
+                </p>
+              )}
             </>
           )}
           <div className="grid grid-cols-2 gap-4">
