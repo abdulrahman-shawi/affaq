@@ -11,6 +11,10 @@ import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDate } from "@/app/lib/utils";
+import {
+  containsLinkOrPhone,
+  FORBIDDEN_CONTENT_MESSAGE,
+} from "@/app/lib/messageValidation";
 import type { MessageDTO } from "@/types";
 
 const senderTypeLabels: Record<string, string> = {
@@ -47,6 +51,10 @@ export default function MessagesPanel({ senderType }: { senderType: string }) {
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim() || !user) return;
+    if (containsLinkOrPhone(content)) {
+      setError(FORBIDDEN_CONTENT_MESSAGE);
+      return;
+    }
     setSending(true);
     setError(null);
     try {
@@ -59,7 +67,10 @@ export default function MessagesPanel({ senderType }: { senderType: string }) {
           senderId: user.id,
         }),
       });
-      if (!res.ok) throw new Error("فشل في إرسال الرسالة");
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error ?? "فشل في إرسال الرسالة");
+      }
       setContent("");
       await refetch();
     } catch (err) {

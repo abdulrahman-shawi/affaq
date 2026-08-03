@@ -1565,7 +1565,8 @@ export const SessionScalarFieldEnum = {
   teacherId: 'teacherId',
   grade: 'grade',
   subject: 'subject',
-  date: 'date'
+  date: 'date',
+  zoomLink: 'zoomLink'
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]

@@ -86,6 +86,7 @@ model Session {
   grade     Int
   subject   String
   date      DateTime
+  zoomLink  String?
 
   attendance Attendance[]
   messages   Message[]

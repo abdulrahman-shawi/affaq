@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import {
+  containsLinkOrPhone,
+  FORBIDDEN_CONTENT_MESSAGE,
+} from "@/app/lib/messageValidation";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +35,13 @@ export async function POST(req: Request) {
 
     if (!content || !senderType || !senderId) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
+    }
+
+    if (containsLinkOrPhone(content)) {
+      return NextResponse.json(
+        { error: FORBIDDEN_CONTENT_MESSAGE },
+        { status: 400 }
+      );
     }
 
     const message = await prisma.message.create({

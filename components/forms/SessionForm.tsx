@@ -34,7 +34,7 @@ interface ClassOption {
 const selectClass =
   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
-const emptyForm = { subject: "", classOrder: "", date: "" };
+const emptyForm = { subject: "", classOrder: "", date: "", zoomLink: "" };
 
 export default function SessionForm({
   session,
@@ -67,6 +67,7 @@ export default function SessionForm({
             subject: session.subject,
             classOrder: String(session.grade),
             date: session.date.slice(0, 10),
+            zoomLink: session.zoomLink ?? "",
           }
         : emptyForm
     );
@@ -128,6 +129,7 @@ export default function SessionForm({
             subject: form.subject,
             grade: Number(form.classOrder),
             date: form.date,
+            zoomLink: form.zoomLink.trim() || null,
           }),
         }
       );
@@ -204,6 +206,17 @@ export default function SessionForm({
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="session-zoom">رابط Zoom (اختياري)</Label>
+            <Input
+              id="session-zoom"
+              type="url"
+              dir="ltr"
+              placeholder="https://zoom.us/j/..."
+              value={form.zoomLink}
+              onChange={(e) => setForm({ ...form, zoomLink: e.target.value })}
+            />
           </div>
           {subjects.length === 0 && classes.length === 0 && (
             <p className="text-sm text-muted-foreground">

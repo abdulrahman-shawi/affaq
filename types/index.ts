@@ -70,6 +70,7 @@ export interface SessionDTO {
   grade: number;
   subject: string;
   date: string;
+  zoomLink?: string | null;
 }
 
 export interface AttendanceDTO {

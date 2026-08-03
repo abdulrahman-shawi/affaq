@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ClipboardCheck, Pencil, Plus, Trash2 } from "lucide-react";
+import { ClipboardCheck, ExternalLink, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable, { type Column } from "@/components/tables/DataTable";
@@ -16,6 +16,23 @@ const columns: Column<SessionDTO>[] = [
   { header: "الصف", cell: (s) => `الصف ${s.grade}` },
   { header: "المعلم", cell: (s) => s.teacher?.user?.name ?? "—" },
   { header: "التاريخ", cell: (s) => formatDate(s.date) },
+  {
+    header: "Zoom",
+    cell: (s) =>
+      s.zoomLink ? (
+        <a
+          href={s.zoomLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-primary hover:underline"
+        >
+          <ExternalLink className="h-4 w-4" />
+          حضور الجلسة
+        </a>
+      ) : (
+        "—"
+      ),
+  },
 ];
 
 export default function TeacherSessionsPage() {
