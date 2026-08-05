@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import { Paperclip, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,7 @@ export default function StudentAssignmentsPage() {
   const { assignments, loading, refetch } = useAssignments();
   const [openId, setOpenId] = useState<string | null>(null);
   const [text, setText] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,6 +41,16 @@ export default function StudentAssignmentsPage() {
     setSubmitting(true);
     setError(null);
     try {
+      // رفع الملف (إن وُجد) مباشرة إلى Vercel Blob
+      let fileUrl: string | undefined;
+      if (file) {
+        const blob = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        fileUrl = blob.url;
+      }
+
       const res = await fetch("/api/submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -46,11 +58,13 @@ export default function StudentAssignmentsPage() {
           assignmentId,
           studentId: me.id,
           text: text || undefined,
+          fileUrl,
         }),
       });
       if (!res.ok) throw new Error("فشل في تسليم الواجب");
       setOpenId(null);
       setText("");
+      setFile(null);
       await refetch();
     } catch (err) {
       setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
@@ -119,6 +133,19 @@ export default function StudentAssignmentsPage() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="submission-file">ملف مرفق (اختياري)</Label>
+                  <Input
+                    id="submission-file"
+                    type="file"
+                    dir="ltr"
+                    accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
+                    onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    صور، PDF، Word، Excel، أو فيديو
+                  </p>
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button

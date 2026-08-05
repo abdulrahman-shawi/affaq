@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { Paperclip, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DataTable, { type Column } from "@/components/tables/DataTable";
@@ -33,6 +33,23 @@ export default function TeacherSubmissionsPage() {
     { header: "الطالب", cell: (s) => s.student?.user?.name ?? "—" },
     { header: "الواجب", cell: (s) => s.assignment?.title ?? "—" },
     { header: "تاريخ التسليم", cell: (s) => formatDate(s.submittedAt) },
+    {
+      header: "الملف",
+      cell: (s) =>
+        s.fileUrl ? (
+          <a
+            href={s.fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline"
+          >
+            <Paperclip className="h-4 w-4" />
+            عرض الملف
+          </a>
+        ) : (
+          "—"
+        ),
+    },
     {
       header: "الدرجة",
       cell: (s) =>
