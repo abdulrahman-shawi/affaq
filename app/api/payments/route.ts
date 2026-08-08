@@ -42,6 +42,27 @@ export async function POST(req: Request) {
       include: { student: { include: { user: true } } },
     });
 
+    // تمديد الاشتراك بعدد الأشهر المدفوعة وإعادة تفعيل الطالب
+    if (months) {
+      const student = await prisma.student.findUnique({
+        where: { id: studentId },
+        select: { subEndDate: true },
+      });
+
+      const now = new Date();
+      // يبدأ التمديد من تاريخ الانتهاء الحالي إن كان ساريًا، وإلا من اليوم
+      const base =
+        student?.subEndDate && student.subEndDate > now
+          ? new Date(student.subEndDate)
+          : now;
+      base.setMonth(base.getMonth() + Number(months));
+
+      await prisma.student.update({
+        where: { id: studentId },
+        data: { subEndDate: base, status: "active" },
+      });
+    }
+
     return NextResponse.json(payment, { status: 201 });
   } catch {
     return NextResponse.json({ error: "فشل في تسجيل الدفعة" }, { status: 500 });
