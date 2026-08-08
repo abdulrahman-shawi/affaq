@@ -226,7 +226,6 @@ export type SessionWhereInput = {
   zoomLink?: Prisma.StringNullableFilter<"Session"> | string | null
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   attendance?: Prisma.AttendanceListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
 }
 
 export type SessionOrderByWithRelationInput = {
@@ -238,7 +237,6 @@ export type SessionOrderByWithRelationInput = {
   zoomLink?: Prisma.SortOrderInput | Prisma.SortOrder
   teacher?: Prisma.TeacherOrderByWithRelationInput
   attendance?: Prisma.AttendanceOrderByRelationAggregateInput
-  messages?: Prisma.MessageOrderByRelationAggregateInput
 }
 
 export type SessionWhereUniqueInput = Prisma.AtLeast<{
@@ -253,7 +251,6 @@ export type SessionWhereUniqueInput = Prisma.AtLeast<{
   zoomLink?: Prisma.StringNullableFilter<"Session"> | string | null
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   attendance?: Prisma.AttendanceListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
 }, "id">
 
 export type SessionOrderByWithAggregationInput = {
@@ -290,7 +287,6 @@ export type SessionCreateInput = {
   zoomLink?: string | null
   teacher: Prisma.TeacherCreateNestedOneWithoutSessionsInput
   attendance?: Prisma.AttendanceCreateNestedManyWithoutSessionInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateInput = {
@@ -301,7 +297,6 @@ export type SessionUncheckedCreateInput = {
   date: Date | string
   zoomLink?: string | null
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutSessionInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUpdateInput = {
@@ -312,7 +307,6 @@ export type SessionUpdateInput = {
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutSessionsNestedInput
   attendance?: Prisma.AttendanceUpdateManyWithoutSessionNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateInput = {
@@ -323,7 +317,6 @@ export type SessionUncheckedUpdateInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutSessionNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionCreateManyInput = {
@@ -402,11 +395,6 @@ export type SessionScalarRelationFilter = {
   isNot?: Prisma.SessionWhereInput
 }
 
-export type SessionNullableScalarRelationFilter = {
-  is?: Prisma.SessionWhereInput | null
-  isNot?: Prisma.SessionWhereInput | null
-}
-
 export type SessionCreateNestedManyWithoutTeacherInput = {
   create?: Prisma.XOR<Prisma.SessionCreateWithoutTeacherInput, Prisma.SessionUncheckedCreateWithoutTeacherInput> | Prisma.SessionCreateWithoutTeacherInput[] | Prisma.SessionUncheckedCreateWithoutTeacherInput[]
   connectOrCreate?: Prisma.SessionCreateOrConnectWithoutTeacherInput | Prisma.SessionCreateOrConnectWithoutTeacherInput[]
@@ -471,22 +459,6 @@ export type SessionUpdateOneRequiredWithoutAttendanceNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SessionUpdateToOneWithWhereWithoutAttendanceInput, Prisma.SessionUpdateWithoutAttendanceInput>, Prisma.SessionUncheckedUpdateWithoutAttendanceInput>
 }
 
-export type SessionCreateNestedOneWithoutMessagesInput = {
-  create?: Prisma.XOR<Prisma.SessionCreateWithoutMessagesInput, Prisma.SessionUncheckedCreateWithoutMessagesInput>
-  connectOrCreate?: Prisma.SessionCreateOrConnectWithoutMessagesInput
-  connect?: Prisma.SessionWhereUniqueInput
-}
-
-export type SessionUpdateOneWithoutMessagesNestedInput = {
-  create?: Prisma.XOR<Prisma.SessionCreateWithoutMessagesInput, Prisma.SessionUncheckedCreateWithoutMessagesInput>
-  connectOrCreate?: Prisma.SessionCreateOrConnectWithoutMessagesInput
-  upsert?: Prisma.SessionUpsertWithoutMessagesInput
-  disconnect?: Prisma.SessionWhereInput | boolean
-  delete?: Prisma.SessionWhereInput | boolean
-  connect?: Prisma.SessionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SessionUpdateToOneWithWhereWithoutMessagesInput, Prisma.SessionUpdateWithoutMessagesInput>, Prisma.SessionUncheckedUpdateWithoutMessagesInput>
-}
-
 export type SessionCreateWithoutTeacherInput = {
   id?: string
   grade: number
@@ -494,7 +466,6 @@ export type SessionCreateWithoutTeacherInput = {
   date: Date | string
   zoomLink?: string | null
   attendance?: Prisma.AttendanceCreateNestedManyWithoutSessionInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateWithoutTeacherInput = {
@@ -504,7 +475,6 @@ export type SessionUncheckedCreateWithoutTeacherInput = {
   date: Date | string
   zoomLink?: string | null
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutSessionInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionCreateOrConnectWithoutTeacherInput = {
@@ -552,7 +522,6 @@ export type SessionCreateWithoutAttendanceInput = {
   date: Date | string
   zoomLink?: string | null
   teacher: Prisma.TeacherCreateNestedOneWithoutSessionsInput
-  messages?: Prisma.MessageCreateNestedManyWithoutSessionInput
 }
 
 export type SessionUncheckedCreateWithoutAttendanceInput = {
@@ -562,7 +531,6 @@ export type SessionUncheckedCreateWithoutAttendanceInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type SessionCreateOrConnectWithoutAttendanceInput = {
@@ -588,7 +556,6 @@ export type SessionUpdateWithoutAttendanceInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutSessionsNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateWithoutAttendanceInput = {
@@ -598,63 +565,6 @@ export type SessionUncheckedUpdateWithoutAttendanceInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSessionNestedInput
-}
-
-export type SessionCreateWithoutMessagesInput = {
-  id?: string
-  grade: number
-  subject: string
-  date: Date | string
-  zoomLink?: string | null
-  teacher: Prisma.TeacherCreateNestedOneWithoutSessionsInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutSessionInput
-}
-
-export type SessionUncheckedCreateWithoutMessagesInput = {
-  id?: string
-  teacherId: string
-  grade: number
-  subject: string
-  date: Date | string
-  zoomLink?: string | null
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutSessionInput
-}
-
-export type SessionCreateOrConnectWithoutMessagesInput = {
-  where: Prisma.SessionWhereUniqueInput
-  create: Prisma.XOR<Prisma.SessionCreateWithoutMessagesInput, Prisma.SessionUncheckedCreateWithoutMessagesInput>
-}
-
-export type SessionUpsertWithoutMessagesInput = {
-  update: Prisma.XOR<Prisma.SessionUpdateWithoutMessagesInput, Prisma.SessionUncheckedUpdateWithoutMessagesInput>
-  create: Prisma.XOR<Prisma.SessionCreateWithoutMessagesInput, Prisma.SessionUncheckedCreateWithoutMessagesInput>
-  where?: Prisma.SessionWhereInput
-}
-
-export type SessionUpdateToOneWithWhereWithoutMessagesInput = {
-  where?: Prisma.SessionWhereInput
-  data: Prisma.XOR<Prisma.SessionUpdateWithoutMessagesInput, Prisma.SessionUncheckedUpdateWithoutMessagesInput>
-}
-
-export type SessionUpdateWithoutMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  grade?: Prisma.IntFieldUpdateOperationsInput | number
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  teacher?: Prisma.TeacherUpdateOneRequiredWithoutSessionsNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutSessionNestedInput
-}
-
-export type SessionUncheckedUpdateWithoutMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
-  grade?: Prisma.IntFieldUpdateOperationsInput | number
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionCreateManyTeacherInput = {
@@ -672,7 +582,6 @@ export type SessionUpdateWithoutTeacherInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendance?: Prisma.AttendanceUpdateManyWithoutSessionNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateWithoutTeacherInput = {
@@ -682,7 +591,6 @@ export type SessionUncheckedUpdateWithoutTeacherInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutSessionNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type SessionUncheckedUpdateManyWithoutTeacherInput = {
@@ -700,12 +608,10 @@ export type SessionUncheckedUpdateManyWithoutTeacherInput = {
 
 export type SessionCountOutputType = {
   attendance: number
-  messages: number
 }
 
 export type SessionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attendance?: boolean | SessionCountOutputTypeCountAttendanceArgs
-  messages?: boolean | SessionCountOutputTypeCountMessagesArgs
 }
 
 /**
@@ -725,13 +631,6 @@ export type SessionCountOutputTypeCountAttendanceArgs<ExtArgs extends runtime.Ty
   where?: Prisma.AttendanceWhereInput
 }
 
-/**
- * SessionCountOutputType without action
- */
-export type SessionCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MessageWhereInput
-}
-
 
 export type SessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -742,7 +641,6 @@ export type SessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   zoomLink?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   attendance?: boolean | Prisma.Session$attendanceArgs<ExtArgs>
-  messages?: boolean | Prisma.Session$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.SessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["session"]>
 
@@ -779,7 +677,6 @@ export type SessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type SessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   attendance?: boolean | Prisma.Session$attendanceArgs<ExtArgs>
-  messages?: boolean | Prisma.Session$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.SessionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -794,7 +691,6 @@ export type $SessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     teacher: Prisma.$TeacherPayload<ExtArgs>
     attendance: Prisma.$AttendancePayload<ExtArgs>[]
-    messages: Prisma.$MessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1199,7 +1095,6 @@ export interface Prisma__SessionClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   teacher<T extends Prisma.TeacherDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TeacherDefaultArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attendance<T extends Prisma.Session$attendanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Session$attendanceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  messages<T extends Prisma.Session$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Session$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1657,30 +1552,6 @@ export type Session$attendanceArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.AttendanceScalarFieldEnum | Prisma.AttendanceScalarFieldEnum[]
-}
-
-/**
- * Session.messages
- */
-export type Session$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Message
-   */
-  select?: Prisma.MessageSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Message
-   */
-  omit?: Prisma.MessageOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MessageInclude<ExtArgs> | null
-  where?: Prisma.MessageWhereInput
-  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
-  cursor?: Prisma.MessageWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
 }
 
 /**

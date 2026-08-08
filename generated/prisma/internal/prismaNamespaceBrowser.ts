@@ -62,6 +62,8 @@ export const ModelName = {
   Submission: 'Submission',
   Grade: 'Grade',
   Message: 'Message',
+  MessageClass: 'MessageClass',
+  MessageRecipient: 'MessageRecipient',
   ClassLevel: 'ClassLevel',
   Subject: 'Subject',
   Notification: 'Notification'
@@ -205,16 +207,28 @@ export type GradeScalarFieldEnum = (typeof GradeScalarFieldEnum)[keyof typeof Gr
 export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
-  senderType: 'senderType',
   senderId: 'senderId',
-  studentId: 'studentId',
-  teacherId: 'teacherId',
-  sessionId: 'sessionId',
-  assignmentId: 'assignmentId',
+  toAll: 'toAll',
   createdAt: 'createdAt'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageClassScalarFieldEnum = {
+  messageId: 'messageId',
+  classId: 'classId'
+} as const
+
+export type MessageClassScalarFieldEnum = (typeof MessageClassScalarFieldEnum)[keyof typeof MessageClassScalarFieldEnum]
+
+
+export const MessageRecipientScalarFieldEnum = {
+  messageId: 'messageId',
+  userId: 'userId'
+} as const
+
+export type MessageRecipientScalarFieldEnum = (typeof MessageRecipientScalarFieldEnum)[keyof typeof MessageRecipientScalarFieldEnum]
 
 
 export const ClassLevelScalarFieldEnum = {

@@ -64,7 +64,6 @@ export async function DELETE(
 
     await prisma.$transaction([
       prisma.attendance.deleteMany({ where: { sessionId: params.id } }),
-      prisma.message.deleteMany({ where: { sessionId: params.id } }),
       prisma.session.delete({ where: { id: params.id } }),
     ]);
 

@@ -3,5 +3,5 @@
 import MessagesPanel from "@/components/shared/MessagesPanel";
 
 export default function TeacherMessagesPage() {
-  return <MessagesPanel senderType="teacher" />;
+  return <MessagesPanel />;
 }

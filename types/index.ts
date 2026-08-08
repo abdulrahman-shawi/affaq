@@ -119,16 +119,33 @@ export interface GradeDTO {
   note?: string | null;
 }
 
+export interface MessageSenderDTO {
+  id: string;
+  name: string;
+  role: string;
+}
+
 export interface MessageDTO {
   id: string;
   content: string;
-  senderType: string;
-  senderId: string;
-  studentId?: string | null;
-  teacherId?: string | null;
-  sessionId?: string | null;
-  assignmentId?: string | null;
+  toAll: boolean;
   createdAt: string;
+  sender: MessageSenderDTO;
+  classes: { id: string; name: string }[];
+  recipients: MessageSenderDTO[];
+}
+
+export interface MessageTargetUserDTO {
+  id: string;
+  name: string;
+  role: string;
+  detail: string | null;
+}
+
+export interface MessageTargetsDTO {
+  canSendToAll: boolean;
+  classes: { id: string; name: string }[];
+  users: MessageTargetUserDTO[];
 }
 
 export interface NotificationDTO {
@@ -224,12 +241,11 @@ export interface CreateGradeInput {
   note?: string;
 }
 
-export interface CreateMessageInput {
+export interface SendMessageInput {
   content: string;
-  senderType: string;
-  senderId: string;
-  studentId?: string;
-  teacherId?: string;
+  toAll?: boolean;
+  classIds?: string[];
+  recipientIds?: string[];
 }
 
 export interface CreateSessionInput {

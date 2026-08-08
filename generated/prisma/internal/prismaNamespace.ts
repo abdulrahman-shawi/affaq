@@ -408,6 +408,8 @@ export const ModelName = {
   Submission: 'Submission',
   Grade: 'Grade',
   Message: 'Message',
+  MessageClass: 'MessageClass',
+  MessageRecipient: 'MessageRecipient',
   ClassLevel: 'ClassLevel',
   Subject: 'Subject',
   Notification: 'Notification'
@@ -426,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "classLevel" | "subject" | "notification"
+    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1244,6 +1246,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MessageClass: {
+      payload: Prisma.$MessageClassPayload<ExtArgs>
+      fields: Prisma.MessageClassFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MessageClassFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MessageClassFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>
+        }
+        findFirst: {
+          args: Prisma.MessageClassFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MessageClassFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>
+        }
+        findMany: {
+          args: Prisma.MessageClassFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>[]
+        }
+        create: {
+          args: Prisma.MessageClassCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>
+        }
+        createMany: {
+          args: Prisma.MessageClassCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MessageClassCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>[]
+        }
+        delete: {
+          args: Prisma.MessageClassDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>
+        }
+        update: {
+          args: Prisma.MessageClassUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>
+        }
+        deleteMany: {
+          args: Prisma.MessageClassDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MessageClassUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MessageClassUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>[]
+        }
+        upsert: {
+          args: Prisma.MessageClassUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageClassPayload>
+        }
+        aggregate: {
+          args: Prisma.MessageClassAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMessageClass>
+        }
+        groupBy: {
+          args: Prisma.MessageClassGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageClassGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MessageClassCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageClassCountAggregateOutputType> | number
+        }
+      }
+    }
+    MessageRecipient: {
+      payload: Prisma.$MessageRecipientPayload<ExtArgs>
+      fields: Prisma.MessageRecipientFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MessageRecipientFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MessageRecipientFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>
+        }
+        findFirst: {
+          args: Prisma.MessageRecipientFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MessageRecipientFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>
+        }
+        findMany: {
+          args: Prisma.MessageRecipientFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>[]
+        }
+        create: {
+          args: Prisma.MessageRecipientCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>
+        }
+        createMany: {
+          args: Prisma.MessageRecipientCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MessageRecipientCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>[]
+        }
+        delete: {
+          args: Prisma.MessageRecipientDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>
+        }
+        update: {
+          args: Prisma.MessageRecipientUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>
+        }
+        deleteMany: {
+          args: Prisma.MessageRecipientDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MessageRecipientUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MessageRecipientUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>[]
+        }
+        upsert: {
+          args: Prisma.MessageRecipientUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageRecipientPayload>
+        }
+        aggregate: {
+          args: Prisma.MessageRecipientAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMessageRecipient>
+        }
+        groupBy: {
+          args: Prisma.MessageRecipientGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageRecipientGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MessageRecipientCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageRecipientCountAggregateOutputType> | number
+        }
+      }
+    }
     ClassLevel: {
       payload: Prisma.$ClassLevelPayload<ExtArgs>
       fields: Prisma.ClassLevelFieldRefs
@@ -1627,16 +1777,28 @@ export type GradeScalarFieldEnum = (typeof GradeScalarFieldEnum)[keyof typeof Gr
 export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
-  senderType: 'senderType',
   senderId: 'senderId',
-  studentId: 'studentId',
-  teacherId: 'teacherId',
-  sessionId: 'sessionId',
-  assignmentId: 'assignmentId',
+  toAll: 'toAll',
   createdAt: 'createdAt'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageClassScalarFieldEnum = {
+  messageId: 'messageId',
+  classId: 'classId'
+} as const
+
+export type MessageClassScalarFieldEnum = (typeof MessageClassScalarFieldEnum)[keyof typeof MessageClassScalarFieldEnum]
+
+
+export const MessageRecipientScalarFieldEnum = {
+  messageId: 'messageId',
+  userId: 'userId'
+} as const
+
+export type MessageRecipientScalarFieldEnum = (typeof MessageRecipientScalarFieldEnum)[keyof typeof MessageRecipientScalarFieldEnum]
 
 
 export const ClassLevelScalarFieldEnum = {
@@ -1926,6 +2088,8 @@ export type GlobalOmitConfig = {
   submission?: Prisma.SubmissionOmit
   grade?: Prisma.GradeOmit
   message?: Prisma.MessageOmit
+  messageClass?: Prisma.MessageClassOmit
+  messageRecipient?: Prisma.MessageRecipientOmit
   classLevel?: Prisma.ClassLevelOmit
   subject?: Prisma.SubjectOmit
   notification?: Prisma.NotificationOmit

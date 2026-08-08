@@ -99,7 +99,6 @@ export async function DELETE(
       prisma.attendance.deleteMany({ where: { studentId: params.id } }),
       prisma.submission.deleteMany({ where: { studentId: params.id } }),
       prisma.grade.deleteMany({ where: { studentId: params.id } }),
-      prisma.message.deleteMany({ where: { studentId: params.id } }),
       prisma.notification.deleteMany({ where: { userId: student.userId } }),
       prisma.student.delete({ where: { id: params.id } }),
       prisma.user.delete({ where: { id: student.userId } }),

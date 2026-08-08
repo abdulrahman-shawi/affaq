@@ -27,6 +27,9 @@ model User {
   parent        Parent?
   student       Student?
   notifications Notification[]
+
+  sentMessages      Message[]
+  messageRecipients MessageRecipient[]
 }
 
 model Parent {
@@ -53,7 +56,6 @@ model Student {
   attendance  Attendance[]
   submissions Submission[]
   grades      Grade[]
-  messages    Message[]
 }
 
 model Teacher {
@@ -64,7 +66,6 @@ model Teacher {
   classes  ClassLevel[]
 
   sessions Session[]
-  messages Message[]
 }
 
 model Payment {
@@ -89,7 +90,6 @@ model Session {
   zoomLink  String?
 
   attendance Attendance[]
-  messages   Message[]
 }
 
 model Attendance {
@@ -112,7 +112,6 @@ model Assignment {
   fileName String?
 
   submissions Submission[]
-  messages    Message[]
 }
 
 model Submission {
@@ -141,29 +140,43 @@ model Grade {
 }
 
 model Message {
-  id           String      @id @default(uuid())
-  content      String
-  senderType   String      // "teacher", "student", "parent"
-  senderId     String
-  studentId    String?
-  student      Student?    @relation(fields: [studentId], references: [id])
-  teacherId    String?
-  teacher      Teacher?    @relation(fields: [teacherId], references: [id])
-  sessionId    String?
-  session      Session?    @relation(fields: [sessionId], references: [id])
-  assignmentId String?
-  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
-  createdAt    DateTime    @default(now())
+  id         String             @id @default(uuid())
+  content    String
+  senderId   String
+  sender     User               @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  toAll      Boolean            @default(false)
+  classes    MessageClass[]
+  recipients MessageRecipient[]
+  createdAt  DateTime           @default(now())
+}
+
+model MessageClass {
+  messageId String
+  classId   String
+  message   Message    @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  class     ClassLevel @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, classId])
+}
+
+model MessageRecipient {
+  messageId String
+  userId    String
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId])
 }
 
 model ClassLevel {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  order     Int       @default(0)
+  id        String         @id @default(uuid())
+  name      String         @unique
+  order     Int            @default(0)
   subjects  Subject[]
   students  Student[]
   teachers  Teacher[]
-  createdAt DateTime  @default(now())
+  messages  MessageClass[]
+  createdAt DateTime       @default(now())
 }
 
 model Subject {

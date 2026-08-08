@@ -27,36 +27,24 @@ export type AggregateMessage = {
 export type MessageMinAggregateOutputType = {
   id: string | null
   content: string | null
-  senderType: string | null
   senderId: string | null
-  studentId: string | null
-  teacherId: string | null
-  sessionId: string | null
-  assignmentId: string | null
+  toAll: boolean | null
   createdAt: Date | null
 }
 
 export type MessageMaxAggregateOutputType = {
   id: string | null
   content: string | null
-  senderType: string | null
   senderId: string | null
-  studentId: string | null
-  teacherId: string | null
-  sessionId: string | null
-  assignmentId: string | null
+  toAll: boolean | null
   createdAt: Date | null
 }
 
 export type MessageCountAggregateOutputType = {
   id: number
   content: number
-  senderType: number
   senderId: number
-  studentId: number
-  teacherId: number
-  sessionId: number
-  assignmentId: number
+  toAll: number
   createdAt: number
   _all: number
 }
@@ -65,36 +53,24 @@ export type MessageCountAggregateOutputType = {
 export type MessageMinAggregateInputType = {
   id?: true
   content?: true
-  senderType?: true
   senderId?: true
-  studentId?: true
-  teacherId?: true
-  sessionId?: true
-  assignmentId?: true
+  toAll?: true
   createdAt?: true
 }
 
 export type MessageMaxAggregateInputType = {
   id?: true
   content?: true
-  senderType?: true
   senderId?: true
-  studentId?: true
-  teacherId?: true
-  sessionId?: true
-  assignmentId?: true
+  toAll?: true
   createdAt?: true
 }
 
 export type MessageCountAggregateInputType = {
   id?: true
   content?: true
-  senderType?: true
   senderId?: true
-  studentId?: true
-  teacherId?: true
-  sessionId?: true
-  assignmentId?: true
+  toAll?: true
   createdAt?: true
   _all?: true
 }
@@ -174,12 +150,8 @@ export type MessageGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type MessageGroupByOutputType = {
   id: string
   content: string
-  senderType: string
   senderId: string
-  studentId: string | null
-  teacherId: string | null
-  sessionId: string | null
-  assignmentId: string | null
+  toAll: boolean
   createdAt: Date
   _count: MessageCountAggregateOutputType | null
   _min: MessageMinAggregateOutputType | null
@@ -207,33 +179,23 @@ export type MessageWhereInput = {
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   id?: Prisma.StringFilter<"Message"> | string
   content?: Prisma.StringFilter<"Message"> | string
-  senderType?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
-  studentId?: Prisma.StringNullableFilter<"Message"> | string | null
-  teacherId?: Prisma.StringNullableFilter<"Message"> | string | null
-  sessionId?: Prisma.StringNullableFilter<"Message"> | string | null
-  assignmentId?: Prisma.StringNullableFilter<"Message"> | string | null
+  toAll?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
-  student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
-  teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
-  session?: Prisma.XOR<Prisma.SessionNullableScalarRelationFilter, Prisma.SessionWhereInput> | null
-  assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
+  sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  classes?: Prisma.MessageClassListRelationFilter
+  recipients?: Prisma.MessageRecipientListRelationFilter
 }
 
 export type MessageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  senderType?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  studentId?: Prisma.SortOrderInput | Prisma.SortOrder
-  teacherId?: Prisma.SortOrderInput | Prisma.SortOrder
-  sessionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  assignmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  toAll?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  student?: Prisma.StudentOrderByWithRelationInput
-  teacher?: Prisma.TeacherOrderByWithRelationInput
-  session?: Prisma.SessionOrderByWithRelationInput
-  assignment?: Prisma.AssignmentOrderByWithRelationInput
+  sender?: Prisma.UserOrderByWithRelationInput
+  classes?: Prisma.MessageClassOrderByRelationAggregateInput
+  recipients?: Prisma.MessageRecipientOrderByRelationAggregateInput
 }
 
 export type MessageWhereUniqueInput = Prisma.AtLeast<{
@@ -242,28 +204,19 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MessageWhereInput[]
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   content?: Prisma.StringFilter<"Message"> | string
-  senderType?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
-  studentId?: Prisma.StringNullableFilter<"Message"> | string | null
-  teacherId?: Prisma.StringNullableFilter<"Message"> | string | null
-  sessionId?: Prisma.StringNullableFilter<"Message"> | string | null
-  assignmentId?: Prisma.StringNullableFilter<"Message"> | string | null
+  toAll?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
-  student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
-  teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
-  session?: Prisma.XOR<Prisma.SessionNullableScalarRelationFilter, Prisma.SessionWhereInput> | null
-  assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
+  sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  classes?: Prisma.MessageClassListRelationFilter
+  recipients?: Prisma.MessageRecipientListRelationFilter
 }, "id">
 
 export type MessageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  senderType?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  studentId?: Prisma.SortOrderInput | Prisma.SortOrder
-  teacherId?: Prisma.SortOrderInput | Prisma.SortOrder
-  sessionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  assignmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  toAll?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.MessageCountOrderByAggregateInput
   _max?: Prisma.MessageMaxOrderByAggregateInput
@@ -276,92 +229,71 @@ export type MessageScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MessageScalarWhereWithAggregatesInput | Prisma.MessageScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Message"> | string
   content?: Prisma.StringWithAggregatesFilter<"Message"> | string
-  senderType?: Prisma.StringWithAggregatesFilter<"Message"> | string
   senderId?: Prisma.StringWithAggregatesFilter<"Message"> | string
-  studentId?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
-  teacherId?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
-  sessionId?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
-  assignmentId?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
+  toAll?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
 }
 
 export type MessageCreateInput = {
   id?: string
   content: string
-  senderType: string
-  senderId: string
+  toAll?: boolean
   createdAt?: Date | string
-  student?: Prisma.StudentCreateNestedOneWithoutMessagesInput
-  teacher?: Prisma.TeacherCreateNestedOneWithoutMessagesInput
-  session?: Prisma.SessionCreateNestedOneWithoutMessagesInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutMessagesInput
+  sender: Prisma.UserCreateNestedOneWithoutSentMessagesInput
+  classes?: Prisma.MessageClassCreateNestedManyWithoutMessageInput
+  recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateInput = {
   id?: string
   content: string
-  senderType: string
   senderId: string
-  studentId?: string | null
-  teacherId?: string | null
-  sessionId?: string | null
-  assignmentId?: string | null
+  toAll?: boolean
   createdAt?: Date | string
+  classes?: Prisma.MessageClassUncheckedCreateNestedManyWithoutMessageInput
+  recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  student?: Prisma.StudentUpdateOneWithoutMessagesNestedInput
-  teacher?: Prisma.TeacherUpdateOneWithoutMessagesNestedInput
-  session?: Prisma.SessionUpdateOneWithoutMessagesNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutMessagesNestedInput
+  sender?: Prisma.UserUpdateOneRequiredWithoutSentMessagesNestedInput
+  classes?: Prisma.MessageClassUpdateManyWithoutMessageNestedInput
+  recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  classes?: Prisma.MessageClassUncheckedUpdateManyWithoutMessageNestedInput
+  recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageCreateManyInput = {
   id?: string
   content: string
-  senderType: string
   senderId: string
-  studentId?: string | null
-  teacherId?: string | null
-  sessionId?: string | null
-  assignmentId?: string | null
+  toAll?: boolean
   createdAt?: Date | string
 }
 
 export type MessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -378,253 +310,148 @@ export type MessageOrderByRelationAggregateInput = {
 export type MessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  senderType?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  studentId?: Prisma.SortOrder
-  teacherId?: Prisma.SortOrder
-  sessionId?: Prisma.SortOrder
-  assignmentId?: Prisma.SortOrder
+  toAll?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type MessageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  senderType?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  studentId?: Prisma.SortOrder
-  teacherId?: Prisma.SortOrder
-  sessionId?: Prisma.SortOrder
-  assignmentId?: Prisma.SortOrder
+  toAll?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type MessageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  senderType?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
-  studentId?: Prisma.SortOrder
-  teacherId?: Prisma.SortOrder
-  sessionId?: Prisma.SortOrder
-  assignmentId?: Prisma.SortOrder
+  toAll?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
-export type MessageCreateNestedManyWithoutStudentInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutStudentInput, Prisma.MessageUncheckedCreateWithoutStudentInput> | Prisma.MessageCreateWithoutStudentInput[] | Prisma.MessageUncheckedCreateWithoutStudentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutStudentInput | Prisma.MessageCreateOrConnectWithoutStudentInput[]
-  createMany?: Prisma.MessageCreateManyStudentInputEnvelope
+export type MessageScalarRelationFilter = {
+  is?: Prisma.MessageWhereInput
+  isNot?: Prisma.MessageWhereInput
+}
+
+export type MessageCreateNestedManyWithoutSenderInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutSenderInput, Prisma.MessageUncheckedCreateWithoutSenderInput> | Prisma.MessageCreateWithoutSenderInput[] | Prisma.MessageUncheckedCreateWithoutSenderInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSenderInput | Prisma.MessageCreateOrConnectWithoutSenderInput[]
+  createMany?: Prisma.MessageCreateManySenderInputEnvelope
   connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
 }
 
-export type MessageUncheckedCreateNestedManyWithoutStudentInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutStudentInput, Prisma.MessageUncheckedCreateWithoutStudentInput> | Prisma.MessageCreateWithoutStudentInput[] | Prisma.MessageUncheckedCreateWithoutStudentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutStudentInput | Prisma.MessageCreateOrConnectWithoutStudentInput[]
-  createMany?: Prisma.MessageCreateManyStudentInputEnvelope
+export type MessageUncheckedCreateNestedManyWithoutSenderInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutSenderInput, Prisma.MessageUncheckedCreateWithoutSenderInput> | Prisma.MessageCreateWithoutSenderInput[] | Prisma.MessageUncheckedCreateWithoutSenderInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSenderInput | Prisma.MessageCreateOrConnectWithoutSenderInput[]
+  createMany?: Prisma.MessageCreateManySenderInputEnvelope
   connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
 }
 
-export type MessageUpdateManyWithoutStudentNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutStudentInput, Prisma.MessageUncheckedCreateWithoutStudentInput> | Prisma.MessageCreateWithoutStudentInput[] | Prisma.MessageUncheckedCreateWithoutStudentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutStudentInput | Prisma.MessageCreateOrConnectWithoutStudentInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutStudentInput | Prisma.MessageUpsertWithWhereUniqueWithoutStudentInput[]
-  createMany?: Prisma.MessageCreateManyStudentInputEnvelope
+export type MessageUpdateManyWithoutSenderNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutSenderInput, Prisma.MessageUncheckedCreateWithoutSenderInput> | Prisma.MessageCreateWithoutSenderInput[] | Prisma.MessageUncheckedCreateWithoutSenderInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSenderInput | Prisma.MessageCreateOrConnectWithoutSenderInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutSenderInput | Prisma.MessageUpsertWithWhereUniqueWithoutSenderInput[]
+  createMany?: Prisma.MessageCreateManySenderInputEnvelope
   set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
   disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
   delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
   connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutStudentInput | Prisma.MessageUpdateWithWhereUniqueWithoutStudentInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutStudentInput | Prisma.MessageUpdateManyWithWhereWithoutStudentInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutSenderInput | Prisma.MessageUpdateWithWhereUniqueWithoutSenderInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutSenderInput | Prisma.MessageUpdateManyWithWhereWithoutSenderInput[]
   deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
 }
 
-export type MessageUncheckedUpdateManyWithoutStudentNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutStudentInput, Prisma.MessageUncheckedCreateWithoutStudentInput> | Prisma.MessageCreateWithoutStudentInput[] | Prisma.MessageUncheckedCreateWithoutStudentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutStudentInput | Prisma.MessageCreateOrConnectWithoutStudentInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutStudentInput | Prisma.MessageUpsertWithWhereUniqueWithoutStudentInput[]
-  createMany?: Prisma.MessageCreateManyStudentInputEnvelope
+export type MessageUncheckedUpdateManyWithoutSenderNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutSenderInput, Prisma.MessageUncheckedCreateWithoutSenderInput> | Prisma.MessageCreateWithoutSenderInput[] | Prisma.MessageUncheckedCreateWithoutSenderInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSenderInput | Prisma.MessageCreateOrConnectWithoutSenderInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutSenderInput | Prisma.MessageUpsertWithWhereUniqueWithoutSenderInput[]
+  createMany?: Prisma.MessageCreateManySenderInputEnvelope
   set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
   disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
   delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
   connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutStudentInput | Prisma.MessageUpdateWithWhereUniqueWithoutStudentInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutStudentInput | Prisma.MessageUpdateManyWithWhereWithoutStudentInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutSenderInput | Prisma.MessageUpdateWithWhereUniqueWithoutSenderInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutSenderInput | Prisma.MessageUpdateManyWithWhereWithoutSenderInput[]
   deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
 }
 
-export type MessageCreateNestedManyWithoutTeacherInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutTeacherInput, Prisma.MessageUncheckedCreateWithoutTeacherInput> | Prisma.MessageCreateWithoutTeacherInput[] | Prisma.MessageUncheckedCreateWithoutTeacherInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutTeacherInput | Prisma.MessageCreateOrConnectWithoutTeacherInput[]
-  createMany?: Prisma.MessageCreateManyTeacherInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
-export type MessageUncheckedCreateNestedManyWithoutTeacherInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutTeacherInput, Prisma.MessageUncheckedCreateWithoutTeacherInput> | Prisma.MessageCreateWithoutTeacherInput[] | Prisma.MessageUncheckedCreateWithoutTeacherInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutTeacherInput | Prisma.MessageCreateOrConnectWithoutTeacherInput[]
-  createMany?: Prisma.MessageCreateManyTeacherInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+export type MessageCreateNestedOneWithoutClassesInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutClassesInput, Prisma.MessageUncheckedCreateWithoutClassesInput>
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutClassesInput
+  connect?: Prisma.MessageWhereUniqueInput
 }
 
-export type MessageUpdateManyWithoutTeacherNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutTeacherInput, Prisma.MessageUncheckedCreateWithoutTeacherInput> | Prisma.MessageCreateWithoutTeacherInput[] | Prisma.MessageUncheckedCreateWithoutTeacherInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutTeacherInput | Prisma.MessageCreateOrConnectWithoutTeacherInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutTeacherInput | Prisma.MessageUpsertWithWhereUniqueWithoutTeacherInput[]
-  createMany?: Prisma.MessageCreateManyTeacherInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutTeacherInput | Prisma.MessageUpdateWithWhereUniqueWithoutTeacherInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutTeacherInput | Prisma.MessageUpdateManyWithWhereWithoutTeacherInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+export type MessageUpdateOneRequiredWithoutClassesNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutClassesInput, Prisma.MessageUncheckedCreateWithoutClassesInput>
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutClassesInput
+  upsert?: Prisma.MessageUpsertWithoutClassesInput
+  connect?: Prisma.MessageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MessageUpdateToOneWithWhereWithoutClassesInput, Prisma.MessageUpdateWithoutClassesInput>, Prisma.MessageUncheckedUpdateWithoutClassesInput>
 }
 
-export type MessageUncheckedUpdateManyWithoutTeacherNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutTeacherInput, Prisma.MessageUncheckedCreateWithoutTeacherInput> | Prisma.MessageCreateWithoutTeacherInput[] | Prisma.MessageUncheckedCreateWithoutTeacherInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutTeacherInput | Prisma.MessageCreateOrConnectWithoutTeacherInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutTeacherInput | Prisma.MessageUpsertWithWhereUniqueWithoutTeacherInput[]
-  createMany?: Prisma.MessageCreateManyTeacherInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutTeacherInput | Prisma.MessageUpdateWithWhereUniqueWithoutTeacherInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutTeacherInput | Prisma.MessageUpdateManyWithWhereWithoutTeacherInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+export type MessageCreateNestedOneWithoutRecipientsInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutRecipientsInput, Prisma.MessageUncheckedCreateWithoutRecipientsInput>
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutRecipientsInput
+  connect?: Prisma.MessageWhereUniqueInput
 }
 
-export type MessageCreateNestedManyWithoutSessionInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutSessionInput, Prisma.MessageUncheckedCreateWithoutSessionInput> | Prisma.MessageCreateWithoutSessionInput[] | Prisma.MessageUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSessionInput | Prisma.MessageCreateOrConnectWithoutSessionInput[]
-  createMany?: Prisma.MessageCreateManySessionInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+export type MessageUpdateOneRequiredWithoutRecipientsNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutRecipientsInput, Prisma.MessageUncheckedCreateWithoutRecipientsInput>
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutRecipientsInput
+  upsert?: Prisma.MessageUpsertWithoutRecipientsInput
+  connect?: Prisma.MessageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MessageUpdateToOneWithWhereWithoutRecipientsInput, Prisma.MessageUpdateWithoutRecipientsInput>, Prisma.MessageUncheckedUpdateWithoutRecipientsInput>
 }
 
-export type MessageUncheckedCreateNestedManyWithoutSessionInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutSessionInput, Prisma.MessageUncheckedCreateWithoutSessionInput> | Prisma.MessageCreateWithoutSessionInput[] | Prisma.MessageUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSessionInput | Prisma.MessageCreateOrConnectWithoutSessionInput[]
-  createMany?: Prisma.MessageCreateManySessionInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-}
-
-export type MessageUpdateManyWithoutSessionNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutSessionInput, Prisma.MessageUncheckedCreateWithoutSessionInput> | Prisma.MessageCreateWithoutSessionInput[] | Prisma.MessageUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSessionInput | Prisma.MessageCreateOrConnectWithoutSessionInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutSessionInput | Prisma.MessageUpsertWithWhereUniqueWithoutSessionInput[]
-  createMany?: Prisma.MessageCreateManySessionInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutSessionInput | Prisma.MessageUpdateWithWhereUniqueWithoutSessionInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutSessionInput | Prisma.MessageUpdateManyWithWhereWithoutSessionInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-}
-
-export type MessageUncheckedUpdateManyWithoutSessionNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutSessionInput, Prisma.MessageUncheckedCreateWithoutSessionInput> | Prisma.MessageCreateWithoutSessionInput[] | Prisma.MessageUncheckedCreateWithoutSessionInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutSessionInput | Prisma.MessageCreateOrConnectWithoutSessionInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutSessionInput | Prisma.MessageUpsertWithWhereUniqueWithoutSessionInput[]
-  createMany?: Prisma.MessageCreateManySessionInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutSessionInput | Prisma.MessageUpdateWithWhereUniqueWithoutSessionInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutSessionInput | Prisma.MessageUpdateManyWithWhereWithoutSessionInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-}
-
-export type MessageCreateNestedManyWithoutAssignmentInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutAssignmentInput, Prisma.MessageUncheckedCreateWithoutAssignmentInput> | Prisma.MessageCreateWithoutAssignmentInput[] | Prisma.MessageUncheckedCreateWithoutAssignmentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutAssignmentInput | Prisma.MessageCreateOrConnectWithoutAssignmentInput[]
-  createMany?: Prisma.MessageCreateManyAssignmentInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-}
-
-export type MessageUncheckedCreateNestedManyWithoutAssignmentInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutAssignmentInput, Prisma.MessageUncheckedCreateWithoutAssignmentInput> | Prisma.MessageCreateWithoutAssignmentInput[] | Prisma.MessageUncheckedCreateWithoutAssignmentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutAssignmentInput | Prisma.MessageCreateOrConnectWithoutAssignmentInput[]
-  createMany?: Prisma.MessageCreateManyAssignmentInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-}
-
-export type MessageUpdateManyWithoutAssignmentNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutAssignmentInput, Prisma.MessageUncheckedCreateWithoutAssignmentInput> | Prisma.MessageCreateWithoutAssignmentInput[] | Prisma.MessageUncheckedCreateWithoutAssignmentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutAssignmentInput | Prisma.MessageCreateOrConnectWithoutAssignmentInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutAssignmentInput | Prisma.MessageUpsertWithWhereUniqueWithoutAssignmentInput[]
-  createMany?: Prisma.MessageCreateManyAssignmentInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutAssignmentInput | Prisma.MessageUpdateWithWhereUniqueWithoutAssignmentInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutAssignmentInput | Prisma.MessageUpdateManyWithWhereWithoutAssignmentInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-}
-
-export type MessageUncheckedUpdateManyWithoutAssignmentNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutAssignmentInput, Prisma.MessageUncheckedCreateWithoutAssignmentInput> | Prisma.MessageCreateWithoutAssignmentInput[] | Prisma.MessageUncheckedCreateWithoutAssignmentInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutAssignmentInput | Prisma.MessageCreateOrConnectWithoutAssignmentInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutAssignmentInput | Prisma.MessageUpsertWithWhereUniqueWithoutAssignmentInput[]
-  createMany?: Prisma.MessageCreateManyAssignmentInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutAssignmentInput | Prisma.MessageUpdateWithWhereUniqueWithoutAssignmentInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutAssignmentInput | Prisma.MessageUpdateManyWithWhereWithoutAssignmentInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-}
-
-export type MessageCreateWithoutStudentInput = {
+export type MessageCreateWithoutSenderInput = {
   id?: string
   content: string
-  senderType: string
-  senderId: string
+  toAll?: boolean
   createdAt?: Date | string
-  teacher?: Prisma.TeacherCreateNestedOneWithoutMessagesInput
-  session?: Prisma.SessionCreateNestedOneWithoutMessagesInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutMessagesInput
+  classes?: Prisma.MessageClassCreateNestedManyWithoutMessageInput
+  recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
 }
 
-export type MessageUncheckedCreateWithoutStudentInput = {
+export type MessageUncheckedCreateWithoutSenderInput = {
   id?: string
   content: string
-  senderType: string
-  senderId: string
-  teacherId?: string | null
-  sessionId?: string | null
-  assignmentId?: string | null
+  toAll?: boolean
   createdAt?: Date | string
+  classes?: Prisma.MessageClassUncheckedCreateNestedManyWithoutMessageInput
+  recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
 }
 
-export type MessageCreateOrConnectWithoutStudentInput = {
+export type MessageCreateOrConnectWithoutSenderInput = {
   where: Prisma.MessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageCreateWithoutStudentInput, Prisma.MessageUncheckedCreateWithoutStudentInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutSenderInput, Prisma.MessageUncheckedCreateWithoutSenderInput>
 }
 
-export type MessageCreateManyStudentInputEnvelope = {
-  data: Prisma.MessageCreateManyStudentInput | Prisma.MessageCreateManyStudentInput[]
+export type MessageCreateManySenderInputEnvelope = {
+  data: Prisma.MessageCreateManySenderInput | Prisma.MessageCreateManySenderInput[]
   skipDuplicates?: boolean
 }
 
-export type MessageUpsertWithWhereUniqueWithoutStudentInput = {
+export type MessageUpsertWithWhereUniqueWithoutSenderInput = {
   where: Prisma.MessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageUpdateWithoutStudentInput, Prisma.MessageUncheckedUpdateWithoutStudentInput>
-  create: Prisma.XOR<Prisma.MessageCreateWithoutStudentInput, Prisma.MessageUncheckedCreateWithoutStudentInput>
+  update: Prisma.XOR<Prisma.MessageUpdateWithoutSenderInput, Prisma.MessageUncheckedUpdateWithoutSenderInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutSenderInput, Prisma.MessageUncheckedCreateWithoutSenderInput>
 }
 
-export type MessageUpdateWithWhereUniqueWithoutStudentInput = {
+export type MessageUpdateWithWhereUniqueWithoutSenderInput = {
   where: Prisma.MessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageUpdateWithoutStudentInput, Prisma.MessageUncheckedUpdateWithoutStudentInput>
+  data: Prisma.XOR<Prisma.MessageUpdateWithoutSenderInput, Prisma.MessageUncheckedUpdateWithoutSenderInput>
 }
 
-export type MessageUpdateManyWithWhereWithoutStudentInput = {
+export type MessageUpdateManyWithWhereWithoutSenderInput = {
   where: Prisma.MessageScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutStudentInput>
+  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutSenderInput>
 }
 
 export type MessageScalarWhereInput = {
@@ -633,434 +460,251 @@ export type MessageScalarWhereInput = {
   NOT?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
   id?: Prisma.StringFilter<"Message"> | string
   content?: Prisma.StringFilter<"Message"> | string
-  senderType?: Prisma.StringFilter<"Message"> | string
   senderId?: Prisma.StringFilter<"Message"> | string
-  studentId?: Prisma.StringNullableFilter<"Message"> | string | null
-  teacherId?: Prisma.StringNullableFilter<"Message"> | string | null
-  sessionId?: Prisma.StringNullableFilter<"Message"> | string | null
-  assignmentId?: Prisma.StringNullableFilter<"Message"> | string | null
+  toAll?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
 }
 
-export type MessageCreateWithoutTeacherInput = {
+export type MessageCreateWithoutClassesInput = {
   id?: string
   content: string
-  senderType: string
-  senderId: string
+  toAll?: boolean
   createdAt?: Date | string
-  student?: Prisma.StudentCreateNestedOneWithoutMessagesInput
-  session?: Prisma.SessionCreateNestedOneWithoutMessagesInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutMessagesInput
+  sender: Prisma.UserCreateNestedOneWithoutSentMessagesInput
+  recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
 }
 
-export type MessageUncheckedCreateWithoutTeacherInput = {
+export type MessageUncheckedCreateWithoutClassesInput = {
   id?: string
   content: string
-  senderType: string
   senderId: string
-  studentId?: string | null
-  sessionId?: string | null
-  assignmentId?: string | null
+  toAll?: boolean
   createdAt?: Date | string
+  recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
 }
 
-export type MessageCreateOrConnectWithoutTeacherInput = {
+export type MessageCreateOrConnectWithoutClassesInput = {
   where: Prisma.MessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageCreateWithoutTeacherInput, Prisma.MessageUncheckedCreateWithoutTeacherInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutClassesInput, Prisma.MessageUncheckedCreateWithoutClassesInput>
 }
 
-export type MessageCreateManyTeacherInputEnvelope = {
-  data: Prisma.MessageCreateManyTeacherInput | Prisma.MessageCreateManyTeacherInput[]
-  skipDuplicates?: boolean
+export type MessageUpsertWithoutClassesInput = {
+  update: Prisma.XOR<Prisma.MessageUpdateWithoutClassesInput, Prisma.MessageUncheckedUpdateWithoutClassesInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutClassesInput, Prisma.MessageUncheckedCreateWithoutClassesInput>
+  where?: Prisma.MessageWhereInput
 }
 
-export type MessageUpsertWithWhereUniqueWithoutTeacherInput = {
-  where: Prisma.MessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageUpdateWithoutTeacherInput, Prisma.MessageUncheckedUpdateWithoutTeacherInput>
-  create: Prisma.XOR<Prisma.MessageCreateWithoutTeacherInput, Prisma.MessageUncheckedCreateWithoutTeacherInput>
+export type MessageUpdateToOneWithWhereWithoutClassesInput = {
+  where?: Prisma.MessageWhereInput
+  data: Prisma.XOR<Prisma.MessageUpdateWithoutClassesInput, Prisma.MessageUncheckedUpdateWithoutClassesInput>
 }
 
-export type MessageUpdateWithWhereUniqueWithoutTeacherInput = {
-  where: Prisma.MessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageUpdateWithoutTeacherInput, Prisma.MessageUncheckedUpdateWithoutTeacherInput>
+export type MessageUpdateWithoutClassesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sender?: Prisma.UserUpdateOneRequiredWithoutSentMessagesNestedInput
+  recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
 }
 
-export type MessageUpdateManyWithWhereWithoutTeacherInput = {
-  where: Prisma.MessageScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutTeacherInput>
+export type MessageUncheckedUpdateWithoutClassesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  senderId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
 }
 
-export type MessageCreateWithoutSessionInput = {
+export type MessageCreateWithoutRecipientsInput = {
   id?: string
   content: string
-  senderType: string
-  senderId: string
+  toAll?: boolean
   createdAt?: Date | string
-  student?: Prisma.StudentCreateNestedOneWithoutMessagesInput
-  teacher?: Prisma.TeacherCreateNestedOneWithoutMessagesInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutMessagesInput
+  sender: Prisma.UserCreateNestedOneWithoutSentMessagesInput
+  classes?: Prisma.MessageClassCreateNestedManyWithoutMessageInput
 }
 
-export type MessageUncheckedCreateWithoutSessionInput = {
+export type MessageUncheckedCreateWithoutRecipientsInput = {
   id?: string
   content: string
-  senderType: string
   senderId: string
-  studentId?: string | null
-  teacherId?: string | null
-  assignmentId?: string | null
+  toAll?: boolean
   createdAt?: Date | string
+  classes?: Prisma.MessageClassUncheckedCreateNestedManyWithoutMessageInput
 }
 
-export type MessageCreateOrConnectWithoutSessionInput = {
+export type MessageCreateOrConnectWithoutRecipientsInput = {
   where: Prisma.MessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageCreateWithoutSessionInput, Prisma.MessageUncheckedCreateWithoutSessionInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutRecipientsInput, Prisma.MessageUncheckedCreateWithoutRecipientsInput>
 }
 
-export type MessageCreateManySessionInputEnvelope = {
-  data: Prisma.MessageCreateManySessionInput | Prisma.MessageCreateManySessionInput[]
-  skipDuplicates?: boolean
+export type MessageUpsertWithoutRecipientsInput = {
+  update: Prisma.XOR<Prisma.MessageUpdateWithoutRecipientsInput, Prisma.MessageUncheckedUpdateWithoutRecipientsInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutRecipientsInput, Prisma.MessageUncheckedCreateWithoutRecipientsInput>
+  where?: Prisma.MessageWhereInput
 }
 
-export type MessageUpsertWithWhereUniqueWithoutSessionInput = {
-  where: Prisma.MessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageUpdateWithoutSessionInput, Prisma.MessageUncheckedUpdateWithoutSessionInput>
-  create: Prisma.XOR<Prisma.MessageCreateWithoutSessionInput, Prisma.MessageUncheckedCreateWithoutSessionInput>
+export type MessageUpdateToOneWithWhereWithoutRecipientsInput = {
+  where?: Prisma.MessageWhereInput
+  data: Prisma.XOR<Prisma.MessageUpdateWithoutRecipientsInput, Prisma.MessageUncheckedUpdateWithoutRecipientsInput>
 }
 
-export type MessageUpdateWithWhereUniqueWithoutSessionInput = {
-  where: Prisma.MessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageUpdateWithoutSessionInput, Prisma.MessageUncheckedUpdateWithoutSessionInput>
+export type MessageUpdateWithoutRecipientsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sender?: Prisma.UserUpdateOneRequiredWithoutSentMessagesNestedInput
+  classes?: Prisma.MessageClassUpdateManyWithoutMessageNestedInput
 }
 
-export type MessageUpdateManyWithWhereWithoutSessionInput = {
-  where: Prisma.MessageScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutSessionInput>
+export type MessageUncheckedUpdateWithoutRecipientsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  senderId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  classes?: Prisma.MessageClassUncheckedUpdateManyWithoutMessageNestedInput
 }
 
-export type MessageCreateWithoutAssignmentInput = {
+export type MessageCreateManySenderInput = {
   id?: string
   content: string
-  senderType: string
-  senderId: string
-  createdAt?: Date | string
-  student?: Prisma.StudentCreateNestedOneWithoutMessagesInput
-  teacher?: Prisma.TeacherCreateNestedOneWithoutMessagesInput
-  session?: Prisma.SessionCreateNestedOneWithoutMessagesInput
-}
-
-export type MessageUncheckedCreateWithoutAssignmentInput = {
-  id?: string
-  content: string
-  senderType: string
-  senderId: string
-  studentId?: string | null
-  teacherId?: string | null
-  sessionId?: string | null
+  toAll?: boolean
   createdAt?: Date | string
 }
 
-export type MessageCreateOrConnectWithoutAssignmentInput = {
-  where: Prisma.MessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageCreateWithoutAssignmentInput, Prisma.MessageUncheckedCreateWithoutAssignmentInput>
-}
-
-export type MessageCreateManyAssignmentInputEnvelope = {
-  data: Prisma.MessageCreateManyAssignmentInput | Prisma.MessageCreateManyAssignmentInput[]
-  skipDuplicates?: boolean
-}
-
-export type MessageUpsertWithWhereUniqueWithoutAssignmentInput = {
-  where: Prisma.MessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageUpdateWithoutAssignmentInput, Prisma.MessageUncheckedUpdateWithoutAssignmentInput>
-  create: Prisma.XOR<Prisma.MessageCreateWithoutAssignmentInput, Prisma.MessageUncheckedCreateWithoutAssignmentInput>
-}
-
-export type MessageUpdateWithWhereUniqueWithoutAssignmentInput = {
-  where: Prisma.MessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageUpdateWithoutAssignmentInput, Prisma.MessageUncheckedUpdateWithoutAssignmentInput>
-}
-
-export type MessageUpdateManyWithWhereWithoutAssignmentInput = {
-  where: Prisma.MessageScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutAssignmentInput>
-}
-
-export type MessageCreateManyStudentInput = {
-  id?: string
-  content: string
-  senderType: string
-  senderId: string
-  teacherId?: string | null
-  sessionId?: string | null
-  assignmentId?: string | null
-  createdAt?: Date | string
-}
-
-export type MessageUpdateWithoutStudentInput = {
+export type MessageUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  teacher?: Prisma.TeacherUpdateOneWithoutMessagesNestedInput
-  session?: Prisma.SessionUpdateOneWithoutMessagesNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutMessagesNestedInput
+  classes?: Prisma.MessageClassUpdateManyWithoutMessageNestedInput
+  recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
 }
 
-export type MessageUncheckedUpdateWithoutStudentInput = {
+export type MessageUncheckedUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  classes?: Prisma.MessageClassUncheckedUpdateManyWithoutMessageNestedInput
+  recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+}
+
+export type MessageUncheckedUpdateManyWithoutSenderInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  toAll?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type MessageUncheckedUpdateManyWithoutStudentInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+
+/**
+ * Count Type MessageCountOutputType
+ */
+
+export type MessageCountOutputType = {
+  classes: number
+  recipients: number
 }
 
-export type MessageCreateManyTeacherInput = {
-  id?: string
-  content: string
-  senderType: string
-  senderId: string
-  studentId?: string | null
-  sessionId?: string | null
-  assignmentId?: string | null
-  createdAt?: Date | string
+export type MessageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  classes?: boolean | MessageCountOutputTypeCountClassesArgs
+  recipients?: boolean | MessageCountOutputTypeCountRecipientsArgs
 }
 
-export type MessageUpdateWithoutTeacherInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  student?: Prisma.StudentUpdateOneWithoutMessagesNestedInput
-  session?: Prisma.SessionUpdateOneWithoutMessagesNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutMessagesNestedInput
+/**
+ * MessageCountOutputType without action
+ */
+export type MessageCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MessageCountOutputType
+   */
+  select?: Prisma.MessageCountOutputTypeSelect<ExtArgs> | null
 }
 
-export type MessageUncheckedUpdateWithoutTeacherInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+/**
+ * MessageCountOutputType without action
+ */
+export type MessageCountOutputTypeCountClassesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageClassWhereInput
 }
 
-export type MessageUncheckedUpdateManyWithoutTeacherInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+/**
+ * MessageCountOutputType without action
+ */
+export type MessageCountOutputTypeCountRecipientsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageRecipientWhereInput
 }
-
-export type MessageCreateManySessionInput = {
-  id?: string
-  content: string
-  senderType: string
-  senderId: string
-  studentId?: string | null
-  teacherId?: string | null
-  assignmentId?: string | null
-  createdAt?: Date | string
-}
-
-export type MessageUpdateWithoutSessionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  student?: Prisma.StudentUpdateOneWithoutMessagesNestedInput
-  teacher?: Prisma.TeacherUpdateOneWithoutMessagesNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutMessagesNestedInput
-}
-
-export type MessageUncheckedUpdateWithoutSessionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type MessageUncheckedUpdateManyWithoutSessionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type MessageCreateManyAssignmentInput = {
-  id?: string
-  content: string
-  senderType: string
-  senderId: string
-  studentId?: string | null
-  teacherId?: string | null
-  sessionId?: string | null
-  createdAt?: Date | string
-}
-
-export type MessageUpdateWithoutAssignmentInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  student?: Prisma.StudentUpdateOneWithoutMessagesNestedInput
-  teacher?: Prisma.TeacherUpdateOneWithoutMessagesNestedInput
-  session?: Prisma.SessionUpdateOneWithoutMessagesNestedInput
-}
-
-export type MessageUncheckedUpdateWithoutAssignmentInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type MessageUncheckedUpdateManyWithoutAssignmentInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  senderType?: Prisma.StringFieldUpdateOperationsInput | string
-  senderId?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 
 
 export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   content?: boolean
-  senderType?: boolean
   senderId?: boolean
-  studentId?: boolean
-  teacherId?: boolean
-  sessionId?: boolean
-  assignmentId?: boolean
+  toAll?: boolean
   createdAt?: boolean
-  student?: boolean | Prisma.Message$studentArgs<ExtArgs>
-  teacher?: boolean | Prisma.Message$teacherArgs<ExtArgs>
-  session?: boolean | Prisma.Message$sessionArgs<ExtArgs>
-  assignment?: boolean | Prisma.Message$assignmentArgs<ExtArgs>
+  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  classes?: boolean | Prisma.Message$classesArgs<ExtArgs>
+  recipients?: boolean | Prisma.Message$recipientsArgs<ExtArgs>
+  _count?: boolean | Prisma.MessageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
 export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   content?: boolean
-  senderType?: boolean
   senderId?: boolean
-  studentId?: boolean
-  teacherId?: boolean
-  sessionId?: boolean
-  assignmentId?: boolean
+  toAll?: boolean
   createdAt?: boolean
-  student?: boolean | Prisma.Message$studentArgs<ExtArgs>
-  teacher?: boolean | Prisma.Message$teacherArgs<ExtArgs>
-  session?: boolean | Prisma.Message$sessionArgs<ExtArgs>
-  assignment?: boolean | Prisma.Message$assignmentArgs<ExtArgs>
+  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
 export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   content?: boolean
-  senderType?: boolean
   senderId?: boolean
-  studentId?: boolean
-  teacherId?: boolean
-  sessionId?: boolean
-  assignmentId?: boolean
+  toAll?: boolean
   createdAt?: boolean
-  student?: boolean | Prisma.Message$studentArgs<ExtArgs>
-  teacher?: boolean | Prisma.Message$teacherArgs<ExtArgs>
-  session?: boolean | Prisma.Message$sessionArgs<ExtArgs>
-  assignment?: boolean | Prisma.Message$assignmentArgs<ExtArgs>
+  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
 export type MessageSelectScalar = {
   id?: boolean
   content?: boolean
-  senderType?: boolean
   senderId?: boolean
-  studentId?: boolean
-  teacherId?: boolean
-  sessionId?: boolean
-  assignmentId?: boolean
+  toAll?: boolean
   createdAt?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "senderType" | "senderId" | "studentId" | "teacherId" | "sessionId" | "assignmentId" | "createdAt", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "senderId" | "toAll" | "createdAt", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  student?: boolean | Prisma.Message$studentArgs<ExtArgs>
-  teacher?: boolean | Prisma.Message$teacherArgs<ExtArgs>
-  session?: boolean | Prisma.Message$sessionArgs<ExtArgs>
-  assignment?: boolean | Prisma.Message$assignmentArgs<ExtArgs>
+  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  classes?: boolean | Prisma.Message$classesArgs<ExtArgs>
+  recipients?: boolean | Prisma.Message$recipientsArgs<ExtArgs>
+  _count?: boolean | Prisma.MessageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  student?: boolean | Prisma.Message$studentArgs<ExtArgs>
-  teacher?: boolean | Prisma.Message$teacherArgs<ExtArgs>
-  session?: boolean | Prisma.Message$sessionArgs<ExtArgs>
-  assignment?: boolean | Prisma.Message$assignmentArgs<ExtArgs>
+  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type MessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  student?: boolean | Prisma.Message$studentArgs<ExtArgs>
-  teacher?: boolean | Prisma.Message$teacherArgs<ExtArgs>
-  session?: boolean | Prisma.Message$sessionArgs<ExtArgs>
-  assignment?: boolean | Prisma.Message$assignmentArgs<ExtArgs>
+  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Message"
   objects: {
-    student: Prisma.$StudentPayload<ExtArgs> | null
-    teacher: Prisma.$TeacherPayload<ExtArgs> | null
-    session: Prisma.$SessionPayload<ExtArgs> | null
-    assignment: Prisma.$AssignmentPayload<ExtArgs> | null
+    sender: Prisma.$UserPayload<ExtArgs>
+    classes: Prisma.$MessageClassPayload<ExtArgs>[]
+    recipients: Prisma.$MessageRecipientPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     content: string
-    senderType: string
     senderId: string
-    studentId: string | null
-    teacherId: string | null
-    sessionId: string | null
-    assignmentId: string | null
+    toAll: boolean
     createdAt: Date
   }, ExtArgs["result"]["message"]>
   composites: {}
@@ -1456,10 +1100,9 @@ readonly fields: MessageFieldRefs;
  */
 export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  student<T extends Prisma.Message$studentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$studentArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  teacher<T extends Prisma.Message$teacherArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$teacherArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  session<T extends Prisma.Message$sessionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$sessionArgs<ExtArgs>>): Prisma.Prisma__SessionClient<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  assignment<T extends Prisma.Message$assignmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$assignmentArgs<ExtArgs>>): Prisma.Prisma__AssignmentClient<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  sender<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  classes<T extends Prisma.Message$classesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$classesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageClassPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  recipients<T extends Prisma.Message$recipientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$recipientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1491,12 +1134,8 @@ export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.
 export interface MessageFieldRefs {
   readonly id: Prisma.FieldRef<"Message", 'String'>
   readonly content: Prisma.FieldRef<"Message", 'String'>
-  readonly senderType: Prisma.FieldRef<"Message", 'String'>
   readonly senderId: Prisma.FieldRef<"Message", 'String'>
-  readonly studentId: Prisma.FieldRef<"Message", 'String'>
-  readonly teacherId: Prisma.FieldRef<"Message", 'String'>
-  readonly sessionId: Prisma.FieldRef<"Message", 'String'>
-  readonly assignmentId: Prisma.FieldRef<"Message", 'String'>
+  readonly toAll: Prisma.FieldRef<"Message", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Message", 'DateTime'>
 }
     
@@ -1899,79 +1538,51 @@ export type MessageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * Message.student
+ * Message.classes
  */
-export type Message$studentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Message$classesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Student
+   * Select specific fields to fetch from the MessageClass
    */
-  select?: Prisma.StudentSelect<ExtArgs> | null
+  select?: Prisma.MessageClassSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Student
+   * Omit specific fields from the MessageClass
    */
-  omit?: Prisma.StudentOmit<ExtArgs> | null
+  omit?: Prisma.MessageClassOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.StudentInclude<ExtArgs> | null
-  where?: Prisma.StudentWhereInput
+  include?: Prisma.MessageClassInclude<ExtArgs> | null
+  where?: Prisma.MessageClassWhereInput
+  orderBy?: Prisma.MessageClassOrderByWithRelationInput | Prisma.MessageClassOrderByWithRelationInput[]
+  cursor?: Prisma.MessageClassWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageClassScalarFieldEnum | Prisma.MessageClassScalarFieldEnum[]
 }
 
 /**
- * Message.teacher
+ * Message.recipients
  */
-export type Message$teacherArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Message$recipientsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Teacher
+   * Select specific fields to fetch from the MessageRecipient
    */
-  select?: Prisma.TeacherSelect<ExtArgs> | null
+  select?: Prisma.MessageRecipientSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Teacher
+   * Omit specific fields from the MessageRecipient
    */
-  omit?: Prisma.TeacherOmit<ExtArgs> | null
+  omit?: Prisma.MessageRecipientOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.TeacherInclude<ExtArgs> | null
-  where?: Prisma.TeacherWhereInput
-}
-
-/**
- * Message.session
- */
-export type Message$sessionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Session
-   */
-  select?: Prisma.SessionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Session
-   */
-  omit?: Prisma.SessionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SessionInclude<ExtArgs> | null
-  where?: Prisma.SessionWhereInput
-}
-
-/**
- * Message.assignment
- */
-export type Message$assignmentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Assignment
-   */
-  select?: Prisma.AssignmentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Assignment
-   */
-  omit?: Prisma.AssignmentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AssignmentInclude<ExtArgs> | null
-  where?: Prisma.AssignmentWhereInput
+  include?: Prisma.MessageRecipientInclude<ExtArgs> | null
+  where?: Prisma.MessageRecipientWhereInput
+  orderBy?: Prisma.MessageRecipientOrderByWithRelationInput | Prisma.MessageRecipientOrderByWithRelationInput[]
+  cursor?: Prisma.MessageRecipientWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageRecipientScalarFieldEnum | Prisma.MessageRecipientScalarFieldEnum[]
 }
 
 /**
