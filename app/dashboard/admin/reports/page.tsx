@@ -3,6 +3,7 @@
 import { GraduationCap, CreditCard, CalendarCheck, ClipboardList } from "lucide-react";
 import StatCard from "@/components/shared/StatCard";
 import StatsChart from "@/components/charts/StatsChart";
+import ReportsExport from "@/components/shared/ReportsExport";
 import { useStudents } from "@/hooks/useStudents";
 import { usePayments } from "@/hooks/usePayments";
 import { useAttendance } from "@/hooks/useAttendance";
@@ -92,6 +93,8 @@ export default function AdminReportsPage() {
         dataKey="count"
         xKey="name"
       />
+
+      <ReportsExport students={students} />
     </div>
   );
 }
