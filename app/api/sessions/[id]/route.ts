@@ -22,7 +22,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { grade, subject, date, zoomLink } = body;
+    const { grade, subject, date, zoomLink, recordingUrl } = body;
 
     if (!grade || !subject || !date) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -35,6 +35,7 @@ export async function PATCH(
         subject,
         date: new Date(date),
         zoomLink: zoomLink || null,
+        recordingUrl: recordingUrl || null,
       },
       include: { teacher: { include: { user: true } } },
     });

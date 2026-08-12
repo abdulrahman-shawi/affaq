@@ -412,6 +412,7 @@ export const ModelName = {
   MessageRecipient: 'MessageRecipient',
   ClassLevel: 'ClassLevel',
   Subject: 'Subject',
+  TimetableSlot: 'TimetableSlot',
   Notification: 'Notification'
 } as const
 
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "notification"
+    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "timetableSlot" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1542,6 +1543,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TimetableSlot: {
+      payload: Prisma.$TimetableSlotPayload<ExtArgs>
+      fields: Prisma.TimetableSlotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TimetableSlotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TimetableSlotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>
+        }
+        findFirst: {
+          args: Prisma.TimetableSlotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TimetableSlotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>
+        }
+        findMany: {
+          args: Prisma.TimetableSlotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>[]
+        }
+        create: {
+          args: Prisma.TimetableSlotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>
+        }
+        createMany: {
+          args: Prisma.TimetableSlotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TimetableSlotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>[]
+        }
+        delete: {
+          args: Prisma.TimetableSlotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>
+        }
+        update: {
+          args: Prisma.TimetableSlotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>
+        }
+        deleteMany: {
+          args: Prisma.TimetableSlotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TimetableSlotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TimetableSlotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>[]
+        }
+        upsert: {
+          args: Prisma.TimetableSlotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimetableSlotPayload>
+        }
+        aggregate: {
+          args: Prisma.TimetableSlotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTimetableSlot>
+        }
+        groupBy: {
+          args: Prisma.TimetableSlotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TimetableSlotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TimetableSlotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TimetableSlotCountAggregateOutputType> | number
+        }
+      }
+    }
     Notification: {
       payload: Prisma.$NotificationPayload<ExtArgs>
       fields: Prisma.NotificationFieldRefs
@@ -1682,7 +1757,8 @@ export const StudentScalarFieldEnum = {
   parentId: 'parentId',
   classId: 'classId',
   status: 'status',
-  subEndDate: 'subEndDate'
+  subEndDate: 'subEndDate',
+  subReminderAt: 'subReminderAt'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -1716,7 +1792,8 @@ export const SessionScalarFieldEnum = {
   grade: 'grade',
   subject: 'subject',
   date: 'date',
-  zoomLink: 'zoomLink'
+  zoomLink: 'zoomLink',
+  recordingUrl: 'recordingUrl'
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
@@ -1818,6 +1895,19 @@ export const SubjectScalarFieldEnum = {
 } as const
 
 export type SubjectScalarFieldEnum = (typeof SubjectScalarFieldEnum)[keyof typeof SubjectScalarFieldEnum]
+
+
+export const TimetableSlotScalarFieldEnum = {
+  id: 'id',
+  classId: 'classId',
+  teacherId: 'teacherId',
+  subject: 'subject',
+  dayOfWeek: 'dayOfWeek',
+  startTime: 'startTime',
+  endTime: 'endTime'
+} as const
+
+export type TimetableSlotScalarFieldEnum = (typeof TimetableSlotScalarFieldEnum)[keyof typeof TimetableSlotScalarFieldEnum]
 
 
 export const NotificationScalarFieldEnum = {
@@ -2092,6 +2182,7 @@ export type GlobalOmitConfig = {
   messageRecipient?: Prisma.MessageRecipientOmit
   classLevel?: Prisma.ClassLevelOmit
   subject?: Prisma.SubjectOmit
+  timetableSlot?: Prisma.TimetableSlotOmit
   notification?: Prisma.NotificationOmit
 }
 

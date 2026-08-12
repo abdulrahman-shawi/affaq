@@ -49,8 +49,9 @@ model Student {
   parent      Parent?      @relation("ParentChildren", fields: [parentId], references: [id])
   classId     String?
   class       ClassLevel?  @relation(fields: [classId], references: [id], onDelete: SetNull)
-  status      String       @default("active")
-  subEndDate  DateTime?
+  status        String       @default("active")
+  subEndDate    DateTime?
+  subReminderAt DateTime?
 
   payments    Payment[]
   attendance  Attendance[]
@@ -65,7 +66,8 @@ model Teacher {
   subjects Subject[]
   classes  ClassLevel[]
 
-  sessions Session[]
+  sessions       Session[]
+  timetableSlots TimetableSlot[]
 }
 
 model Payment {
@@ -81,13 +83,14 @@ model Payment {
 }
 
 model Session {
-  id        String       @id @default(uuid())
-  teacherId String
-  teacher   Teacher      @relation(fields: [teacherId], references: [id])
-  grade     Int
-  subject   String
-  date      DateTime
-  zoomLink  String?
+  id           String       @id @default(uuid())
+  teacherId    String
+  teacher      Teacher      @relation(fields: [teacherId], references: [id])
+  grade        Int
+  subject      String
+  date         DateTime
+  zoomLink     String?
+  recordingUrl String?
 
   attendance Attendance[]
 }
@@ -169,14 +172,15 @@ model MessageRecipient {
 }
 
 model ClassLevel {
-  id        String         @id @default(uuid())
-  name      String         @unique
-  order     Int            @default(0)
-  subjects  Subject[]
-  students  Student[]
-  teachers  Teacher[]
-  messages  MessageClass[]
-  createdAt DateTime       @default(now())
+  id             String          @id @default(uuid())
+  name           String          @unique
+  order          Int             @default(0)
+  subjects       Subject[]
+  students       Student[]
+  teachers       Teacher[]
+  messages       MessageClass[]
+  timetableSlots TimetableSlot[]
+  createdAt      DateTime        @default(now())
 }
 
 model Subject {
@@ -185,6 +189,20 @@ model Subject {
   classes   ClassLevel[]
   teachers  Teacher[]
   createdAt DateTime     @default(now())
+}
+
+model TimetableSlot {
+  id        String     @id @default(uuid())
+  classId   String
+  class     ClassLevel @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId String
+  teacher   Teacher    @relation(fields: [teacherId], references: [id])
+  subject   String
+  dayOfWeek Int        // 0=الأحد .. 6=السبت
+  startTime String     // "HH:MM"
+  endTime   String     // "HH:MM"
+
+  @@unique([classId, dayOfWeek, startTime])
 }
 
 model Notification {

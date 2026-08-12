@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { teacherId, grade, subject, date, zoomLink } = body;
+    const { teacherId, grade, subject, date, zoomLink, recordingUrl } = body;
 
     if (!teacherId || !grade || !subject || !date) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         subject,
         date: new Date(date),
         zoomLink: zoomLink || null,
+        recordingUrl: recordingUrl || null,
       },
       include: { teacher: { include: { user: true } } },
     });

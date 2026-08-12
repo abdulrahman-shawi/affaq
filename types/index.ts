@@ -71,6 +71,7 @@ export interface SessionDTO {
   subject: string;
   date: string;
   zoomLink?: string | null;
+  recordingUrl?: string | null;
 }
 
 export interface AttendanceDTO {
@@ -81,6 +82,18 @@ export interface AttendanceDTO {
   student?: StudentDTO;
   status: string;
   note?: string | null;
+}
+
+export interface TimetableSlotDTO {
+  id: string;
+  classId: string;
+  class?: { id: string; name: string };
+  teacherId: string;
+  teacher?: { id: string; user?: { name: string } };
+  subject: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
 }
 
 export interface AssignmentDTO {
@@ -253,6 +266,15 @@ export interface CreateSessionInput {
   grade: number;
   subject: string;
   date: string;
+}
+
+export interface CreateTimetableSlotInput {
+  classId: string;
+  teacherId: string;
+  subject: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
 }
 
 export interface CreateClassInput {

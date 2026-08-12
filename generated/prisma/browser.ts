@@ -93,6 +93,11 @@ export type ClassLevel = Prisma.ClassLevelModel
  */
 export type Subject = Prisma.SubjectModel
 /**
+ * Model TimetableSlot
+ * 
+ */
+export type TimetableSlot = Prisma.TimetableSlotModel
+/**
  * Model Notification
  * 
  */

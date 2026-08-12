@@ -41,6 +41,7 @@ export type SessionMinAggregateOutputType = {
   subject: string | null
   date: Date | null
   zoomLink: string | null
+  recordingUrl: string | null
 }
 
 export type SessionMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type SessionMaxAggregateOutputType = {
   subject: string | null
   date: Date | null
   zoomLink: string | null
+  recordingUrl: string | null
 }
 
 export type SessionCountAggregateOutputType = {
@@ -59,6 +61,7 @@ export type SessionCountAggregateOutputType = {
   subject: number
   date: number
   zoomLink: number
+  recordingUrl: number
   _all: number
 }
 
@@ -78,6 +81,7 @@ export type SessionMinAggregateInputType = {
   subject?: true
   date?: true
   zoomLink?: true
+  recordingUrl?: true
 }
 
 export type SessionMaxAggregateInputType = {
@@ -87,6 +91,7 @@ export type SessionMaxAggregateInputType = {
   subject?: true
   date?: true
   zoomLink?: true
+  recordingUrl?: true
 }
 
 export type SessionCountAggregateInputType = {
@@ -96,6 +101,7 @@ export type SessionCountAggregateInputType = {
   subject?: true
   date?: true
   zoomLink?: true
+  recordingUrl?: true
   _all?: true
 }
 
@@ -192,6 +198,7 @@ export type SessionGroupByOutputType = {
   subject: string
   date: Date
   zoomLink: string | null
+  recordingUrl: string | null
   _count: SessionCountAggregateOutputType | null
   _avg: SessionAvgAggregateOutputType | null
   _sum: SessionSumAggregateOutputType | null
@@ -224,6 +231,7 @@ export type SessionWhereInput = {
   subject?: Prisma.StringFilter<"Session"> | string
   date?: Prisma.DateTimeFilter<"Session"> | Date | string
   zoomLink?: Prisma.StringNullableFilter<"Session"> | string | null
+  recordingUrl?: Prisma.StringNullableFilter<"Session"> | string | null
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   attendance?: Prisma.AttendanceListRelationFilter
 }
@@ -235,6 +243,7 @@ export type SessionOrderByWithRelationInput = {
   subject?: Prisma.SortOrder
   date?: Prisma.SortOrder
   zoomLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  recordingUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   teacher?: Prisma.TeacherOrderByWithRelationInput
   attendance?: Prisma.AttendanceOrderByRelationAggregateInput
 }
@@ -249,6 +258,7 @@ export type SessionWhereUniqueInput = Prisma.AtLeast<{
   subject?: Prisma.StringFilter<"Session"> | string
   date?: Prisma.DateTimeFilter<"Session"> | Date | string
   zoomLink?: Prisma.StringNullableFilter<"Session"> | string | null
+  recordingUrl?: Prisma.StringNullableFilter<"Session"> | string | null
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
   attendance?: Prisma.AttendanceListRelationFilter
 }, "id">
@@ -260,6 +270,7 @@ export type SessionOrderByWithAggregationInput = {
   subject?: Prisma.SortOrder
   date?: Prisma.SortOrder
   zoomLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  recordingUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SessionCountOrderByAggregateInput
   _avg?: Prisma.SessionAvgOrderByAggregateInput
   _max?: Prisma.SessionMaxOrderByAggregateInput
@@ -277,6 +288,7 @@ export type SessionScalarWhereWithAggregatesInput = {
   subject?: Prisma.StringWithAggregatesFilter<"Session"> | string
   date?: Prisma.DateTimeWithAggregatesFilter<"Session"> | Date | string
   zoomLink?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
+  recordingUrl?: Prisma.StringNullableWithAggregatesFilter<"Session"> | string | null
 }
 
 export type SessionCreateInput = {
@@ -285,6 +297,7 @@ export type SessionCreateInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
   teacher: Prisma.TeacherCreateNestedOneWithoutSessionsInput
   attendance?: Prisma.AttendanceCreateNestedManyWithoutSessionInput
 }
@@ -296,6 +309,7 @@ export type SessionUncheckedCreateInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutSessionInput
 }
 
@@ -305,6 +319,7 @@ export type SessionUpdateInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutSessionsNestedInput
   attendance?: Prisma.AttendanceUpdateManyWithoutSessionNestedInput
 }
@@ -316,6 +331,7 @@ export type SessionUncheckedUpdateInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutSessionNestedInput
 }
 
@@ -326,6 +342,7 @@ export type SessionCreateManyInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
 }
 
 export type SessionUpdateManyMutationInput = {
@@ -334,6 +351,7 @@ export type SessionUpdateManyMutationInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SessionUncheckedUpdateManyInput = {
@@ -343,6 +361,7 @@ export type SessionUncheckedUpdateManyInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SessionListRelationFilter = {
@@ -362,6 +381,7 @@ export type SessionCountOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   date?: Prisma.SortOrder
   zoomLink?: Prisma.SortOrder
+  recordingUrl?: Prisma.SortOrder
 }
 
 export type SessionAvgOrderByAggregateInput = {
@@ -375,6 +395,7 @@ export type SessionMaxOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   date?: Prisma.SortOrder
   zoomLink?: Prisma.SortOrder
+  recordingUrl?: Prisma.SortOrder
 }
 
 export type SessionMinOrderByAggregateInput = {
@@ -384,6 +405,7 @@ export type SessionMinOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   date?: Prisma.SortOrder
   zoomLink?: Prisma.SortOrder
+  recordingUrl?: Prisma.SortOrder
 }
 
 export type SessionSumOrderByAggregateInput = {
@@ -465,6 +487,7 @@ export type SessionCreateWithoutTeacherInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
   attendance?: Prisma.AttendanceCreateNestedManyWithoutSessionInput
 }
 
@@ -474,6 +497,7 @@ export type SessionUncheckedCreateWithoutTeacherInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutSessionInput
 }
 
@@ -513,6 +537,7 @@ export type SessionScalarWhereInput = {
   subject?: Prisma.StringFilter<"Session"> | string
   date?: Prisma.DateTimeFilter<"Session"> | Date | string
   zoomLink?: Prisma.StringNullableFilter<"Session"> | string | null
+  recordingUrl?: Prisma.StringNullableFilter<"Session"> | string | null
 }
 
 export type SessionCreateWithoutAttendanceInput = {
@@ -521,6 +546,7 @@ export type SessionCreateWithoutAttendanceInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
   teacher: Prisma.TeacherCreateNestedOneWithoutSessionsInput
 }
 
@@ -531,6 +557,7 @@ export type SessionUncheckedCreateWithoutAttendanceInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
 }
 
 export type SessionCreateOrConnectWithoutAttendanceInput = {
@@ -555,6 +582,7 @@ export type SessionUpdateWithoutAttendanceInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutSessionsNestedInput
 }
 
@@ -565,6 +593,7 @@ export type SessionUncheckedUpdateWithoutAttendanceInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SessionCreateManyTeacherInput = {
@@ -573,6 +602,7 @@ export type SessionCreateManyTeacherInput = {
   subject: string
   date: Date | string
   zoomLink?: string | null
+  recordingUrl?: string | null
 }
 
 export type SessionUpdateWithoutTeacherInput = {
@@ -581,6 +611,7 @@ export type SessionUpdateWithoutTeacherInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendance?: Prisma.AttendanceUpdateManyWithoutSessionNestedInput
 }
 
@@ -590,6 +621,7 @@ export type SessionUncheckedUpdateWithoutTeacherInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutSessionNestedInput
 }
 
@@ -599,6 +631,7 @@ export type SessionUncheckedUpdateManyWithoutTeacherInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -639,6 +672,7 @@ export type SessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   subject?: boolean
   date?: boolean
   zoomLink?: boolean
+  recordingUrl?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   attendance?: boolean | Prisma.Session$attendanceArgs<ExtArgs>
   _count?: boolean | Prisma.SessionCountOutputTypeDefaultArgs<ExtArgs>
@@ -651,6 +685,7 @@ export type SessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   subject?: boolean
   date?: boolean
   zoomLink?: boolean
+  recordingUrl?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["session"]>
 
@@ -661,6 +696,7 @@ export type SessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   subject?: boolean
   date?: boolean
   zoomLink?: boolean
+  recordingUrl?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["session"]>
 
@@ -671,9 +707,10 @@ export type SessionSelectScalar = {
   subject?: boolean
   date?: boolean
   zoomLink?: boolean
+  recordingUrl?: boolean
 }
 
-export type SessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "teacherId" | "grade" | "subject" | "date" | "zoomLink", ExtArgs["result"]["session"]>
+export type SessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "teacherId" | "grade" | "subject" | "date" | "zoomLink" | "recordingUrl", ExtArgs["result"]["session"]>
 export type SessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   attendance?: boolean | Prisma.Session$attendanceArgs<ExtArgs>
@@ -699,6 +736,7 @@ export type $SessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     subject: string
     date: Date
     zoomLink: string | null
+    recordingUrl: string | null
   }, ExtArgs["result"]["session"]>
   composites: {}
 }
@@ -1130,6 +1168,7 @@ export interface SessionFieldRefs {
   readonly subject: Prisma.FieldRef<"Session", 'String'>
   readonly date: Prisma.FieldRef<"Session", 'DateTime'>
   readonly zoomLink: Prisma.FieldRef<"Session", 'String'>
+  readonly recordingUrl: Prisma.FieldRef<"Session", 'String'>
 }
     
 

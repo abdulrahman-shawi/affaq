@@ -66,6 +66,7 @@ export const ModelName = {
   MessageRecipient: 'MessageRecipient',
   ClassLevel: 'ClassLevel',
   Subject: 'Subject',
+  TimetableSlot: 'TimetableSlot',
   Notification: 'Notification'
 } as const
 
@@ -112,7 +113,8 @@ export const StudentScalarFieldEnum = {
   parentId: 'parentId',
   classId: 'classId',
   status: 'status',
-  subEndDate: 'subEndDate'
+  subEndDate: 'subEndDate',
+  subReminderAt: 'subReminderAt'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -146,7 +148,8 @@ export const SessionScalarFieldEnum = {
   grade: 'grade',
   subject: 'subject',
   date: 'date',
-  zoomLink: 'zoomLink'
+  zoomLink: 'zoomLink',
+  recordingUrl: 'recordingUrl'
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
@@ -248,6 +251,19 @@ export const SubjectScalarFieldEnum = {
 } as const
 
 export type SubjectScalarFieldEnum = (typeof SubjectScalarFieldEnum)[keyof typeof SubjectScalarFieldEnum]
+
+
+export const TimetableSlotScalarFieldEnum = {
+  id: 'id',
+  classId: 'classId',
+  teacherId: 'teacherId',
+  subject: 'subject',
+  dayOfWeek: 'dayOfWeek',
+  startTime: 'startTime',
+  endTime: 'endTime'
+} as const
+
+export type TimetableSlotScalarFieldEnum = (typeof TimetableSlotScalarFieldEnum)[keyof typeof TimetableSlotScalarFieldEnum]
 
 
 export const NotificationScalarFieldEnum = {

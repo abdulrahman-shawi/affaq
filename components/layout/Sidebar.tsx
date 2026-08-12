@@ -8,6 +8,7 @@ import {
   GraduationCap,
   CreditCard,
   CalendarCheck,
+  CalendarDays,
   ClipboardList,
   MessagesSquare,
   ChartBar,
@@ -16,6 +17,7 @@ import {
   Inbox,
   Baby,
   School,
+  Video,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/app/lib/utils";
@@ -34,6 +36,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/admin/teachers", label: "المعلمون", icon: Users },
     { href: "/dashboard/admin/parents", label: "أولياء الأمور", icon: Baby },
     { href: "/dashboard/admin/classes", label: "الصفوف", icon: School },
+    { href: "/dashboard/admin/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
     { href: "/dashboard/admin/subjects", label: "المواد", icon: BookOpen },
     { href: "/dashboard/admin/payments", label: "المدفوعات", icon: CreditCard },
     { href: "/dashboard/admin/attendance", label: "الحضور", icon: CalendarCheck },
@@ -45,6 +48,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/teacher", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/dashboard/teacher/students", label: "طلابي", icon: GraduationCap },
     { href: "/dashboard/teacher/sessions", label: "الحصص", icon: BookOpen },
+    { href: "/dashboard/teacher/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
     { href: "/dashboard/teacher/assignments", label: "الواجبات", icon: FileText },
     { href: "/dashboard/teacher/submissions", label: "التسليمات", icon: Inbox },
     { href: "/dashboard/teacher/grades", label: "الدرجات", icon: ClipboardList },
@@ -53,6 +57,7 @@ export const roleNav: Record<Role, NavItem[]> = {
   parent: [
     { href: "/dashboard/parent", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/dashboard/parent/children", label: "أبنائي", icon: Baby },
+    { href: "/dashboard/parent/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
     { href: "/dashboard/parent/attendance", label: "الحضور", icon: CalendarCheck },
     { href: "/dashboard/parent/grades", label: "الدرجات", icon: ClipboardList },
     { href: "/dashboard/parent/messages", label: "الرسائل", icon: MessagesSquare },
@@ -60,6 +65,8 @@ export const roleNav: Record<Role, NavItem[]> = {
   student: [
     { href: "/dashboard/student", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/dashboard/student/assignments", label: "واجباتي", icon: FileText },
+    { href: "/dashboard/student/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
+    { href: "/dashboard/student/recordings", label: "التسجيلات", icon: Video },
     { href: "/dashboard/student/grades", label: "درجاتي", icon: ClipboardList },
     { href: "/dashboard/student/messages", label: "الرسائل", icon: MessagesSquare },
   ],

@@ -34,7 +34,13 @@ interface ClassOption {
 const selectClass =
   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
-const emptyForm = { subject: "", classOrder: "", date: "", zoomLink: "" };
+const emptyForm = {
+  subject: "",
+  classOrder: "",
+  date: "",
+  zoomLink: "",
+  recordingUrl: "",
+};
 
 export default function SessionForm({
   session,
@@ -68,6 +74,7 @@ export default function SessionForm({
             classOrder: String(session.grade),
             date: session.date.slice(0, 10),
             zoomLink: session.zoomLink ?? "",
+            recordingUrl: session.recordingUrl ?? "",
           }
         : emptyForm
     );
@@ -130,6 +137,7 @@ export default function SessionForm({
             grade: Number(form.classOrder),
             date: form.date,
             zoomLink: form.zoomLink.trim() || null,
+            recordingUrl: form.recordingUrl.trim() || null,
           }),
         }
       );
@@ -216,6 +224,19 @@ export default function SessionForm({
               placeholder="https://zoom.us/j/..."
               value={form.zoomLink}
               onChange={(e) => setForm({ ...form, zoomLink: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="session-recording">رابط التسجيل (اختياري)</Label>
+            <Input
+              id="session-recording"
+              type="url"
+              dir="ltr"
+              placeholder="https://..."
+              value={form.recordingUrl}
+              onChange={(e) =>
+                setForm({ ...form, recordingUrl: e.target.value })
+              }
             />
           </div>
           {subjects.length === 0 && classes.length === 0 && (
