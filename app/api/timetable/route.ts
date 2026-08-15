@@ -57,13 +57,28 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const sessionUser = await getSessionUser();
-  if (sessionUser?.role !== "admin") {
+  if (!sessionUser || !["admin", "teacher"].includes(sessionUser.role)) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
 
   try {
     const body = await req.json();
-    const { classId, teacherId, subject, dayOfWeek, startTime, endTime } = body;
+    const { classId, subject, dayOfWeek, startTime, endTime } = body;
+    let { teacherId } = body;
+
+    // المعلم يضيف حصصًا لنفسه فقط
+    if (sessionUser.role === "teacher") {
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+      });
+      if (!teacher) {
+        return NextResponse.json(
+          { error: "لم يتم العثور على ملف المعلم" },
+          { status: 403 }
+        );
+      }
+      teacherId = teacher.id;
+    }
     if (
       !classId ||
       !teacherId ||

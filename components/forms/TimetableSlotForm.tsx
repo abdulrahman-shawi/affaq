@@ -31,6 +31,7 @@ const emptyForm = {
 export default function TimetableSlotForm({
   slot,
   classId,
+  fixedTeacherId,
   onSuccess,
   trigger,
 }: {
@@ -38,6 +39,8 @@ export default function TimetableSlotForm({
   slot?: TimetableSlotDTO;
   /** الصف الذي تُضاف إليه الحصة (إلزامي في وضع الإنشاء) */
   classId: string;
+  /** تثبيت المعلم (للمعلم نفسه) — يُخفى حقل اختيار المعلم */
+  fixedTeacherId?: string;
   onSuccess?: () => void;
   trigger: ReactNode;
 }) {
@@ -62,7 +65,7 @@ export default function TimetableSlotForm({
             startTime: slot.startTime,
             endTime: slot.endTime,
           }
-        : emptyForm
+        : { ...emptyForm, teacherId: fixedTeacherId ?? "" }
     );
     (async () => {
       try {
@@ -77,7 +80,7 @@ export default function TimetableSlotForm({
         setSubjects([]);
       }
     })();
-  }, [open, slot]);
+  }, [open, slot, fixedTeacherId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -126,23 +129,25 @@ export default function TimetableSlotForm({
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="slot-teacher">المعلم</Label>
-            <select
-              id="slot-teacher"
-              required
-              className={selectClass}
-              value={form.teacherId}
-              onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
-            >
-              <option value="">اختر المعلم</option>
-              {teachers.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.user?.name ?? t.id}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!fixedTeacherId && (
+            <div className="space-y-2">
+              <Label htmlFor="slot-teacher">المعلم</Label>
+              <select
+                id="slot-teacher"
+                required
+                className={selectClass}
+                value={form.teacherId}
+                onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
+              >
+                <option value="">اختر المعلم</option>
+                {teachers.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.user?.name ?? t.id}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="slot-subject">المادة</Label>
