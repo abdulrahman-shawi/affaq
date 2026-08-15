@@ -53,10 +53,11 @@ model Student {
   subEndDate    DateTime?
   subReminderAt DateTime?
 
-  payments    Payment[]
-  attendance  Attendance[]
-  submissions Submission[]
-  grades      Grade[]
+  payments     Payment[]
+  attendance   Attendance[]
+  submissions  Submission[]
+  grades       Grade[]
+  quizAttempts QuizAttempt[]
 }
 
 model Teacher {
@@ -68,6 +69,7 @@ model Teacher {
 
   sessions       Session[]
   timetableSlots TimetableSlot[]
+  quizzes        Quiz[]
 }
 
 model Payment {
@@ -203,6 +205,42 @@ model TimetableSlot {
   endTime   String     // "HH:MM"
 
   @@unique([classId, dayOfWeek, startTime])
+}
+
+model Quiz {
+  id        String         @id @default(uuid())
+  title     String
+  subject   String
+  grade     Int
+  teacherId String
+  teacher   Teacher        @relation(fields: [teacherId], references: [id])
+  createdAt DateTime       @default(now())
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+}
+
+model QuizQuestion {
+  id           String @id @default(uuid())
+  quizId       String
+  quiz         Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text         String
+  options      String[]
+  correctIndex Int
+  points       Float  @default(1)
+}
+
+model QuizAttempt {
+  id          String   @id @default(uuid())
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers     Int[]
+  score       Float
+  maxScore    Float
+  submittedAt DateTime @default(now())
+
+  @@unique([quizId, studentId])
 }
 
 model Notification {

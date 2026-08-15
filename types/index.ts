@@ -96,6 +96,37 @@ export interface TimetableSlotDTO {
   endTime: string;
 }
 
+export interface QuizQuestionDTO {
+  id: string;
+  quizId: string;
+  text: string;
+  options: string[];
+  correctIndex?: number; // يُحذف من استجابة الطالب
+  points: number;
+}
+
+export interface QuizAttemptDTO {
+  id: string;
+  quizId: string;
+  studentId: string;
+  student?: StudentDTO;
+  score: number;
+  maxScore: number;
+  submittedAt: string;
+}
+
+export interface QuizDTO {
+  id: string;
+  title: string;
+  subject: string;
+  grade: number;
+  teacherId: string;
+  teacher?: TeacherDTO;
+  createdAt: string;
+  questions?: QuizQuestionDTO[];
+  attempts?: QuizAttemptDTO[];
+}
+
 export interface AssignmentDTO {
   id: string;
   title: string;

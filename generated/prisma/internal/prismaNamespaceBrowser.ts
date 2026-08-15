@@ -67,6 +67,9 @@ export const ModelName = {
   ClassLevel: 'ClassLevel',
   Subject: 'Subject',
   TimetableSlot: 'TimetableSlot',
+  Quiz: 'Quiz',
+  QuizQuestion: 'QuizQuestion',
+  QuizAttempt: 'QuizAttempt',
   Notification: 'Notification'
 } as const
 
@@ -264,6 +267,43 @@ export const TimetableSlotScalarFieldEnum = {
 } as const
 
 export type TimetableSlotScalarFieldEnum = (typeof TimetableSlotScalarFieldEnum)[keyof typeof TimetableSlotScalarFieldEnum]
+
+
+export const QuizScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  subject: 'subject',
+  grade: 'grade',
+  teacherId: 'teacherId',
+  createdAt: 'createdAt'
+} as const
+
+export type QuizScalarFieldEnum = (typeof QuizScalarFieldEnum)[keyof typeof QuizScalarFieldEnum]
+
+
+export const QuizQuestionScalarFieldEnum = {
+  id: 'id',
+  quizId: 'quizId',
+  text: 'text',
+  options: 'options',
+  correctIndex: 'correctIndex',
+  points: 'points'
+} as const
+
+export type QuizQuestionScalarFieldEnum = (typeof QuizQuestionScalarFieldEnum)[keyof typeof QuizQuestionScalarFieldEnum]
+
+
+export const QuizAttemptScalarFieldEnum = {
+  id: 'id',
+  quizId: 'quizId',
+  studentId: 'studentId',
+  answers: 'answers',
+  score: 'score',
+  maxScore: 'maxScore',
+  submittedAt: 'submittedAt'
+} as const
+
+export type QuizAttemptScalarFieldEnum = (typeof QuizAttemptScalarFieldEnum)[keyof typeof QuizAttemptScalarFieldEnum]
 
 
 export const NotificationScalarFieldEnum = {

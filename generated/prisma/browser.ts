@@ -98,6 +98,21 @@ export type Subject = Prisma.SubjectModel
  */
 export type TimetableSlot = Prisma.TimetableSlotModel
 /**
+ * Model Quiz
+ * 
+ */
+export type Quiz = Prisma.QuizModel
+/**
+ * Model QuizQuestion
+ * 
+ */
+export type QuizQuestion = Prisma.QuizQuestionModel
+/**
+ * Model QuizAttempt
+ * 
+ */
+export type QuizAttempt = Prisma.QuizAttemptModel
+/**
  * Model Notification
  * 
  */
