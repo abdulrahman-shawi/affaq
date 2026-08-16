@@ -18,6 +18,7 @@ import {
   Baby,
   School,
   Video,
+  ClipboardCheck,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/app/lib/utils";
@@ -50,6 +51,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/teacher/sessions", label: "الحصص", icon: BookOpen },
     { href: "/dashboard/teacher/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
     { href: "/dashboard/teacher/assignments", label: "الواجبات", icon: FileText },
+    { href: "/dashboard/teacher/quizzes", label: "الاختبارات", icon: ClipboardCheck },
     { href: "/dashboard/teacher/submissions", label: "التسليمات", icon: Inbox },
     { href: "/dashboard/teacher/grades", label: "الدرجات", icon: ClipboardList },
     { href: "/dashboard/teacher/messages", label: "الرسائل", icon: MessagesSquare },
@@ -65,6 +67,7 @@ export const roleNav: Record<Role, NavItem[]> = {
   student: [
     { href: "/dashboard/student", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/dashboard/student/assignments", label: "واجباتي", icon: FileText },
+    { href: "/dashboard/student/quizzes", label: "اختباراتي", icon: ClipboardCheck },
     { href: "/dashboard/student/sessions", label: "حصصي", icon: BookOpen },
     { href: "/dashboard/student/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
     { href: "/dashboard/student/recordings", label: "التسجيلات", icon: Video },

@@ -308,6 +308,25 @@ export interface CreateTimetableSlotInput {
   endTime: string;
 }
 
+export interface CreateQuizQuestionInput {
+  text: string;
+  options: string[]; // 4 خيارات
+  correctIndex: number;
+  points?: number;
+}
+
+export interface CreateQuizInput {
+  title: string;
+  subject: string;
+  grade: number;
+  questions: CreateQuizQuestionInput[];
+}
+
+export interface SubmitQuizInput {
+  studentId: string;
+  answers: number[];
+}
+
 export interface CreateClassInput {
   name: string;
   order?: number;
