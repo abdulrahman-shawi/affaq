@@ -96,7 +96,7 @@ export default function Sidebar({ role }: { role: Role }) {
   const accent = roleAccent[role];
 
   return (
-    <aside className="flex h-full w-64 flex-col border-l bg-card">
+    <aside className="flex h-full w-64 flex-col border-l bg-card print:hidden">
       <div className="flex items-center gap-2 border-b p-6">
         <GraduationCap className={cn("h-8 w-8", accent.logo)} />
         <span className="text-xl font-bold">آفاق أكاديمي</span>
