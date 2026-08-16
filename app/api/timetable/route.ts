@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     const params = new URL(req.url).searchParams;
     const classId = params.get("classId");
     const teacherId = params.get("teacherId");
-    if (!classId && !teacherId) {
+    if (!classId && !teacherId && sessionUser.role !== "admin") {
       return NextResponse.json(
         { error: "يجب تحديد classId أو teacherId" },
         { status: 400 }
