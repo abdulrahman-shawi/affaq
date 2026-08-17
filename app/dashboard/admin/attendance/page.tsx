@@ -6,6 +6,13 @@ import StatCard from "@/components/shared/StatCard";
 import DataTable from "@/components/tables/DataTable";
 import { attendanceColumns } from "@/components/tables/Columns";
 import { useAttendance } from "@/hooks/useAttendance";
+import { formatDate } from "@/app/lib/utils";
+
+const STATUS_LABELS: Record<string, string> = {
+  present: "حاضر",
+  absent: "غائب",
+  late: "متأخر",
+};
 
 const filters = [
   { value: "all", label: "الكل" },
@@ -72,6 +79,23 @@ export default function AdminAttendancePage() {
         data={filtered}
         loading={loading}
         emptyTitle="لا توجد سجلات حضور"
+        searchValue={(a) =>
+          [a.student?.user?.name, a.session?.subject]
+            .filter(Boolean)
+            .join(" ")
+        }
+        searchPlaceholder="ابحث باسم الطالب أو المادة..."
+        csv={{
+          filename: "الحضور.csv",
+          headers: ["التاريخ", "الطالب", "المادة", "الحالة", "ملاحظة"],
+          row: (a) => [
+            formatDate(a.session?.date),
+            a.student?.user?.name,
+            a.session?.subject,
+            STATUS_LABELS[a.status] ?? a.status,
+            a.note,
+          ],
+        }}
       />
     </div>
   );

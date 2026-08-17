@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Search } from "lucide-react";
+import { Search, Download } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -11,14 +11,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import Pagination from "@/components/shared/Pagination";
+import { downloadCsv } from "@/app/lib/csv";
 
 export interface Column<T> {
   header: string;
   cell: (row: T) => ReactNode;
   className?: string;
+}
+
+export interface CsvExport<T> {
+  filename: string;
+  headers: string[];
+  row: (row: T) => (string | number | null | undefined)[];
 }
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
@@ -37,6 +45,7 @@ export default function DataTable<T>({
   actionsHeader = "الإجراءات",
   selectable = false,
   bulkActions,
+  csv,
 }: {
   columns: Column<T>[];
   data: T[];
@@ -55,6 +64,8 @@ export default function DataTable<T>({
   selectable?: boolean;
   /** شريط يظهر عند وجود صفوف محددة (إجراءات جماعية) */
   bulkActions?: (selected: T[], clear: () => void) => ReactNode;
+  /** تمريره يفعّل زر تصدير CSV — يصدّر الصفوف بعد البحث الحالي */
+  csv?: CsvExport<T>;
 }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
@@ -125,6 +136,22 @@ export default function DataTable<T>({
             <div />
           )}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            {csv && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  downloadCsv(
+                    csv.filename,
+                    csv.headers,
+                    filtered.map((row) => csv.row(row))
+                  )
+                }
+              >
+                <Download className="h-4 w-4" />
+                تصدير CSV
+              </Button>
+            )}
             <span>عرض</span>
             <select
               value={pageSize}

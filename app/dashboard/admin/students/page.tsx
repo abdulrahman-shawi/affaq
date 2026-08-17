@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { Pencil, Plus, Trash2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
@@ -9,11 +10,41 @@ import StudentForm from "@/components/forms/StudentForm";
 import AssignParentDialog from "@/components/forms/AssignParentDialog";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import { useStudents } from "@/hooks/useStudents";
+import { formatDate } from "@/app/lib/utils";
 import type { StudentDTO } from "@/types";
+
+const STATUS_LABELS: Record<string, string> = {
+  active: "نشط",
+  expired: "منتهي",
+  suspended: "موقوف",
+};
+
+const selectClassName =
+  "flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 export default function AdminStudentsPage() {
   const { students, loading, refetch } = useStudents();
   const { toast } = useToast();
+  const [classFilter, setClassFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const classNames = useMemo(
+    () =>
+      Array.from(
+        new Set(students.map((s) => s.class?.name).filter(Boolean))
+      ) as string[],
+    [students]
+  );
+
+  const filtered = useMemo(
+    () =>
+      students.filter(
+        (s) =>
+          (classFilter === "all" || s.class?.name === classFilter) &&
+          (statusFilter === "all" || s.status === statusFilter)
+      ),
+    [students, classFilter, statusFilter]
+  );
 
   async function handleDelete(student: StudentDTO) {
     try {
@@ -37,7 +68,33 @@ export default function AdminStudentsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap gap-2">
+          <select
+            className={selectClassName}
+            value={classFilter}
+            onChange={(e) => setClassFilter(e.target.value)}
+          >
+            <option value="all">كل الصفوف</option>
+            {classNames.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <select
+            className={selectClassName}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">كل الحالات</option>
+            {Object.entries(STATUS_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
         <StudentForm
           onSuccess={refetch}
           trigger={
@@ -51,10 +108,31 @@ export default function AdminStudentsPage() {
 
       <DataTable
         columns={studentColumns()}
-        data={students}
+        data={filtered}
         loading={loading}
         emptyTitle="لا يوجد طلاب"
         emptyMessage="ابدأ بإضافة أول طالب"
+        csv={{
+          filename: "الطلاب.csv",
+          headers: [
+            "الاسم",
+            "البريد",
+            "الجوال",
+            "الصف",
+            "الحالة",
+            "نهاية الاشتراك",
+            "ولي الأمر",
+          ],
+          row: (s) => [
+            s.user?.name,
+            s.user?.email,
+            s.user?.phone,
+            s.class?.name ?? "بدون صف",
+            STATUS_LABELS[s.status] ?? s.status,
+            formatDate(s.subEndDate),
+            s.parent?.user?.name,
+          ],
+        }}
         searchValue={(s) =>
           [s.user?.name, s.user?.email, s.user?.phone, s.parent?.user?.name]
             .filter(Boolean)
