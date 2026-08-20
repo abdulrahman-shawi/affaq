@@ -208,15 +208,16 @@ model TimetableSlot {
 }
 
 model Quiz {
-  id        String         @id @default(uuid())
-  title     String
-  subject   String
-  grade     Int
-  teacherId String
-  teacher   Teacher        @relation(fields: [teacherId], references: [id])
-  createdAt DateTime       @default(now())
-  questions QuizQuestion[]
-  attempts  QuizAttempt[]
+  id              String         @id @default(uuid())
+  title           String
+  subject         String
+  grade           Int
+  durationMinutes Int?           // مهلة الاختبار بالدقائق — فارغة = بلا مؤقت
+  teacherId       String
+  teacher         Teacher        @relation(fields: [teacherId], references: [id])
+  createdAt       DateTime       @default(now())
+  questions       QuizQuestion[]
+  attempts        QuizAttempt[]
 }
 
 model QuizQuestion {

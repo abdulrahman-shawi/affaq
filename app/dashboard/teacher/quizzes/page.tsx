@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2, BarChart3 } from "lucide-react";
+import { Plus, Trash2, BarChart3, Pencil } from "lucide-react";
 import DataTable, { type Column } from "@/components/tables/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,15 @@ export default function TeacherQuizzesPage() {
         <Badge variant="secondary">{q.attempts?.length ?? 0}</Badge>
       ),
     },
+    {
+      header: "المدة",
+      cell: (q) =>
+        q.durationMinutes ? (
+          <Badge variant="outline">{q.durationMinutes} دقيقة</Badge>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
+    },
     { header: "التاريخ", cell: (q) => formatDate(q.createdAt) },
   ];
 
@@ -71,6 +80,15 @@ export default function TeacherQuizzesPage() {
               trigger={
                 <Button variant="ghost" size="icon" title="النتائج">
                   <BarChart3 className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <QuizForm
+              quiz={q}
+              onSuccess={refetch}
+              trigger={
+                <Button variant="ghost" size="icon" title="تعديل">
+                  <Pencil className="h-4 w-4" />
                 </Button>
               }
             />

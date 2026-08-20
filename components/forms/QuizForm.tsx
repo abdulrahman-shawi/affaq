@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type {
   ClassLevelDTO,
   CreateQuizQuestionInput,
+  QuizDTO,
   SubjectDTO,
   TeacherDTO,
 } from "@/types";
@@ -42,15 +43,18 @@ const emptyQuestion = (): CreateQuizQuestionInput => ({
   points: 1,
 });
 
-const emptyForm = { title: "", subject: "", classOrder: "" };
+const emptyForm = { title: "", subject: "", classOrder: "", duration: "" };
 
 export default function QuizForm({
+  quiz,
   onSuccess,
   trigger,
 }: {
+  quiz?: QuizDTO; // عند تمريره يعمل النموذج في وضع التعديل
   onSuccess?: () => void;
   trigger: ReactNode;
 }) {
+  const isEdit = Boolean(quiz);
   const { user } = useAuth();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -65,11 +69,30 @@ export default function QuizForm({
   ]);
 
   // عند فتح النموذج: نجلب ملف المعلم وقوائم المواد والصفوف (نفس نمط AssignmentForm)
+  // وفي وضع التعديل نعبّئ الحقول من الاختبار الحالي
   useEffect(() => {
     if (!open || !user) return;
     setError(null);
-    setForm(emptyForm);
-    setQuestions([emptyQuestion()]);
+    setForm(
+      quiz
+        ? {
+            title: quiz.title,
+            subject: quiz.subject,
+            classOrder: String(quiz.grade),
+            duration: quiz.durationMinutes ? String(quiz.durationMinutes) : "",
+          }
+        : emptyForm
+    );
+    setQuestions(
+      quiz?.questions?.length
+        ? quiz.questions.map((q) => ({
+            text: q.text,
+            options: [...q.options],
+            correctIndex: q.correctIndex ?? 0,
+            points: q.points,
+          }))
+        : [emptyQuestion()]
+    );
     (async () => {
       try {
         let me: TeacherDTO | null = null;
@@ -116,7 +139,7 @@ export default function QuizForm({
         setClasses([]);
       }
     })();
-  }, [open, user]);
+  }, [open, user, quiz]);
 
   function updateQuestion(
     index: number,
@@ -142,30 +165,42 @@ export default function QuizForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!teacher) {
+    if (!isEdit && !teacher) {
       setError("لم يتم العثور على ملف المعلم");
       return;
     }
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/quizzes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: form.title,
-          subject: form.subject,
-          grade: Number(form.classOrder),
-          teacherId: teacher.id,
-          questions,
-        }),
-      });
+      const payload = {
+        title: form.title,
+        subject: form.subject,
+        grade: Number(form.classOrder),
+        durationMinutes: form.duration ? Number(form.duration) : null,
+        questions,
+      };
+      const res = await fetch(
+        isEdit ? `/api/quizzes/${quiz!.id}` : "/api/quizzes",
+        {
+          method: isEdit ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            isEdit ? payload : { ...payload, teacherId: teacher!.id }
+          ),
+        }
+      );
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "فشل في إنشاء الاختبار");
+        throw new Error(
+          body?.error ??
+            (isEdit ? "فشل في تعديل الاختبار" : "فشل في إنشاء الاختبار")
+        );
       }
       setOpen(false);
-      toast({ variant: "success", title: "تم إنشاء الاختبار بنجاح" });
+      toast({
+        variant: "success",
+        title: isEdit ? "تم تعديل الاختبار بنجاح" : "تم إنشاء الاختبار بنجاح",
+      });
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
@@ -179,7 +214,9 @@ export default function QuizForm({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>إنشاء اختبار جديد</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "تعديل الاختبار" : "إنشاء اختبار جديد"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -229,6 +266,24 @@ export default function QuizForm({
               </select>
             </div>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="quiz-duration">المدة بالدقائق (اختياري)</Label>
+            <Input
+              id="quiz-duration"
+              type="number"
+              min={1}
+              step={1}
+              placeholder="اتركه فارغًا لاختبار بلا مؤقت"
+              value={form.duration}
+              onChange={(e) => setForm({ ...form, duration: e.target.value })}
+            />
+          </div>
+          {isEdit && (quiz?.attempts?.length ?? 0) > 0 && (
+            <p className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+              تنبيه: لهذا الاختبار {quiz!.attempts!.length} محاولة مسجلة.
+              تعديل الأسئلة لا يغيّر درجات المحاولات السابقة.
+            </p>
+          )}
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -317,7 +372,11 @@ export default function QuizForm({
 
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "جارٍ الحفظ..." : "إنشاء الاختبار"}
+            {submitting
+              ? "جارٍ الحفظ..."
+              : isEdit
+                ? "حفظ التعديلات"
+                : "إنشاء الاختبار"}
           </Button>
         </form>
       </DialogContent>

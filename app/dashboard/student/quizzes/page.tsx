@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Play } from "lucide-react";
+import { Eye, Play } from "lucide-react";
 import DataTable, { type Column } from "@/components/tables/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import TakeQuizDialog from "@/components/forms/TakeQuizDialog";
+import QuizReviewDialog from "@/components/forms/QuizReviewDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuizzes } from "@/hooks/useQuizzes";
 import { useStudents } from "@/hooks/useStudents";
@@ -56,6 +57,15 @@ export default function StudentQuizzesPage() {
         <Badge variant="secondary">{q.questions?.length ?? 0}</Badge>
       ),
     },
+    {
+      header: "المدة",
+      cell: (q) =>
+        q.durationMinutes ? (
+          <Badge variant="outline">{q.durationMinutes} دقيقة</Badge>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
+    },
     { header: "التاريخ", cell: (q) => formatDate(q.createdAt) },
     {
       header: "الحالة",
@@ -83,7 +93,21 @@ export default function StudentQuizzesPage() {
         emptyMessage="ستظهر اختبارات صفّك هنا عند إضافتها من قبل المعلم"
         actions={(q) => {
           const attempt = myAttempt(q);
-          if (attempt || !me) return null;
+          if (!me) return null;
+          if (attempt) {
+            return (
+              <QuizReviewDialog
+                quiz={q}
+                attempt={attempt}
+                trigger={
+                  <Button variant="outline" size="sm">
+                    <Eye className="h-4 w-4" />
+                    مراجعة إجاباتي
+                  </Button>
+                }
+              />
+            );
+          }
           return (
             <TakeQuizDialog
               quiz={q}

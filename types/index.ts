@@ -101,7 +101,7 @@ export interface QuizQuestionDTO {
   quizId: string;
   text: string;
   options: string[];
-  correctIndex?: number; // يُحذف من استجابة الطالب
+  correctIndex?: number; // يُحذف من استجابة الطالب ما لم يكن قد أدّى الاختبار (للمراجعة)
   points: number;
 }
 
@@ -110,6 +110,7 @@ export interface QuizAttemptDTO {
   quizId: string;
   studentId: string;
   student?: StudentDTO;
+  answers?: number[]; // إجابات الطالب بفهارس الخيارات الأصلية
   score: number;
   maxScore: number;
   submittedAt: string;
@@ -120,6 +121,7 @@ export interface QuizDTO {
   title: string;
   subject: string;
   grade: number;
+  durationMinutes?: number | null; // مهلة الاختبار — فارغة = بلا مؤقت
   teacherId: string;
   teacher?: TeacherDTO;
   createdAt: string;
@@ -319,7 +321,12 @@ export interface CreateQuizInput {
   title: string;
   subject: string;
   grade: number;
+  durationMinutes?: number | null;
   questions: CreateQuizQuestionInput[];
+}
+
+export interface UpdateQuizInput extends CreateQuizInput {
+  id: string;
 }
 
 export interface SubmitQuizInput {

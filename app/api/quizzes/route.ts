@@ -20,16 +20,22 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    // الطالب لا يحصل على correctIndex
+    // الطالب لا يحصل على correctIndex إلا للاختبارات التي أدّاها (للمراجعة)
     if (sessionUser.role === "student") {
       return NextResponse.json(
-        quizzes.map((quiz) => ({
-          ...quiz,
-          attempts: quiz.attempts.filter(
+        quizzes.map((quiz) => {
+          const myAttempts = quiz.attempts.filter(
             (a) => a.student.userId === sessionUser.id
-          ),
-          questions: quiz.questions.map(({ correctIndex: _c, ...q }) => q),
-        }))
+          );
+          const attempted = myAttempts.length > 0;
+          return {
+            ...quiz,
+            attempts: myAttempts,
+            questions: attempted
+              ? quiz.questions
+              : quiz.questions.map(({ correctIndex: _c, ...q }) => q),
+          };
+        })
       );
     }
 
@@ -47,7 +53,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, subject, grade, teacherId, questions } = body;
+    const { title, subject, grade, teacherId, questions, durationMinutes } = body;
 
     if (
       !title?.trim() ||
@@ -58,6 +64,17 @@ export async function POST(req: Request) {
       questions.length === 0
     ) {
       return NextResponse.json({ error: "بيانات الاختبار ناقصة" }, { status: 400 });
+    }
+
+    if (
+      durationMinutes !== undefined &&
+      durationMinutes !== null &&
+      (!Number.isInteger(Number(durationMinutes)) || Number(durationMinutes) <= 0)
+    ) {
+      return NextResponse.json(
+        { error: "مدة الاختبار يجب أن تكون عددًا صحيحًا موجبًا من الدقائق" },
+        { status: 400 }
+      );
     }
 
     const invalid = questions.some(
@@ -88,6 +105,7 @@ export async function POST(req: Request) {
         title: title.trim(),
         subject,
         grade: Number(grade),
+        durationMinutes: durationMinutes ? Number(durationMinutes) : null,
         teacherId,
         questions: {
           create: questions.map(
