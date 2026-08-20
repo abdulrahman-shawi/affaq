@@ -80,11 +80,12 @@ export default function TeacherQuizzesPage() {
 
   // خيارات الفلاتر من البيانات نفسها
   const subjectOptions = useMemo(
-    () => [...new Set(quizzes.map((q) => q.subject))],
+    () => Array.from(new Set(quizzes.map((q) => q.subject))),
     [quizzes]
   );
   const gradeOptions = useMemo(
-    () => [...new Set(quizzes.map((q) => q.grade))].sort((a, b) => a - b),
+    () =>
+      Array.from(new Set(quizzes.map((q) => q.grade))).sort((a, b) => a - b),
     [quizzes]
   );
 
