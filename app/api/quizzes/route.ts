@@ -12,6 +12,8 @@ export async function GET() {
 
   try {
     const quizzes = await prisma.quiz.findMany({
+      // الطالب يرى الاختبارات المنشورة فقط — المسودات للمعلم والمدير
+      where: sessionUser.role === "student" ? { published: true } : {},
       include: {
         teacher: { include: { user: true } },
         questions: true,
@@ -53,7 +55,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, subject, grade, teacherId, questions, durationMinutes } = body;
+    const { title, subject, grade, teacherId, questions, durationMinutes, published } = body;
 
     if (
       !title?.trim() ||
@@ -79,23 +81,28 @@ export async function POST(req: Request) {
 
     const invalid = questions.some(
       (q: {
+        type?: string;
         text?: string;
         options?: string[];
         correctIndex?: number;
         points?: number;
-      }) =>
-        !q.text?.trim() ||
-        !Array.isArray(q.options) ||
-        q.options.length !== 4 ||
-        q.options.some((o) => !o?.trim()) ||
-        !Number.isInteger(q.correctIndex) ||
-        q.correctIndex! < 0 ||
-        q.correctIndex! > 3 ||
-        (q.points !== undefined && Number(q.points) <= 0)
+      }) => {
+        if (!q.text?.trim() || !Array.isArray(q.options)) return true;
+        if (q.points !== undefined && Number(q.points) <= 0) return true;
+        const isTrueFalse = q.type === "truefalse";
+        const expectedOptions = isTrueFalse ? 2 : 4;
+        return (
+          q.options!.length !== expectedOptions ||
+          q.options!.some((o) => !o?.trim()) ||
+          !Number.isInteger(q.correctIndex) ||
+          q.correctIndex! < 0 ||
+          q.correctIndex! >= expectedOptions
+        );
+      }
     );
     if (invalid) {
       return NextResponse.json(
-        { error: "كل سؤال يحتاج نصًا و4 خيارات وإجابة صحيحة محددة" },
+        { error: "كل سؤال يحتاج نصًا وخيارات مكتملة وإجابة صحيحة محددة" },
         { status: 400 }
       );
     }
@@ -106,15 +113,18 @@ export async function POST(req: Request) {
         subject,
         grade: Number(grade),
         durationMinutes: durationMinutes ? Number(durationMinutes) : null,
+        published: published !== false,
         teacherId,
         questions: {
           create: questions.map(
             (q: {
+              type?: string;
               text: string;
               options: string[];
               correctIndex: number;
               points?: number;
             }) => ({
+              type: q.type === "truefalse" ? "truefalse" : "mcq",
               text: q.text.trim(),
               options: q.options.map((o) => o.trim()),
               correctIndex: q.correctIndex,

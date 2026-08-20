@@ -99,6 +99,7 @@ export interface TimetableSlotDTO {
 export interface QuizQuestionDTO {
   id: string;
   quizId: string;
+  type?: "mcq" | "truefalse";
   text: string;
   options: string[];
   correctIndex?: number; // يُحذف من استجابة الطالب ما لم يكن قد أدّى الاختبار (للمراجعة)
@@ -122,6 +123,7 @@ export interface QuizDTO {
   subject: string;
   grade: number;
   durationMinutes?: number | null; // مهلة الاختبار — فارغة = بلا مؤقت
+  published?: boolean; // مسودة = لا تظهر للطلاب
   teacherId: string;
   teacher?: TeacherDTO;
   createdAt: string;
@@ -311,8 +313,9 @@ export interface CreateTimetableSlotInput {
 }
 
 export interface CreateQuizQuestionInput {
+  type?: "mcq" | "truefalse";
   text: string;
-  options: string[]; // 4 خيارات
+  options: string[]; // 4 خيارات لـ mcq، وخياران [صح، خطأ] لـ truefalse
   correctIndex: number;
   points?: number;
 }
@@ -322,6 +325,7 @@ export interface CreateQuizInput {
   subject: string;
   grade: number;
   durationMinutes?: number | null;
+  published?: boolean;
   questions: CreateQuizQuestionInput[];
 }
 

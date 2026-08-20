@@ -53,8 +53,10 @@ export default function TakeQuizDialog({
   // answers[موضع العرض] = فهرس الخيار الأصلي المختار
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [incompleteWarn, setIncompleteWarn] = useState(false);
 
   const questions = quiz.questions ?? [];
+  const answeredCount = answers.filter((a) => a !== null).length;
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
@@ -73,10 +75,11 @@ export default function TakeQuizDialog({
         quiz.durationMinutes ? quiz.durationMinutes * 60 : null
       );
       setError(null);
+      setIncompleteWarn(false);
     }
   }
 
-  async function submit(auto: boolean) {
+  async function submit(auto: boolean, allowIncomplete = false) {
     // نعيد الإجابات إلى الفهارس الأصلية قبل الإرسال؛ غير المُجاب = -1
     const mapped = questions.map((_, origIdx) => {
       const displayIdx = items.findIndex((it) => it.origIndex === origIdx);
@@ -84,10 +87,12 @@ export default function TakeQuizDialog({
       return a ?? -1;
     });
 
-    if (!auto && mapped.some((a) => a === -1)) {
-      setError("يجب الإجابة على جميع الأسئلة قبل التسليم");
+    // التسليم الناقص يدويًا يتطلب تأكيدًا أولًا (المؤقّت يسلّم كما هو)
+    if (!auto && !allowIncomplete && mapped.some((a) => a === -1)) {
+      setIncompleteWarn(true);
       return;
     }
+    setIncompleteWarn(false);
     setSubmitting(true);
     setError(null);
     try {
@@ -151,6 +156,21 @@ export default function TakeQuizDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          {items.length > 0 && (
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                أجبت على {answeredCount} من {items.length}
+              </p>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{
+                    width: `${items.length ? (answeredCount / items.length) * 100 : 0}%`,
+                  }}
+                />
+              </div>
+            </div>
+          )}
           {items.map(({ q, optionOrder }, qi) => (
             <div key={q.id} className="space-y-2 rounded-md border p-4">
               <p className="text-sm font-medium">
@@ -169,11 +189,12 @@ export default function TakeQuizDialog({
                       type="radio"
                       name={`answer-${qi}`}
                       checked={answers[qi] === origOptionIdx}
-                      onChange={() =>
+                      onChange={() => {
+                        setIncompleteWarn(false);
                         setAnswers((prev) =>
                           prev.map((a, i) => (i === qi ? origOptionIdx : a))
-                        )
-                      }
+                        );
+                      }}
                     />
                     {q.options[origOptionIdx]}
                   </label>
@@ -182,6 +203,32 @@ export default function TakeQuizDialog({
             </div>
           ))}
           {error && <p className="text-sm text-destructive">{error}</p>}
+          {incompleteWarn && (
+            <div className="space-y-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+              <p>
+                لم تجب على {items.length - answeredCount}{" "}
+                {items.length - answeredCount === 1 ? "سؤال" : "أسئلة"} —
+                الأسئلة غير المُجابة ستُحسب خاطئة.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={submitting}
+                  onClick={() => submit(false, true)}
+                >
+                  تسليم على أي حال
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIncompleteWarn(false)}
+                >
+                  متابعة الإجابة
+                </Button>
+              </div>
+            </div>
+          )}
           <Button
             className="w-full"
             disabled={submitting}

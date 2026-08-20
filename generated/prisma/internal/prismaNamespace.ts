@@ -2141,6 +2141,7 @@ export const QuizScalarFieldEnum = {
   subject: 'subject',
   grade: 'grade',
   durationMinutes: 'durationMinutes',
+  published: 'published',
   teacherId: 'teacherId',
   createdAt: 'createdAt'
 } as const
@@ -2151,6 +2152,7 @@ export type QuizScalarFieldEnum = (typeof QuizScalarFieldEnum)[keyof typeof Quiz
 export const QuizQuestionScalarFieldEnum = {
   id: 'id',
   quizId: 'quizId',
+  type: 'type',
   text: 'text',
   options: 'options',
   correctIndex: 'correctIndex',

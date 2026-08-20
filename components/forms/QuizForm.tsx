@@ -37,13 +37,20 @@ const selectClass =
   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 const emptyQuestion = (): CreateQuizQuestionInput => ({
+  type: "mcq",
   text: "",
   options: ["", "", "", ""],
   correctIndex: 0,
   points: 1,
 });
 
-const emptyForm = { title: "", subject: "", classOrder: "", duration: "" };
+const emptyForm = {
+  title: "",
+  subject: "",
+  classOrder: "",
+  duration: "",
+  publishNow: true,
+};
 
 export default function QuizForm({
   quiz,
@@ -80,12 +87,14 @@ export default function QuizForm({
             subject: quiz.subject,
             classOrder: String(quiz.grade),
             duration: quiz.durationMinutes ? String(quiz.durationMinutes) : "",
+            publishNow: quiz.published !== false,
           }
         : emptyForm
     );
     setQuestions(
       quiz?.questions?.length
         ? quiz.questions.map((q) => ({
+            type: q.type === "truefalse" ? "truefalse" : "mcq",
             text: q.text,
             options: [...q.options],
             correctIndex: q.correctIndex ?? 0,
@@ -163,6 +172,23 @@ export default function QuizForm({
     );
   }
 
+  // تبديل نوع السؤال يعيد ضبط خياراته: صح/خطأ بخيارين ثابتين
+  function changeQuestionType(index: number, type: "mcq" | "truefalse") {
+    setQuestions((prev) =>
+      prev.map((q, i) =>
+        i === index
+          ? {
+              ...q,
+              type,
+              options:
+                type === "truefalse" ? ["صح", "خطأ"] : ["", "", "", ""],
+              correctIndex: 0,
+            }
+          : q
+      )
+    );
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isEdit && !teacher) {
@@ -177,6 +203,7 @@ export default function QuizForm({
         subject: form.subject,
         grade: Number(form.classOrder),
         durationMinutes: form.duration ? Number(form.duration) : null,
+        published: form.publishNow,
         questions,
       };
       const res = await fetch(
@@ -278,6 +305,16 @@ export default function QuizForm({
               onChange={(e) => setForm({ ...form, duration: e.target.value })}
             />
           </div>
+          <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={form.publishNow}
+              onChange={(e) =>
+                setForm({ ...form, publishNow: e.target.checked })
+              }
+            />
+            نشر الاختبار للطلاب فورًا (أوقفه لحفظه كمسودة)
+          </label>
           {isEdit && (quiz?.attempts?.length ?? 0) > 0 && (
             <p className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
               تنبيه: لهذا الاختبار {quiz!.attempts!.length} محاولة مسجلة.
@@ -303,7 +340,23 @@ export default function QuizForm({
             {questions.map((q, qi) => (
               <div key={qi} className="space-y-3 rounded-md border p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium">سؤال {qi + 1}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">سؤال {qi + 1}</span>
+                    <select
+                      aria-label="نوع السؤال"
+                      className="h-8 rounded-md border border-input bg-transparent px-2 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      value={q.type ?? "mcq"}
+                      onChange={(e) =>
+                        changeQuestionType(
+                          qi,
+                          e.target.value as "mcq" | "truefalse"
+                        )
+                      }
+                    >
+                      <option value="mcq">اختيار من متعدد</option>
+                      <option value="truefalse">صح / خطأ</option>
+                    </select>
+                  </div>
                   <div className="flex items-center gap-2">
                     <Label htmlFor={`points-${qi}`} className="text-xs">
                       الدرجة
@@ -343,27 +396,52 @@ export default function QuizForm({
                   onChange={(e) => updateQuestion(qi, { text: e.target.value })}
                 />
                 <div className="space-y-2">
-                  {q.options.map((option, oi) => (
-                    <div key={oi} className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name={`correct-${qi}`}
-                        title="الإجابة الصحيحة"
-                        checked={q.correctIndex === oi}
-                        onChange={() =>
-                          updateQuestion(qi, { correctIndex: oi })
-                        }
-                      />
-                      <Input
-                        required
-                        placeholder={`الخيار ${oi + 1}`}
-                        value={option}
-                        onChange={(e) => updateOption(qi, oi, e.target.value)}
-                      />
+                  {(q.type ?? "mcq") === "truefalse" ? (
+                    <div className="flex gap-4">
+                      {q.options.map((option, oi) => (
+                        <label
+                          key={oi}
+                          className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm"
+                        >
+                          <input
+                            type="radio"
+                            name={`correct-${qi}`}
+                            checked={q.correctIndex === oi}
+                            onChange={() =>
+                              updateQuestion(qi, { correctIndex: oi })
+                            }
+                          />
+                          {option}
+                        </label>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <>
+                      {q.options.map((option, oi) => (
+                        <div key={oi} className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name={`correct-${qi}`}
+                            title="الإجابة الصحيحة"
+                            checked={q.correctIndex === oi}
+                            onChange={() =>
+                              updateQuestion(qi, { correctIndex: oi })
+                            }
+                          />
+                          <Input
+                            required
+                            placeholder={`الخيار ${oi + 1}`}
+                            value={option}
+                            onChange={(e) => updateOption(qi, oi, e.target.value)}
+                          />
+                        </div>
+                      ))}
+                    </>
+                  )}
                   <p className="text-xs text-muted-foreground">
-                    حدّد الدائرة بجانب الإجابة الصحيحة
+                    {(q.type ?? "mcq") === "truefalse"
+                      ? "حدّد الإجابة الصحيحة: صح أم خطأ"
+                      : "حدّد الدائرة بجانب الإجابة الصحيحة"}
                   </p>
                 </div>
               </div>

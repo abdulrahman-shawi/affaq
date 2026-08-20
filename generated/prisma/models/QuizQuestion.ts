@@ -39,6 +39,7 @@ export type QuizQuestionSumAggregateOutputType = {
 export type QuizQuestionMinAggregateOutputType = {
   id: string | null
   quizId: string | null
+  type: string | null
   text: string | null
   correctIndex: number | null
   points: number | null
@@ -47,6 +48,7 @@ export type QuizQuestionMinAggregateOutputType = {
 export type QuizQuestionMaxAggregateOutputType = {
   id: string | null
   quizId: string | null
+  type: string | null
   text: string | null
   correctIndex: number | null
   points: number | null
@@ -55,6 +57,7 @@ export type QuizQuestionMaxAggregateOutputType = {
 export type QuizQuestionCountAggregateOutputType = {
   id: number
   quizId: number
+  type: number
   text: number
   options: number
   correctIndex: number
@@ -76,6 +79,7 @@ export type QuizQuestionSumAggregateInputType = {
 export type QuizQuestionMinAggregateInputType = {
   id?: true
   quizId?: true
+  type?: true
   text?: true
   correctIndex?: true
   points?: true
@@ -84,6 +88,7 @@ export type QuizQuestionMinAggregateInputType = {
 export type QuizQuestionMaxAggregateInputType = {
   id?: true
   quizId?: true
+  type?: true
   text?: true
   correctIndex?: true
   points?: true
@@ -92,6 +97,7 @@ export type QuizQuestionMaxAggregateInputType = {
 export type QuizQuestionCountAggregateInputType = {
   id?: true
   quizId?: true
+  type?: true
   text?: true
   options?: true
   correctIndex?: true
@@ -188,6 +194,7 @@ export type QuizQuestionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type QuizQuestionGroupByOutputType = {
   id: string
   quizId: string
+  type: string
   text: string
   options: string[]
   correctIndex: number
@@ -220,6 +227,7 @@ export type QuizQuestionWhereInput = {
   NOT?: Prisma.QuizQuestionWhereInput | Prisma.QuizQuestionWhereInput[]
   id?: Prisma.StringFilter<"QuizQuestion"> | string
   quizId?: Prisma.StringFilter<"QuizQuestion"> | string
+  type?: Prisma.StringFilter<"QuizQuestion"> | string
   text?: Prisma.StringFilter<"QuizQuestion"> | string
   options?: Prisma.StringNullableListFilter<"QuizQuestion">
   correctIndex?: Prisma.IntFilter<"QuizQuestion"> | number
@@ -230,6 +238,7 @@ export type QuizQuestionWhereInput = {
 export type QuizQuestionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   quizId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   text?: Prisma.SortOrder
   options?: Prisma.SortOrder
   correctIndex?: Prisma.SortOrder
@@ -243,6 +252,7 @@ export type QuizQuestionWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.QuizQuestionWhereInput[]
   NOT?: Prisma.QuizQuestionWhereInput | Prisma.QuizQuestionWhereInput[]
   quizId?: Prisma.StringFilter<"QuizQuestion"> | string
+  type?: Prisma.StringFilter<"QuizQuestion"> | string
   text?: Prisma.StringFilter<"QuizQuestion"> | string
   options?: Prisma.StringNullableListFilter<"QuizQuestion">
   correctIndex?: Prisma.IntFilter<"QuizQuestion"> | number
@@ -253,6 +263,7 @@ export type QuizQuestionWhereUniqueInput = Prisma.AtLeast<{
 export type QuizQuestionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   quizId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   text?: Prisma.SortOrder
   options?: Prisma.SortOrder
   correctIndex?: Prisma.SortOrder
@@ -270,6 +281,7 @@ export type QuizQuestionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.QuizQuestionScalarWhereWithAggregatesInput | Prisma.QuizQuestionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"QuizQuestion"> | string
   quizId?: Prisma.StringWithAggregatesFilter<"QuizQuestion"> | string
+  type?: Prisma.StringWithAggregatesFilter<"QuizQuestion"> | string
   text?: Prisma.StringWithAggregatesFilter<"QuizQuestion"> | string
   options?: Prisma.StringNullableListFilter<"QuizQuestion">
   correctIndex?: Prisma.IntWithAggregatesFilter<"QuizQuestion"> | number
@@ -278,6 +290,7 @@ export type QuizQuestionScalarWhereWithAggregatesInput = {
 
 export type QuizQuestionCreateInput = {
   id?: string
+  type?: string
   text: string
   options?: Prisma.QuizQuestionCreateoptionsInput | string[]
   correctIndex: number
@@ -288,6 +301,7 @@ export type QuizQuestionCreateInput = {
 export type QuizQuestionUncheckedCreateInput = {
   id?: string
   quizId: string
+  type?: string
   text: string
   options?: Prisma.QuizQuestionCreateoptionsInput | string[]
   correctIndex: number
@@ -296,6 +310,7 @@ export type QuizQuestionUncheckedCreateInput = {
 
 export type QuizQuestionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   options?: Prisma.QuizQuestionUpdateoptionsInput | string[]
   correctIndex?: Prisma.IntFieldUpdateOperationsInput | number
@@ -306,6 +321,7 @@ export type QuizQuestionUpdateInput = {
 export type QuizQuestionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quizId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   options?: Prisma.QuizQuestionUpdateoptionsInput | string[]
   correctIndex?: Prisma.IntFieldUpdateOperationsInput | number
@@ -315,6 +331,7 @@ export type QuizQuestionUncheckedUpdateInput = {
 export type QuizQuestionCreateManyInput = {
   id?: string
   quizId: string
+  type?: string
   text: string
   options?: Prisma.QuizQuestionCreateoptionsInput | string[]
   correctIndex: number
@@ -323,6 +340,7 @@ export type QuizQuestionCreateManyInput = {
 
 export type QuizQuestionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   options?: Prisma.QuizQuestionUpdateoptionsInput | string[]
   correctIndex?: Prisma.IntFieldUpdateOperationsInput | number
@@ -332,6 +350,7 @@ export type QuizQuestionUpdateManyMutationInput = {
 export type QuizQuestionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quizId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   options?: Prisma.QuizQuestionUpdateoptionsInput | string[]
   correctIndex?: Prisma.IntFieldUpdateOperationsInput | number
@@ -359,6 +378,7 @@ export type StringNullableListFilter<$PrismaModel = never> = {
 export type QuizQuestionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   quizId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   text?: Prisma.SortOrder
   options?: Prisma.SortOrder
   correctIndex?: Prisma.SortOrder
@@ -373,6 +393,7 @@ export type QuizQuestionAvgOrderByAggregateInput = {
 export type QuizQuestionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   quizId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   text?: Prisma.SortOrder
   correctIndex?: Prisma.SortOrder
   points?: Prisma.SortOrder
@@ -381,6 +402,7 @@ export type QuizQuestionMaxOrderByAggregateInput = {
 export type QuizQuestionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   quizId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   text?: Prisma.SortOrder
   correctIndex?: Prisma.SortOrder
   points?: Prisma.SortOrder
@@ -444,6 +466,7 @@ export type QuizQuestionUpdateoptionsInput = {
 
 export type QuizQuestionCreateWithoutQuizInput = {
   id?: string
+  type?: string
   text: string
   options?: Prisma.QuizQuestionCreateoptionsInput | string[]
   correctIndex: number
@@ -452,6 +475,7 @@ export type QuizQuestionCreateWithoutQuizInput = {
 
 export type QuizQuestionUncheckedCreateWithoutQuizInput = {
   id?: string
+  type?: string
   text: string
   options?: Prisma.QuizQuestionCreateoptionsInput | string[]
   correctIndex: number
@@ -490,6 +514,7 @@ export type QuizQuestionScalarWhereInput = {
   NOT?: Prisma.QuizQuestionScalarWhereInput | Prisma.QuizQuestionScalarWhereInput[]
   id?: Prisma.StringFilter<"QuizQuestion"> | string
   quizId?: Prisma.StringFilter<"QuizQuestion"> | string
+  type?: Prisma.StringFilter<"QuizQuestion"> | string
   text?: Prisma.StringFilter<"QuizQuestion"> | string
   options?: Prisma.StringNullableListFilter<"QuizQuestion">
   correctIndex?: Prisma.IntFilter<"QuizQuestion"> | number
@@ -498,6 +523,7 @@ export type QuizQuestionScalarWhereInput = {
 
 export type QuizQuestionCreateManyQuizInput = {
   id?: string
+  type?: string
   text: string
   options?: Prisma.QuizQuestionCreateoptionsInput | string[]
   correctIndex: number
@@ -506,6 +532,7 @@ export type QuizQuestionCreateManyQuizInput = {
 
 export type QuizQuestionUpdateWithoutQuizInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   options?: Prisma.QuizQuestionUpdateoptionsInput | string[]
   correctIndex?: Prisma.IntFieldUpdateOperationsInput | number
@@ -514,6 +541,7 @@ export type QuizQuestionUpdateWithoutQuizInput = {
 
 export type QuizQuestionUncheckedUpdateWithoutQuizInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   options?: Prisma.QuizQuestionUpdateoptionsInput | string[]
   correctIndex?: Prisma.IntFieldUpdateOperationsInput | number
@@ -522,6 +550,7 @@ export type QuizQuestionUncheckedUpdateWithoutQuizInput = {
 
 export type QuizQuestionUncheckedUpdateManyWithoutQuizInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   text?: Prisma.StringFieldUpdateOperationsInput | string
   options?: Prisma.QuizQuestionUpdateoptionsInput | string[]
   correctIndex?: Prisma.IntFieldUpdateOperationsInput | number
@@ -533,6 +562,7 @@ export type QuizQuestionUncheckedUpdateManyWithoutQuizInput = {
 export type QuizQuestionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   quizId?: boolean
+  type?: boolean
   text?: boolean
   options?: boolean
   correctIndex?: boolean
@@ -543,6 +573,7 @@ export type QuizQuestionSelect<ExtArgs extends runtime.Types.Extensions.Internal
 export type QuizQuestionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   quizId?: boolean
+  type?: boolean
   text?: boolean
   options?: boolean
   correctIndex?: boolean
@@ -553,6 +584,7 @@ export type QuizQuestionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 export type QuizQuestionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   quizId?: boolean
+  type?: boolean
   text?: boolean
   options?: boolean
   correctIndex?: boolean
@@ -563,13 +595,14 @@ export type QuizQuestionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 export type QuizQuestionSelectScalar = {
   id?: boolean
   quizId?: boolean
+  type?: boolean
   text?: boolean
   options?: boolean
   correctIndex?: boolean
   points?: boolean
 }
 
-export type QuizQuestionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "quizId" | "text" | "options" | "correctIndex" | "points", ExtArgs["result"]["quizQuestion"]>
+export type QuizQuestionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "quizId" | "type" | "text" | "options" | "correctIndex" | "points", ExtArgs["result"]["quizQuestion"]>
 export type QuizQuestionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   quiz?: boolean | Prisma.QuizDefaultArgs<ExtArgs>
 }
@@ -588,6 +621,7 @@ export type $QuizQuestionPayload<ExtArgs extends runtime.Types.Extensions.Intern
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     quizId: string
+    type: string
     text: string
     options: string[]
     correctIndex: number
@@ -1018,6 +1052,7 @@ export interface Prisma__QuizQuestionClient<T, Null = never, ExtArgs extends run
 export interface QuizQuestionFieldRefs {
   readonly id: Prisma.FieldRef<"QuizQuestion", 'String'>
   readonly quizId: Prisma.FieldRef<"QuizQuestion", 'String'>
+  readonly type: Prisma.FieldRef<"QuizQuestion", 'String'>
   readonly text: Prisma.FieldRef<"QuizQuestion", 'String'>
   readonly options: Prisma.FieldRef<"QuizQuestion", 'String[]'>
   readonly correctIndex: Prisma.FieldRef<"QuizQuestion", 'Int'>

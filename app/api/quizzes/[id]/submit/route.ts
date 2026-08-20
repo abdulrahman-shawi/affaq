@@ -38,6 +38,13 @@ export async function POST(
     if (!quiz) {
       return NextResponse.json({ error: "الاختبار غير موجود" }, { status: 404 });
     }
+    // لا تسليم على مسودة (قد تكون أُلغي نشرها بعد تحميل الطالب للقائمة)
+    if (!quiz.published && sessionUser.role !== "admin") {
+      return NextResponse.json(
+        { error: "هذا الاختبار غير متاح حاليًا" },
+        { status: 403 }
+      );
+    }
     if (answers.length !== quiz.questions.length) {
       return NextResponse.json(
         { error: "يجب الإجابة على جميع الأسئلة" },

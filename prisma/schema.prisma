@@ -213,6 +213,7 @@ model Quiz {
   subject         String
   grade           Int
   durationMinutes Int?           // مهلة الاختبار بالدقائق — فارغة = بلا مؤقت
+  published       Boolean        @default(true) // مسودة = لا تظهر للطلاب
   teacherId       String
   teacher         Teacher        @relation(fields: [teacherId], references: [id])
   createdAt       DateTime       @default(now())
@@ -224,6 +225,7 @@ model QuizQuestion {
   id           String @id @default(uuid())
   quizId       String
   quiz         Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  type         String @default("mcq") // "mcq" | "truefalse"
   text         String
   options      String[]
   correctIndex Int
