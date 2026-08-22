@@ -94,6 +94,7 @@ export interface TimetableSlotDTO {
   dayOfWeek: number;
   startTime: string;
   endTime: string;
+  zoomLink?: string | null;
 }
 
 export interface QuizQuestionDTO {
@@ -310,6 +311,7 @@ export interface CreateTimetableSlotInput {
   dayOfWeek: number;
   startTime: string;
   endTime: string;
+  zoomLink?: string | null;
 }
 
 export interface CreateQuizQuestionInput {

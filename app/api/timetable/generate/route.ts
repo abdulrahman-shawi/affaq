@@ -74,6 +74,7 @@ export async function POST(req: Request) {
         grade: slot.class.order,
         subject: slot.subject,
         date,
+        zoomLink: slot.zoomLink,
       });
     }
 

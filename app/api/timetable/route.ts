@@ -5,6 +5,18 @@ import { getSessionUser } from "@/app/lib/auth";
 export const dynamic = "force-dynamic";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const URL_RE = /^https?:\/\/\S+$/i;
+
+/** يعيد الرابط منسّقًا، أو null إذا كان فارغًا، أو يرمي خطأ إذا كان غير صالح */
+function normalizeZoomLink(value: unknown): string | null {
+  if (value === undefined || value === null) return null;
+  const link = String(value).trim();
+  if (!link) return null;
+  if (!URL_RE.test(link)) {
+    throw new Error("رابط زوم غير صالح — يجب أن يبدأ بـ http:// أو https://");
+  }
+  return link;
+}
 
 function isValidSlot(body: {
   subject?: string;
@@ -65,6 +77,15 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { classId, subject, dayOfWeek, startTime, endTime } = body;
     let { teacherId } = body;
+    let zoomLink: string | null;
+    try {
+      zoomLink = normalizeZoomLink(body.zoomLink);
+    } catch (e) {
+      return NextResponse.json(
+        { error: e instanceof Error ? e.message : "رابط زوم غير صالح" },
+        { status: 400 }
+      );
+    }
 
     // المعلم يضيف حصصًا لنفسه فقط
     if (sessionUser.role === "teacher") {
@@ -98,6 +119,7 @@ export async function POST(req: Request) {
         dayOfWeek: Number(dayOfWeek),
         startTime,
         endTime,
+        zoomLink,
       },
       include: { teacher: { include: { user: true } }, class: true },
     });

@@ -26,6 +26,7 @@ const emptyForm = {
   dayOfWeek: "",
   startTime: "",
   endTime: "",
+  zoomLink: "",
 };
 
 export default function TimetableSlotForm({
@@ -64,6 +65,7 @@ export default function TimetableSlotForm({
             dayOfWeek: String(slot.dayOfWeek),
             startTime: slot.startTime,
             endTime: slot.endTime,
+            zoomLink: slot.zoomLink ?? "",
           }
         : { ...emptyForm, teacherId: fixedTeacherId ?? "" }
     );
@@ -99,6 +101,7 @@ export default function TimetableSlotForm({
             dayOfWeek: Number(form.dayOfWeek),
             startTime: form.startTime,
             endTime: form.endTime,
+            zoomLink: form.zoomLink.trim() || null,
           }),
         }
       );
@@ -207,6 +210,20 @@ export default function TimetableSlotForm({
                 onChange={(e) => setForm({ ...form, endTime: e.target.value })}
               />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="slot-zoom">رابط زوم (اختياري)</Label>
+            <Input
+              id="slot-zoom"
+              type="url"
+              dir="ltr"
+              placeholder="https://zoom.us/j/..."
+              value={form.zoomLink}
+              onChange={(e) => setForm({ ...form, zoomLink: e.target.value })}
+            />
+            <p className="text-xs text-muted-foreground">
+              كل يوم في الجدول حصة مستقلة — يمكنك وضع رابط مختلف لكل يوم
+            </p>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Video } from "lucide-react";
 import EmptyState from "@/components/shared/EmptyState";
 import type { TimetableSlotDTO } from "@/types";
 
@@ -153,6 +153,17 @@ export default function TimetableGrid({
                         {formatTime12(toMinutes(slot.startTime))} -{" "}
                         {formatTime12(toMinutes(slot.endTime))}
                       </p>
+                      {slot.zoomLink && (
+                        <a
+                          href={slot.zoomLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-0.5 inline-flex items-center gap-1 rounded bg-white/70 px-1.5 py-0.5 font-medium text-sky-700 underline decoration-sky-400 underline-offset-2 hover:bg-white"
+                        >
+                          <Video className="h-3 w-3" />
+                          انضم عبر زوم
+                        </a>
+                      )}
                       {renderActions && (
                         <div className="absolute left-1 top-1 flex gap-0.5">
                           {renderActions(slot)}

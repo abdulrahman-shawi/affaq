@@ -2129,7 +2129,8 @@ export const TimetableSlotScalarFieldEnum = {
   subject: 'subject',
   dayOfWeek: 'dayOfWeek',
   startTime: 'startTime',
-  endTime: 'endTime'
+  endTime: 'endTime',
+  zoomLink: 'zoomLink'
 } as const
 
 export type TimetableSlotScalarFieldEnum = (typeof TimetableSlotScalarFieldEnum)[keyof typeof TimetableSlotScalarFieldEnum]

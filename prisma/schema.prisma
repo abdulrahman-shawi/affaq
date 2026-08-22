@@ -203,6 +203,7 @@ model TimetableSlot {
   dayOfWeek Int        // 0=الأحد .. 6=السبت
   startTime String     // "HH:MM"
   endTime   String     // "HH:MM"
+  zoomLink  String?    // رابط زوم الخاص بهذا اليوم — كل يوم له رابط مستقل
 
   @@unique([classId, dayOfWeek, startTime])
 }

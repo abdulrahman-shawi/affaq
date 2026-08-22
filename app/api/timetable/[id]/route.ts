@@ -5,6 +5,17 @@ import { getSessionUser } from "@/app/lib/auth";
 export const dynamic = "force-dynamic";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const URL_RE = /^https?:\/\/\S+$/i;
+
+/** يعيد الرابط منسّقًا، أو null إذا كان فارغًا (لمسح الرابط)، أو يرمي خطأ إذا كان غير صالح */
+function normalizeZoomLink(value: unknown): string | null {
+  const link = String(value ?? "").trim();
+  if (!link) return null;
+  if (!URL_RE.test(link)) {
+    throw new Error("رابط زوم غير صالح — يجب أن يبدأ بـ http:// أو https://");
+  }
+  return link;
+}
 
 export async function PATCH(
   req: Request,
@@ -34,6 +45,16 @@ export async function PATCH(
     if (body.endTime !== undefined) data.endTime = body.endTime;
     if (body.classId !== undefined) data.classId = body.classId;
     if (body.teacherId !== undefined) data.teacherId = body.teacherId;
+    if (body.zoomLink !== undefined) {
+      try {
+        data.zoomLink = normalizeZoomLink(body.zoomLink);
+      } catch (e) {
+        return NextResponse.json(
+          { error: e instanceof Error ? e.message : "رابط زوم غير صالح" },
+          { status: 400 }
+        );
+      }
+    }
 
     const merged = { ...existing, ...data } as {
       subject: string;

@@ -42,6 +42,7 @@ export type TimetableSlotMinAggregateOutputType = {
   dayOfWeek: number | null
   startTime: string | null
   endTime: string | null
+  zoomLink: string | null
 }
 
 export type TimetableSlotMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type TimetableSlotMaxAggregateOutputType = {
   dayOfWeek: number | null
   startTime: string | null
   endTime: string | null
+  zoomLink: string | null
 }
 
 export type TimetableSlotCountAggregateOutputType = {
@@ -62,6 +64,7 @@ export type TimetableSlotCountAggregateOutputType = {
   dayOfWeek: number
   startTime: number
   endTime: number
+  zoomLink: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type TimetableSlotMinAggregateInputType = {
   dayOfWeek?: true
   startTime?: true
   endTime?: true
+  zoomLink?: true
 }
 
 export type TimetableSlotMaxAggregateInputType = {
@@ -92,6 +96,7 @@ export type TimetableSlotMaxAggregateInputType = {
   dayOfWeek?: true
   startTime?: true
   endTime?: true
+  zoomLink?: true
 }
 
 export type TimetableSlotCountAggregateInputType = {
@@ -102,6 +107,7 @@ export type TimetableSlotCountAggregateInputType = {
   dayOfWeek?: true
   startTime?: true
   endTime?: true
+  zoomLink?: true
   _all?: true
 }
 
@@ -199,6 +205,7 @@ export type TimetableSlotGroupByOutputType = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink: string | null
   _count: TimetableSlotCountAggregateOutputType | null
   _avg: TimetableSlotAvgAggregateOutputType | null
   _sum: TimetableSlotSumAggregateOutputType | null
@@ -232,6 +239,7 @@ export type TimetableSlotWhereInput = {
   dayOfWeek?: Prisma.IntFilter<"TimetableSlot"> | number
   startTime?: Prisma.StringFilter<"TimetableSlot"> | string
   endTime?: Prisma.StringFilter<"TimetableSlot"> | string
+  zoomLink?: Prisma.StringNullableFilter<"TimetableSlot"> | string | null
   class?: Prisma.XOR<Prisma.ClassLevelScalarRelationFilter, Prisma.ClassLevelWhereInput>
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
 }
@@ -244,6 +252,7 @@ export type TimetableSlotOrderByWithRelationInput = {
   dayOfWeek?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  zoomLink?: Prisma.SortOrderInput | Prisma.SortOrder
   class?: Prisma.ClassLevelOrderByWithRelationInput
   teacher?: Prisma.TeacherOrderByWithRelationInput
 }
@@ -260,6 +269,7 @@ export type TimetableSlotWhereUniqueInput = Prisma.AtLeast<{
   dayOfWeek?: Prisma.IntFilter<"TimetableSlot"> | number
   startTime?: Prisma.StringFilter<"TimetableSlot"> | string
   endTime?: Prisma.StringFilter<"TimetableSlot"> | string
+  zoomLink?: Prisma.StringNullableFilter<"TimetableSlot"> | string | null
   class?: Prisma.XOR<Prisma.ClassLevelScalarRelationFilter, Prisma.ClassLevelWhereInput>
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
 }, "id" | "classId_dayOfWeek_startTime">
@@ -272,6 +282,7 @@ export type TimetableSlotOrderByWithAggregationInput = {
   dayOfWeek?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  zoomLink?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.TimetableSlotCountOrderByAggregateInput
   _avg?: Prisma.TimetableSlotAvgOrderByAggregateInput
   _max?: Prisma.TimetableSlotMaxOrderByAggregateInput
@@ -290,6 +301,7 @@ export type TimetableSlotScalarWhereWithAggregatesInput = {
   dayOfWeek?: Prisma.IntWithAggregatesFilter<"TimetableSlot"> | number
   startTime?: Prisma.StringWithAggregatesFilter<"TimetableSlot"> | string
   endTime?: Prisma.StringWithAggregatesFilter<"TimetableSlot"> | string
+  zoomLink?: Prisma.StringNullableWithAggregatesFilter<"TimetableSlot"> | string | null
 }
 
 export type TimetableSlotCreateInput = {
@@ -298,6 +310,7 @@ export type TimetableSlotCreateInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
   class: Prisma.ClassLevelCreateNestedOneWithoutTimetableSlotsInput
   teacher: Prisma.TeacherCreateNestedOneWithoutTimetableSlotsInput
 }
@@ -310,6 +323,7 @@ export type TimetableSlotUncheckedCreateInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
 }
 
 export type TimetableSlotUpdateInput = {
@@ -318,6 +332,7 @@ export type TimetableSlotUpdateInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   class?: Prisma.ClassLevelUpdateOneRequiredWithoutTimetableSlotsNestedInput
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutTimetableSlotsNestedInput
 }
@@ -330,6 +345,7 @@ export type TimetableSlotUncheckedUpdateInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TimetableSlotCreateManyInput = {
@@ -340,6 +356,7 @@ export type TimetableSlotCreateManyInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
 }
 
 export type TimetableSlotUpdateManyMutationInput = {
@@ -348,6 +365,7 @@ export type TimetableSlotUpdateManyMutationInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TimetableSlotUncheckedUpdateManyInput = {
@@ -358,6 +376,7 @@ export type TimetableSlotUncheckedUpdateManyInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TimetableSlotListRelationFilter = {
@@ -384,6 +403,7 @@ export type TimetableSlotCountOrderByAggregateInput = {
   dayOfWeek?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  zoomLink?: Prisma.SortOrder
 }
 
 export type TimetableSlotAvgOrderByAggregateInput = {
@@ -398,6 +418,7 @@ export type TimetableSlotMaxOrderByAggregateInput = {
   dayOfWeek?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  zoomLink?: Prisma.SortOrder
 }
 
 export type TimetableSlotMinOrderByAggregateInput = {
@@ -408,6 +429,7 @@ export type TimetableSlotMinOrderByAggregateInput = {
   dayOfWeek?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  zoomLink?: Prisma.SortOrder
 }
 
 export type TimetableSlotSumOrderByAggregateInput = {
@@ -504,6 +526,7 @@ export type TimetableSlotCreateWithoutTeacherInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
   class: Prisma.ClassLevelCreateNestedOneWithoutTimetableSlotsInput
 }
 
@@ -514,6 +537,7 @@ export type TimetableSlotUncheckedCreateWithoutTeacherInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
 }
 
 export type TimetableSlotCreateOrConnectWithoutTeacherInput = {
@@ -553,6 +577,7 @@ export type TimetableSlotScalarWhereInput = {
   dayOfWeek?: Prisma.IntFilter<"TimetableSlot"> | number
   startTime?: Prisma.StringFilter<"TimetableSlot"> | string
   endTime?: Prisma.StringFilter<"TimetableSlot"> | string
+  zoomLink?: Prisma.StringNullableFilter<"TimetableSlot"> | string | null
 }
 
 export type TimetableSlotCreateWithoutClassInput = {
@@ -561,6 +586,7 @@ export type TimetableSlotCreateWithoutClassInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
   teacher: Prisma.TeacherCreateNestedOneWithoutTimetableSlotsInput
 }
 
@@ -571,6 +597,7 @@ export type TimetableSlotUncheckedCreateWithoutClassInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
 }
 
 export type TimetableSlotCreateOrConnectWithoutClassInput = {
@@ -606,6 +633,7 @@ export type TimetableSlotCreateManyTeacherInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
 }
 
 export type TimetableSlotUpdateWithoutTeacherInput = {
@@ -614,6 +642,7 @@ export type TimetableSlotUpdateWithoutTeacherInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   class?: Prisma.ClassLevelUpdateOneRequiredWithoutTimetableSlotsNestedInput
 }
 
@@ -624,6 +653,7 @@ export type TimetableSlotUncheckedUpdateWithoutTeacherInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TimetableSlotUncheckedUpdateManyWithoutTeacherInput = {
@@ -633,6 +663,7 @@ export type TimetableSlotUncheckedUpdateManyWithoutTeacherInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TimetableSlotCreateManyClassInput = {
@@ -642,6 +673,7 @@ export type TimetableSlotCreateManyClassInput = {
   dayOfWeek: number
   startTime: string
   endTime: string
+  zoomLink?: string | null
 }
 
 export type TimetableSlotUpdateWithoutClassInput = {
@@ -650,6 +682,7 @@ export type TimetableSlotUpdateWithoutClassInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutTimetableSlotsNestedInput
 }
 
@@ -660,6 +693,7 @@ export type TimetableSlotUncheckedUpdateWithoutClassInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TimetableSlotUncheckedUpdateManyWithoutClassInput = {
@@ -669,6 +703,7 @@ export type TimetableSlotUncheckedUpdateManyWithoutClassInput = {
   dayOfWeek?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -681,6 +716,7 @@ export type TimetableSlotSelect<ExtArgs extends runtime.Types.Extensions.Interna
   dayOfWeek?: boolean
   startTime?: boolean
   endTime?: boolean
+  zoomLink?: boolean
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["timetableSlot"]>
@@ -693,6 +729,7 @@ export type TimetableSlotSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   dayOfWeek?: boolean
   startTime?: boolean
   endTime?: boolean
+  zoomLink?: boolean
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["timetableSlot"]>
@@ -705,6 +742,7 @@ export type TimetableSlotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   dayOfWeek?: boolean
   startTime?: boolean
   endTime?: boolean
+  zoomLink?: boolean
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["timetableSlot"]>
@@ -717,9 +755,10 @@ export type TimetableSlotSelectScalar = {
   dayOfWeek?: boolean
   startTime?: boolean
   endTime?: boolean
+  zoomLink?: boolean
 }
 
-export type TimetableSlotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "classId" | "teacherId" | "subject" | "dayOfWeek" | "startTime" | "endTime", ExtArgs["result"]["timetableSlot"]>
+export type TimetableSlotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "classId" | "teacherId" | "subject" | "dayOfWeek" | "startTime" | "endTime" | "zoomLink", ExtArgs["result"]["timetableSlot"]>
 export type TimetableSlotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
@@ -747,6 +786,7 @@ export type $TimetableSlotPayload<ExtArgs extends runtime.Types.Extensions.Inter
     dayOfWeek: number
     startTime: string
     endTime: string
+    zoomLink: string | null
   }, ExtArgs["result"]["timetableSlot"]>
   composites: {}
 }
@@ -1179,6 +1219,7 @@ export interface TimetableSlotFieldRefs {
   readonly dayOfWeek: Prisma.FieldRef<"TimetableSlot", 'Int'>
   readonly startTime: Prisma.FieldRef<"TimetableSlot", 'String'>
   readonly endTime: Prisma.FieldRef<"TimetableSlot", 'String'>
+  readonly zoomLink: Prisma.FieldRef<"TimetableSlot", 'String'>
 }
     
 
