@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "QuizAttempt" ADD COLUMN     "essayScores" DOUBLE PRECISION[] NOT NULL DEFAULT ARRAY[]::DOUBLE PRECISION[],
+ADD COLUMN     "graded" BOOLEAN NOT NULL DEFAULT true,
+ALTER COLUMN "answers" SET DATA TYPE JSONB USING to_jsonb("answers");

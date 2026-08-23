@@ -100,10 +100,10 @@ export interface TimetableSlotDTO {
 export interface QuizQuestionDTO {
   id: string;
   quizId: string;
-  type?: "mcq" | "truefalse";
+  type?: "mcq" | "truefalse" | "essay";
   text: string;
   options: string[];
-  correctIndex?: number; // يُحذف من استجابة الطالب ما لم يكن قد أدّى الاختبار (للمراجعة)
+  correctIndex?: number; // يُحذف من استجابة الطالب ما لم يكن قد أدّى الاختبار (للمراجعة)؛ essay = -1
   points: number;
 }
 
@@ -112,7 +112,9 @@ export interface QuizAttemptDTO {
   quizId: string;
   studentId: string;
   student?: StudentDTO;
-  answers?: number[]; // إجابات الطالب بفهارس الخيارات الأصلية
+  answers?: (number | string)[]; // فهرس الخيار لـ mcq/truefalse، ونص الإجابة لـ essay
+  essayScores?: number[]; // درجة كل سؤال كتابي بترتيب الأسئلة (0 عند غير الكتابية)
+  graded?: boolean; // false = بانتظار تصحيح المعلم للأسئلة الكتابية
   score: number;
   maxScore: number;
   submittedAt: string;
@@ -315,10 +317,10 @@ export interface CreateTimetableSlotInput {
 }
 
 export interface CreateQuizQuestionInput {
-  type?: "mcq" | "truefalse";
+  type?: "mcq" | "truefalse" | "essay";
   text: string;
-  options: string[]; // 4 خيارات لـ mcq، وخياران [صح، خطأ] لـ truefalse
-  correctIndex: number;
+  options: string[]; // 4 خيارات لـ mcq، وخياران [صح، خطأ] لـ truefalse، و[] لـ essay
+  correctIndex: number; // essay = -1 (تصحيح يدوي)
   points?: number;
 }
 
@@ -337,7 +339,7 @@ export interface UpdateQuizInput extends CreateQuizInput {
 
 export interface SubmitQuizInput {
   studentId: string;
-  answers: number[];
+  answers: (number | string)[]; // فهرس الخيار لـ mcq/truefalse (-1 = بلا إجابة)، ونص لـ essay
 }
 
 export interface CreateClassInput {

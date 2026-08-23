@@ -50,23 +50,26 @@ export default function TakeQuizDialog({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState<ShuffledQuestion[]>([]);
-  // answers[موضع العرض] = فهرس الخيار الأصلي المختار
-  const [answers, setAnswers] = useState<(number | null)[]>([]);
+  // answers[موضع العرض] = فهرس الخيار الأصلي المختار (mcq/truefalse) أو نص الإجابة (essay)
+  const [answers, setAnswers] = useState<(number | string | null)[]>([]);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [incompleteWarn, setIncompleteWarn] = useState(false);
 
   const questions = quiz.questions ?? [];
-  const answeredCount = answers.filter((a) => a !== null).length;
+  const answeredCount = answers.filter(
+    (a) => a !== null && (typeof a !== "string" || a.trim() !== "")
+  ).length;
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
     if (next) {
-      // خلط الأسئلة وخياراتها لكل محاولة
+      // خلط الأسئلة وخياراتها لكل محاولة (الأسئلة الكتابية بلا خيارات للخلط)
       const shuffled = shuffle(
         questions.map((q, origIndex) => ({
           q,
           origIndex,
-          optionOrder: shuffle(q.options.map((_, i) => i)),
+          optionOrder:
+            q.type === "essay" ? [] : shuffle(q.options.map((_, i) => i)),
         }))
       );
       setItems(shuffled);
@@ -80,15 +83,19 @@ export default function TakeQuizDialog({
   }
 
   async function submit(auto: boolean, allowIncomplete = false) {
-    // نعيد الإجابات إلى الفهارس الأصلية قبل الإرسال؛ غير المُجاب = -1
-    const mapped = questions.map((_, origIdx) => {
+    // نعيد الإجابات إلى الفهارس الأصلية قبل الإرسال؛ غير المُجاب = -1 للاختيارية و"" للكتابية
+    const mapped = questions.map((q, origIdx) => {
       const displayIdx = items.findIndex((it) => it.origIndex === origIdx);
       const a = displayIdx >= 0 ? answers[displayIdx] : null;
-      return a ?? -1;
+      if (q.type === "essay") return typeof a === "string" ? a : "";
+      return typeof a === "number" ? a : -1;
     });
 
     // التسليم الناقص يدويًا يتطلب تأكيدًا أولًا (المؤقّت يسلّم كما هو)
-    if (!auto && !allowIncomplete && mapped.some((a) => a === -1)) {
+    const hasUnanswered = mapped.some((a, i) =>
+      questions[i].type === "essay" ? !String(a).trim() : a === -1
+    );
+    if (!auto && !allowIncomplete && hasUnanswered) {
       setIncompleteWarn(true);
       return;
     }
@@ -108,9 +115,12 @@ export default function TakeQuizDialog({
       setOpen(false);
       toast({
         variant: "success",
-        title: auto
-          ? `انتهى الوقت — تم التسليم تلقائيًا. درجتك: ${body.score} من ${body.maxScore}`
-          : `تم التسليم — درجتك: ${body.score} من ${body.maxScore}`,
+        title:
+          body?.graded === false
+            ? "تم التسليم — ستظهر درجتك النهائية بعد تصحيح المعلم للأسئلة الكتابية"
+            : auto
+              ? `انتهى الوقت — تم التسليم تلقائيًا. درجتك: ${body.score} من ${body.maxScore}`
+              : `تم التسليم — درجتك: ${body.score} من ${body.maxScore}`,
       });
       onSuccess?.();
     } catch (err) {
@@ -180,7 +190,21 @@ export default function TakeQuizDialog({
                 </span>
               </p>
               <div className="space-y-1">
-                {optionOrder.map((origOptionIdx) => (
+                {q.type === "essay" ? (
+                  <textarea
+                    className="min-h-24 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    placeholder="اكتب إجابتك هنا..."
+                    value={typeof answers[qi] === "string" ? (answers[qi] as string) : ""}
+                    onChange={(e) => {
+                      setIncompleteWarn(false);
+                      const value = e.target.value;
+                      setAnswers((prev) =>
+                        prev.map((a, i) => (i === qi ? value : a))
+                      );
+                    }}
+                  />
+                ) : (
+                  optionOrder.map((origOptionIdx) => (
                   <label
                     key={origOptionIdx}
                     className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-accent"
@@ -198,7 +222,8 @@ export default function TakeQuizDialog({
                     />
                     {q.options[origOptionIdx]}
                   </label>
-                ))}
+                ))
+                )}
               </div>
             </div>
           ))}

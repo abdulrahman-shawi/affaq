@@ -248,6 +248,7 @@ export default function TeacherQuizzesPage() {
           <div className="flex gap-1">
             <QuizResultsDialog
               quiz={q}
+              onSuccess={refetch}
               trigger={
                 <Button variant="ghost" size="icon" title="النتائج">
                   <BarChart3 className="h-4 w-4" />

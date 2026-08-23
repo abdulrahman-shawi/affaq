@@ -87,8 +87,11 @@ export async function POST(req: Request) {
         correctIndex?: number;
         points?: number;
       }) => {
-        if (!q.text?.trim() || !Array.isArray(q.options)) return true;
+        if (!q.text?.trim()) return true;
         if (q.points !== undefined && Number(q.points) <= 0) return true;
+        // السؤال الكتابي لا يحتاج خيارات ولا إجابة صحيحة — يصحَّح يدويًا
+        if (q.type === "essay") return false;
+        if (!Array.isArray(q.options)) return true;
         const isTrueFalse = q.type === "truefalse";
         const expectedOptions = isTrueFalse ? 2 : 4;
         return (
@@ -102,7 +105,7 @@ export async function POST(req: Request) {
     );
     if (invalid) {
       return NextResponse.json(
-        { error: "كل سؤال يحتاج نصًا وخيارات مكتملة وإجابة صحيحة محددة" },
+        { error: "كل سؤال يحتاج نصًا، والأسئلة الاختيارية تحتاج خيارات مكتملة وإجابة صحيحة محددة" },
         { status: 400 }
       );
     }
@@ -124,10 +127,15 @@ export async function POST(req: Request) {
               correctIndex: number;
               points?: number;
             }) => ({
-              type: q.type === "truefalse" ? "truefalse" : "mcq",
+              type:
+                q.type === "truefalse"
+                  ? "truefalse"
+                  : q.type === "essay"
+                    ? "essay"
+                    : "mcq",
               text: q.text.trim(),
-              options: q.options.map((o) => o.trim()),
-              correctIndex: q.correctIndex,
+              options: q.type === "essay" ? [] : q.options.map((o) => o.trim()),
+              correctIndex: q.type === "essay" ? -1 : q.correctIndex,
               points: q.points !== undefined ? Number(q.points) : 1,
             })
           ),

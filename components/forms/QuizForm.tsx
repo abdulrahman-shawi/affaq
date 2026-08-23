@@ -94,7 +94,12 @@ export default function QuizForm({
     setQuestions(
       quiz?.questions?.length
         ? quiz.questions.map((q) => ({
-            type: q.type === "truefalse" ? "truefalse" : "mcq",
+            type:
+              q.type === "truefalse"
+                ? ("truefalse" as const)
+                : q.type === "essay"
+                  ? ("essay" as const)
+                  : ("mcq" as const),
             text: q.text,
             options: [...q.options],
             correctIndex: q.correctIndex ?? 0,
@@ -172,8 +177,8 @@ export default function QuizForm({
     );
   }
 
-  // تبديل نوع السؤال يعيد ضبط خياراته: صح/خطأ بخيارين ثابتين
-  function changeQuestionType(index: number, type: "mcq" | "truefalse") {
+  // تبديل نوع السؤال يعيد ضبط خياراته: صح/خطأ بخيارين ثابتين، والكتابي بلا خيارات
+  function changeQuestionType(index: number, type: "mcq" | "truefalse" | "essay") {
     setQuestions((prev) =>
       prev.map((q, i) =>
         i === index
@@ -181,8 +186,12 @@ export default function QuizForm({
               ...q,
               type,
               options:
-                type === "truefalse" ? ["صح", "خطأ"] : ["", "", "", ""],
-              correctIndex: 0,
+                type === "truefalse"
+                  ? ["صح", "خطأ"]
+                  : type === "essay"
+                    ? []
+                    : ["", "", "", ""],
+              correctIndex: type === "essay" ? -1 : 0,
             }
           : q
       )
@@ -349,12 +358,13 @@ export default function QuizForm({
                       onChange={(e) =>
                         changeQuestionType(
                           qi,
-                          e.target.value as "mcq" | "truefalse"
+                          e.target.value as "mcq" | "truefalse" | "essay"
                         )
                       }
                     >
                       <option value="mcq">اختيار من متعدد</option>
                       <option value="truefalse">صح / خطأ</option>
+                      <option value="essay">إجابة كتابية</option>
                     </select>
                   </div>
                   <div className="flex items-center gap-2">
@@ -396,7 +406,12 @@ export default function QuizForm({
                   onChange={(e) => updateQuestion(qi, { text: e.target.value })}
                 />
                 <div className="space-y-2">
-                  {(q.type ?? "mcq") === "truefalse" ? (
+                  {(q.type ?? "mcq") === "essay" ? (
+                    <p className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+                      سيكتب الطالب إجابته نصًا حرًا، وستصحّحها يدويًا من نافذة
+                      النتائج بعد تسليم الطلاب.
+                    </p>
+                  ) : (q.type ?? "mcq") === "truefalse" ? (
                     <div className="flex gap-4">
                       {q.options.map((option, oi) => (
                         <label
@@ -438,11 +453,13 @@ export default function QuizForm({
                       ))}
                     </>
                   )}
-                  <p className="text-xs text-muted-foreground">
-                    {(q.type ?? "mcq") === "truefalse"
-                      ? "حدّد الإجابة الصحيحة: صح أم خطأ"
-                      : "حدّد الدائرة بجانب الإجابة الصحيحة"}
-                  </p>
+                  {(q.type ?? "mcq") !== "essay" && (
+                    <p className="text-xs text-muted-foreground">
+                      {(q.type ?? "mcq") === "truefalse"
+                        ? "حدّد الإجابة الصحيحة: صح أم خطأ"
+                        : "حدّد الدائرة بجانب الإجابة الصحيحة"}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}

@@ -71,12 +71,13 @@ export default function StudentQuizzesPage() {
       header: "الحالة",
       cell: (q) => {
         const attempt = myAttempt(q);
-        return attempt ? (
+        if (!attempt) return <Badge variant="warning">لم يُؤدَّ</Badge>;
+        if (attempt.graded === false)
+          return <Badge variant="warning">قيد التصحيح</Badge>;
+        return (
           <Badge variant="success">
             {attempt.score} / {attempt.maxScore}
           </Badge>
-        ) : (
-          <Badge variant="warning">لم يُؤدَّ</Badge>
         );
       },
     },

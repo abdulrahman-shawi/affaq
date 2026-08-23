@@ -27,13 +27,13 @@ export type AggregateQuizAttempt = {
 }
 
 export type QuizAttemptAvgAggregateOutputType = {
-  answers: number | null
+  essayScores: number | null
   score: number | null
   maxScore: number | null
 }
 
 export type QuizAttemptSumAggregateOutputType = {
-  answers: number[]
+  essayScores: number[]
   score: number | null
   maxScore: number | null
 }
@@ -42,6 +42,7 @@ export type QuizAttemptMinAggregateOutputType = {
   id: string | null
   quizId: string | null
   studentId: string | null
+  graded: boolean | null
   score: number | null
   maxScore: number | null
   submittedAt: Date | null
@@ -51,6 +52,7 @@ export type QuizAttemptMaxAggregateOutputType = {
   id: string | null
   quizId: string | null
   studentId: string | null
+  graded: boolean | null
   score: number | null
   maxScore: number | null
   submittedAt: Date | null
@@ -61,6 +63,8 @@ export type QuizAttemptCountAggregateOutputType = {
   quizId: number
   studentId: number
   answers: number
+  essayScores: number
+  graded: number
   score: number
   maxScore: number
   submittedAt: number
@@ -69,13 +73,13 @@ export type QuizAttemptCountAggregateOutputType = {
 
 
 export type QuizAttemptAvgAggregateInputType = {
-  answers?: true
+  essayScores?: true
   score?: true
   maxScore?: true
 }
 
 export type QuizAttemptSumAggregateInputType = {
-  answers?: true
+  essayScores?: true
   score?: true
   maxScore?: true
 }
@@ -84,6 +88,7 @@ export type QuizAttemptMinAggregateInputType = {
   id?: true
   quizId?: true
   studentId?: true
+  graded?: true
   score?: true
   maxScore?: true
   submittedAt?: true
@@ -93,6 +98,7 @@ export type QuizAttemptMaxAggregateInputType = {
   id?: true
   quizId?: true
   studentId?: true
+  graded?: true
   score?: true
   maxScore?: true
   submittedAt?: true
@@ -103,6 +109,8 @@ export type QuizAttemptCountAggregateInputType = {
   quizId?: true
   studentId?: true
   answers?: true
+  essayScores?: true
+  graded?: true
   score?: true
   maxScore?: true
   submittedAt?: true
@@ -199,7 +207,9 @@ export type QuizAttemptGroupByOutputType = {
   id: string
   quizId: string
   studentId: string
-  answers: number[]
+  answers: runtime.JsonValue
+  essayScores: number[]
+  graded: boolean
   score: number
   maxScore: number
   submittedAt: Date
@@ -232,7 +242,9 @@ export type QuizAttemptWhereInput = {
   id?: Prisma.StringFilter<"QuizAttempt"> | string
   quizId?: Prisma.StringFilter<"QuizAttempt"> | string
   studentId?: Prisma.StringFilter<"QuizAttempt"> | string
-  answers?: Prisma.IntNullableListFilter<"QuizAttempt">
+  answers?: Prisma.JsonFilter<"QuizAttempt">
+  essayScores?: Prisma.FloatNullableListFilter<"QuizAttempt">
+  graded?: Prisma.BoolFilter<"QuizAttempt"> | boolean
   score?: Prisma.FloatFilter<"QuizAttempt"> | number
   maxScore?: Prisma.FloatFilter<"QuizAttempt"> | number
   submittedAt?: Prisma.DateTimeFilter<"QuizAttempt"> | Date | string
@@ -245,6 +257,8 @@ export type QuizAttemptOrderByWithRelationInput = {
   quizId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   answers?: Prisma.SortOrder
+  essayScores?: Prisma.SortOrder
+  graded?: Prisma.SortOrder
   score?: Prisma.SortOrder
   maxScore?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
@@ -260,7 +274,9 @@ export type QuizAttemptWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.QuizAttemptWhereInput | Prisma.QuizAttemptWhereInput[]
   quizId?: Prisma.StringFilter<"QuizAttempt"> | string
   studentId?: Prisma.StringFilter<"QuizAttempt"> | string
-  answers?: Prisma.IntNullableListFilter<"QuizAttempt">
+  answers?: Prisma.JsonFilter<"QuizAttempt">
+  essayScores?: Prisma.FloatNullableListFilter<"QuizAttempt">
+  graded?: Prisma.BoolFilter<"QuizAttempt"> | boolean
   score?: Prisma.FloatFilter<"QuizAttempt"> | number
   maxScore?: Prisma.FloatFilter<"QuizAttempt"> | number
   submittedAt?: Prisma.DateTimeFilter<"QuizAttempt"> | Date | string
@@ -273,6 +289,8 @@ export type QuizAttemptOrderByWithAggregationInput = {
   quizId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   answers?: Prisma.SortOrder
+  essayScores?: Prisma.SortOrder
+  graded?: Prisma.SortOrder
   score?: Prisma.SortOrder
   maxScore?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
@@ -290,7 +308,9 @@ export type QuizAttemptScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"QuizAttempt"> | string
   quizId?: Prisma.StringWithAggregatesFilter<"QuizAttempt"> | string
   studentId?: Prisma.StringWithAggregatesFilter<"QuizAttempt"> | string
-  answers?: Prisma.IntNullableListFilter<"QuizAttempt">
+  answers?: Prisma.JsonWithAggregatesFilter<"QuizAttempt">
+  essayScores?: Prisma.FloatNullableListFilter<"QuizAttempt">
+  graded?: Prisma.BoolWithAggregatesFilter<"QuizAttempt"> | boolean
   score?: Prisma.FloatWithAggregatesFilter<"QuizAttempt"> | number
   maxScore?: Prisma.FloatWithAggregatesFilter<"QuizAttempt"> | number
   submittedAt?: Prisma.DateTimeWithAggregatesFilter<"QuizAttempt"> | Date | string
@@ -298,7 +318,9 @@ export type QuizAttemptScalarWhereWithAggregatesInput = {
 
 export type QuizAttemptCreateInput = {
   id?: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -310,7 +332,9 @@ export type QuizAttemptUncheckedCreateInput = {
   id?: string
   quizId: string
   studentId: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -318,7 +342,9 @@ export type QuizAttemptUncheckedCreateInput = {
 
 export type QuizAttemptUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -330,7 +356,9 @@ export type QuizAttemptUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quizId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -340,7 +368,9 @@ export type QuizAttemptCreateManyInput = {
   id?: string
   quizId: string
   studentId: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -348,7 +378,9 @@ export type QuizAttemptCreateManyInput = {
 
 export type QuizAttemptUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,7 +390,9 @@ export type QuizAttemptUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quizId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -374,11 +408,11 @@ export type QuizAttemptOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type IntNullableListFilter<$PrismaModel = never> = {
-  equals?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  has?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
-  hasEvery?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  hasSome?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+export type FloatNullableListFilter<$PrismaModel = never> = {
+  equals?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  has?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  hasEvery?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  hasSome?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
   isEmpty?: boolean
 }
 
@@ -392,13 +426,15 @@ export type QuizAttemptCountOrderByAggregateInput = {
   quizId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
   answers?: Prisma.SortOrder
+  essayScores?: Prisma.SortOrder
+  graded?: Prisma.SortOrder
   score?: Prisma.SortOrder
   maxScore?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
 }
 
 export type QuizAttemptAvgOrderByAggregateInput = {
-  answers?: Prisma.SortOrder
+  essayScores?: Prisma.SortOrder
   score?: Prisma.SortOrder
   maxScore?: Prisma.SortOrder
 }
@@ -407,6 +443,7 @@ export type QuizAttemptMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   quizId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
+  graded?: Prisma.SortOrder
   score?: Prisma.SortOrder
   maxScore?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
@@ -416,13 +453,14 @@ export type QuizAttemptMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   quizId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
+  graded?: Prisma.SortOrder
   score?: Prisma.SortOrder
   maxScore?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
 }
 
 export type QuizAttemptSumOrderByAggregateInput = {
-  answers?: Prisma.SortOrder
+  essayScores?: Prisma.SortOrder
   score?: Prisma.SortOrder
   maxScore?: Prisma.SortOrder
 }
@@ -511,18 +549,20 @@ export type QuizAttemptUncheckedUpdateManyWithoutQuizNestedInput = {
   deleteMany?: Prisma.QuizAttemptScalarWhereInput | Prisma.QuizAttemptScalarWhereInput[]
 }
 
-export type QuizAttemptCreateanswersInput = {
+export type QuizAttemptCreateessayScoresInput = {
   set: number[]
 }
 
-export type QuizAttemptUpdateanswersInput = {
+export type QuizAttemptUpdateessayScoresInput = {
   set?: number[]
   push?: number | number[]
 }
 
 export type QuizAttemptCreateWithoutStudentInput = {
   id?: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -532,7 +572,9 @@ export type QuizAttemptCreateWithoutStudentInput = {
 export type QuizAttemptUncheckedCreateWithoutStudentInput = {
   id?: string
   quizId: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -571,7 +613,9 @@ export type QuizAttemptScalarWhereInput = {
   id?: Prisma.StringFilter<"QuizAttempt"> | string
   quizId?: Prisma.StringFilter<"QuizAttempt"> | string
   studentId?: Prisma.StringFilter<"QuizAttempt"> | string
-  answers?: Prisma.IntNullableListFilter<"QuizAttempt">
+  answers?: Prisma.JsonFilter<"QuizAttempt">
+  essayScores?: Prisma.FloatNullableListFilter<"QuizAttempt">
+  graded?: Prisma.BoolFilter<"QuizAttempt"> | boolean
   score?: Prisma.FloatFilter<"QuizAttempt"> | number
   maxScore?: Prisma.FloatFilter<"QuizAttempt"> | number
   submittedAt?: Prisma.DateTimeFilter<"QuizAttempt"> | Date | string
@@ -579,7 +623,9 @@ export type QuizAttemptScalarWhereInput = {
 
 export type QuizAttemptCreateWithoutQuizInput = {
   id?: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -589,7 +635,9 @@ export type QuizAttemptCreateWithoutQuizInput = {
 export type QuizAttemptUncheckedCreateWithoutQuizInput = {
   id?: string
   studentId: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -624,7 +672,9 @@ export type QuizAttemptUpdateManyWithWhereWithoutQuizInput = {
 export type QuizAttemptCreateManyStudentInput = {
   id?: string
   quizId: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -632,7 +682,9 @@ export type QuizAttemptCreateManyStudentInput = {
 
 export type QuizAttemptUpdateWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -642,7 +694,9 @@ export type QuizAttemptUpdateWithoutStudentInput = {
 export type QuizAttemptUncheckedUpdateWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quizId?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -651,7 +705,9 @@ export type QuizAttemptUncheckedUpdateWithoutStudentInput = {
 export type QuizAttemptUncheckedUpdateManyWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quizId?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -660,7 +716,9 @@ export type QuizAttemptUncheckedUpdateManyWithoutStudentInput = {
 export type QuizAttemptCreateManyQuizInput = {
   id?: string
   studentId: string
-  answers?: Prisma.QuizAttemptCreateanswersInput | number[]
+  answers: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptCreateessayScoresInput | number[]
+  graded?: boolean
   score: number
   maxScore: number
   submittedAt?: Date | string
@@ -668,7 +726,9 @@ export type QuizAttemptCreateManyQuizInput = {
 
 export type QuizAttemptUpdateWithoutQuizInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -678,7 +738,9 @@ export type QuizAttemptUpdateWithoutQuizInput = {
 export type QuizAttemptUncheckedUpdateWithoutQuizInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -687,7 +749,9 @@ export type QuizAttemptUncheckedUpdateWithoutQuizInput = {
 export type QuizAttemptUncheckedUpdateManyWithoutQuizInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
-  answers?: Prisma.QuizAttemptUpdateanswersInput | number[]
+  answers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  essayScores?: Prisma.QuizAttemptUpdateessayScoresInput | number[]
+  graded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   score?: Prisma.FloatFieldUpdateOperationsInput | number
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -700,6 +764,8 @@ export type QuizAttemptSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   quizId?: boolean
   studentId?: boolean
   answers?: boolean
+  essayScores?: boolean
+  graded?: boolean
   score?: boolean
   maxScore?: boolean
   submittedAt?: boolean
@@ -712,6 +778,8 @@ export type QuizAttemptSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   quizId?: boolean
   studentId?: boolean
   answers?: boolean
+  essayScores?: boolean
+  graded?: boolean
   score?: boolean
   maxScore?: boolean
   submittedAt?: boolean
@@ -724,6 +792,8 @@ export type QuizAttemptSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   quizId?: boolean
   studentId?: boolean
   answers?: boolean
+  essayScores?: boolean
+  graded?: boolean
   score?: boolean
   maxScore?: boolean
   submittedAt?: boolean
@@ -736,12 +806,14 @@ export type QuizAttemptSelectScalar = {
   quizId?: boolean
   studentId?: boolean
   answers?: boolean
+  essayScores?: boolean
+  graded?: boolean
   score?: boolean
   maxScore?: boolean
   submittedAt?: boolean
 }
 
-export type QuizAttemptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "quizId" | "studentId" | "answers" | "score" | "maxScore" | "submittedAt", ExtArgs["result"]["quizAttempt"]>
+export type QuizAttemptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "quizId" | "studentId" | "answers" | "essayScores" | "graded" | "score" | "maxScore" | "submittedAt", ExtArgs["result"]["quizAttempt"]>
 export type QuizAttemptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   quiz?: boolean | Prisma.QuizDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -765,7 +837,9 @@ export type $QuizAttemptPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     quizId: string
     studentId: string
-    answers: number[]
+    answers: runtime.JsonValue
+    essayScores: number[]
+    graded: boolean
     score: number
     maxScore: number
     submittedAt: Date
@@ -1197,7 +1271,9 @@ export interface QuizAttemptFieldRefs {
   readonly id: Prisma.FieldRef<"QuizAttempt", 'String'>
   readonly quizId: Prisma.FieldRef<"QuizAttempt", 'String'>
   readonly studentId: Prisma.FieldRef<"QuizAttempt", 'String'>
-  readonly answers: Prisma.FieldRef<"QuizAttempt", 'Int[]'>
+  readonly answers: Prisma.FieldRef<"QuizAttempt", 'Json'>
+  readonly essayScores: Prisma.FieldRef<"QuizAttempt", 'Float[]'>
+  readonly graded: Prisma.FieldRef<"QuizAttempt", 'Boolean'>
   readonly score: Prisma.FieldRef<"QuizAttempt", 'Float'>
   readonly maxScore: Prisma.FieldRef<"QuizAttempt", 'Float'>
   readonly submittedAt: Prisma.FieldRef<"QuizAttempt", 'DateTime'>

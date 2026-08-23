@@ -226,10 +226,10 @@ model QuizQuestion {
   id           String @id @default(uuid())
   quizId       String
   quiz         Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  type         String @default("mcq") // "mcq" | "truefalse"
+  type         String @default("mcq") // "mcq" | "truefalse" | "essay"
   text         String
   options      String[]
-  correctIndex Int
+  correctIndex Int    // essay = -1 (تصحيح يدوي، لا توجد إجابة صحيحة تلقائية)
   points       Float  @default(1)
 }
 
@@ -239,7 +239,9 @@ model QuizAttempt {
   quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   studentId   String
   student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  answers     Int[]
+  answers     Json     // لكل سؤال: فهرس الخيار (mcq/truefalse) أو نص الإجابة (essay)
+  essayScores Float[]  // درجة كل سؤال كتابي بترتيب الأسئلة (0 عند غير الكتابية)
+  graded      Boolean  @default(true) // false = بانتظار تصحيح المعلم للأسئلة الكتابية
   score       Float
   maxScore    Float
   submittedAt DateTime @default(now())

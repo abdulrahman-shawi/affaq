@@ -52,39 +52,53 @@ export async function POST(
       );
     }
 
-    // التصحيح التلقائي
+    // تطبيع الإجابات حسب نوع السؤال: نص للكتابية، وفهرس رقمي للاختيارية
+    const normalized = quiz.questions.map((q, i) =>
+      q.type === "essay" ? String(answers[i] ?? "").trim() : Number(answers[i])
+    );
+    const hasEssay = quiz.questions.some((q) => q.type === "essay");
+
+    // التصحيح التلقائي للأسئلة الاختيارية فقط
     let score = 0;
     let maxScore = 0;
     quiz.questions.forEach((q, i) => {
       maxScore += q.points;
-      if (answers[i] === q.correctIndex) score += q.points;
+      if (q.type !== "essay" && normalized[i] === q.correctIndex)
+        score += q.points;
     });
 
     // محاولة + درجة في transaction واحدة؛ تكرار المحاولة يرمي P2002
+    // مع وجود أسئلة كتابية تُحفظ المحاولة بانتظار التصحيح اليدوي،
+    // وتُنشأ درجة Grade بعد أن يصححها المعلم
     const [attempt] = await prisma.$transaction([
       prisma.quizAttempt.create({
         data: {
           quizId: quiz.id,
           studentId,
-          answers: answers.map(Number),
+          answers: normalized,
           score,
           maxScore,
+          graded: !hasEssay,
         },
       }),
-      prisma.grade.create({
-        data: {
-          studentId,
-          subject: quiz.subject,
-          type: "quiz",
-          score,
-          maxScore,
-          note: quiz.title,
-        },
-      }),
+      ...(hasEssay
+        ? []
+        : [
+            prisma.grade.create({
+              data: {
+                studentId,
+                subject: quiz.subject,
+                type: "quiz",
+                score,
+                maxScore,
+                note: quiz.title,
+              },
+            }),
+          ]),
     ]);
 
     return NextResponse.json(
-      { id: attempt.id, score, maxScore },
+      { id: attempt.id, score, maxScore, graded: !hasEssay },
       { status: 201 }
     );
   } catch (e) {
