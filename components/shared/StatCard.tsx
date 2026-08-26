@@ -7,20 +7,37 @@ export default function StatCard({
   value,
   icon: Icon,
   iconClassName,
+  iconBgClassName,
+  description,
 }: {
   title: string;
   value: string | number;
   icon: LucideIcon;
   iconClassName?: string;
+  /** خلفية الأيقونة — مثال: "bg-blue-500/10" */
+  iconBgClassName?: string;
+  description?: string;
 }) {
   return (
-    <Card>
-      <CardContent className="flex items-center justify-between p-6">
+    <Card className="transition-shadow hover:shadow-md">
+      <CardContent className="flex items-center justify-between gap-4 p-6">
         <div>
           <p className="text-sm text-muted-foreground">{title}</p>
           <p className="mt-1 text-2xl font-bold">{value}</p>
+          {description && (
+            <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+          )}
         </div>
-        <Icon className={cn("h-10 w-10 text-muted-foreground/40", iconClassName)} />
+        <div
+          className={cn(
+            "shrink-0 rounded-xl bg-primary/10 p-3",
+            iconBgClassName
+          )}
+        >
+          <Icon
+            className={cn("h-6 w-6 text-primary", iconClassName)}
+          />
+        </div>
       </CardContent>
     </Card>
   );

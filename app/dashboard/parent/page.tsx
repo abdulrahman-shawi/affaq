@@ -2,10 +2,11 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Baby, CalendarCheck, ClipboardList } from "lucide-react";
+import { Baby, CalendarCheck, ClipboardList, BadgeCheck, AlarmClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import StatCard from "@/components/shared/StatCard";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
@@ -34,8 +35,42 @@ export default function ParentDashboard() {
     );
   }
 
+  const activeChildren = children.filter((c) => c.status === "active").length;
+  const expiringSoon = children.filter((c) => {
+    if (!c.subEndDate) return false;
+    const days = Math.ceil(
+      (new Date(c.subEndDate).getTime() - Date.now()) / (24 * 60 * 60 * 1000)
+    );
+    return days >= 0 && days <= 30;
+  }).length;
+
   return (
     <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          title="عدد الأبناء"
+          value={children.length}
+          icon={Baby}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+        />
+        <StatCard
+          title="اشتراكات نشطة"
+          value={activeChildren}
+          icon={BadgeCheck}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="تنتهي خلال 30 يومًا"
+          value={expiringSoon}
+          icon={AlarmClock}
+          iconClassName="text-rose-600"
+          iconBgClassName="bg-rose-500/10"
+          description={expiringSoon > 0 ? "يُنصح بالتجديد مبكرًا" : undefined}
+        />
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {children.map((child) => (
           <Card key={child.id}>

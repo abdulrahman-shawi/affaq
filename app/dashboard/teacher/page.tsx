@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, FileText, Inbox, ClipboardList } from "lucide-react";
+import { BookOpen, FileText, Inbox, ClipboardList, ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StatCard from "@/components/shared/StatCard";
@@ -32,26 +32,43 @@ export default function TeacherDashboard() {
     0
   );
 
+  const pendingGrading = assignments.reduce(
+    (sum, a) =>
+      sum + (a.submissions?.filter((s) => s.grade == null).length ?? 0),
+    0
+  );
+
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="حصص اليوم"
           value={todaysSessions.length}
           icon={BookOpen}
           iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
         />
         <StatCard
           title="الواجبات النشطة"
           value={assignments.length}
           icon={FileText}
-          iconClassName="text-emerald-600"
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="التسليمات المستلمة"
           value={totalSubmissions}
           icon={Inbox}
-          iconClassName="text-emerald-600"
+          iconClassName="text-violet-600"
+          iconBgClassName="bg-violet-500/10"
+        />
+        <StatCard
+          title="بانتظار التقييم"
+          value={pendingGrading}
+          icon={ClipboardCheck}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+          description={pendingGrading > 0 ? "تسليمات تحتاج مراجعة" : undefined}
         />
       </div>
 

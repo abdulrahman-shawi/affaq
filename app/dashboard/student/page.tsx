@@ -69,18 +69,21 @@ export default function StudentDashboard() {
           value={upcoming.length}
           icon={FileText}
           iconClassName="text-violet-600"
+          iconBgClassName="bg-violet-500/10"
         />
         <StatCard
           title="درجات مرصودة"
           value={myGrades.length}
           icon={ClipboardList}
-          iconClassName="text-violet-600"
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="نسبة حضوري"
           value={`${attendanceRate}%`}
           icon={CalendarCheck}
-          iconClassName="text-violet-600"
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
         />
       </div>
 

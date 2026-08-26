@@ -31,5 +31,25 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-cairo), var(--font-geist-sans), ui-sans-serif,
+      system-ui, sans-serif;
   }
+  ::selection {
+    @apply bg-primary/20;
+  }
+}
+
+/* شريط تمرير أنيق */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-muted-foreground/25;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/40;
 }

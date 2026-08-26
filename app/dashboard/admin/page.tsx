@@ -216,24 +216,28 @@ export default function AdminDashboard() {
           value={students.length}
           icon={GraduationCap}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="المعلمون"
           value={teachers.length}
           icon={Users}
-          iconClassName="text-blue-600"
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
         />
         <StatCard
           title="الإيرادات"
           value={formatCurrency(revenue)}
           icon={CreditCard}
-          iconClassName="text-blue-600"
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
         />
         <StatCard
           title="نسبة الحضور"
           value={`${attendanceRate}%`}
           icon={CalendarCheck}
-          iconClassName="text-blue-600"
+          iconClassName="text-violet-600"
+          iconBgClassName="bg-violet-500/10"
         />
       </div>
 
