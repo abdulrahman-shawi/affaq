@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Video, CheckCircle2 } from "lucide-react";
+import { Video, CheckCircle2, Clock } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
+import StatCard from "@/components/shared/StatCard";
 import { useToast } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/useAuth";
 import type {
@@ -120,6 +121,12 @@ export default function StudentSessionsPage() {
     [sessions]
   );
 
+  // عدد حصص اليوم التي سجّل الطالب حضوره فيها
+  const attendedCount = useMemo(
+    () => sorted.filter((s) => attendedIds.has(s.id)).length,
+    [sorted, attendedIds]
+  );
+
   if (loading) {
     return <Loading label="جارٍ تحميل حصص اليوم..." />;
   }
@@ -137,6 +144,29 @@ export default function StudentSessionsPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-lg font-semibold">حصصي — اليوم</h1>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          title="حصص اليوم"
+          value={sorted.length}
+          icon={Video}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="سجّلت حضوري"
+          value={attendedCount}
+          icon={CheckCircle2}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="لم أسجّل بعد"
+          value={sorted.length - attendedCount}
+          icon={Clock}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+        />
+      </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {sorted.map((session) => {
           const attended = attendedIds.has(session.id);

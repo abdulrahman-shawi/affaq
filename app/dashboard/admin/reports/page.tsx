@@ -206,12 +206,14 @@ export default function AdminReportsPage() {
           value={students.length}
           icon={GraduationCap}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title={`إجمالي الإيرادات (${PERIOD_LABELS[period]})`}
           value={formatCurrency(revenue)}
           icon={CreditCard}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title={
@@ -232,18 +234,25 @@ export default function AdminReportsPage() {
               ? "text-red-600"
               : "text-emerald-600"
           }
+          iconBgClassName={
+            revenueDelta !== null && revenueDelta < 0
+              ? "bg-red-500/10"
+              : "bg-emerald-500/10"
+          }
         />
         <StatCard
           title={`سجلات الحضور (${PERIOD_LABELS[period]})`}
           value={filteredAttendance.length}
           icon={CalendarCheck}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="نسبة الحضور"
           value={attendanceRate === null ? "—" : `${attendanceRate}%`}
           icon={ClipboardList}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="اشتراكات تنتهي خلال 7 أيام"
@@ -251,6 +260,9 @@ export default function AdminReportsPage() {
           icon={AlarmClock}
           iconClassName={
             expiringSoon > 0 ? "text-amber-600" : "text-blue-600"
+          }
+          iconBgClassName={
+            expiringSoon > 0 ? "bg-amber-500/10" : "bg-blue-500/10"
           }
         />
       </div>

@@ -55,18 +55,21 @@ export default function AdminPaymentsPage() {
           value={formatCurrency(total)}
           icon={CreditCard}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="تحويل بنكي"
           value={formatCurrency(bank)}
           icon={Landmark}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="نقدي"
           value={formatCurrency(cash)}
           icon={Banknote}
           iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
       </div>
 

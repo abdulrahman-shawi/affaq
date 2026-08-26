@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Paperclip, Star } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { CheckCircle2, Clock, Inbox, Paperclip, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DataTable, { type Column } from "@/components/tables/DataTable";
 import GradeForm from "@/components/forms/GradeForm";
+import StatCard from "@/components/shared/StatCard";
 import { formatDate } from "@/app/lib/utils";
 import type { SubmissionDTO } from "@/types";
 
@@ -28,6 +29,22 @@ export default function TeacherSubmissionsPage() {
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  const stats = useMemo(() => {
+    const graded = submissions.filter((s) => s.grade != null);
+    const avg = graded.length
+      ? Math.round(
+          (graded.reduce((sum, s) => sum + (s.grade ?? 0), 0) / graded.length) *
+            10
+        ) / 10
+      : null;
+    return {
+      total: submissions.length,
+      graded: graded.length,
+      pending: submissions.length - graded.length,
+      avg,
+    };
+  }, [submissions]);
 
   const columns: Column<SubmissionDTO>[] = [
     { header: "الطالب", cell: (s) => s.student?.user?.name ?? "—" },
@@ -78,12 +95,46 @@ export default function TeacherSubmissionsPage() {
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={submissions}
-      loading={loading}
-      emptyTitle="لا توجد تسليمات"
-      emptyMessage="ستظهر تسليمات الطلاب هنا"
-    />
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="إجمالي التسليمات"
+          value={stats.total}
+          icon={Inbox}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="تم تقييمها"
+          value={stats.graded}
+          icon={CheckCircle2}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="بانتظار التقييم"
+          value={stats.pending}
+          icon={Clock}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+          description={stats.pending > 0 ? "تسليمات تحتاج مراجعة" : undefined}
+        />
+        <StatCard
+          title="متوسط الدرجات"
+          value={stats.avg ?? "—"}
+          icon={Star}
+          iconClassName="text-violet-600"
+          iconBgClassName="bg-violet-500/10"
+        />
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={submissions}
+        loading={loading}
+        emptyTitle="لا توجد تسليمات"
+        emptyMessage="ستظهر تسليمات الطلاب هنا"
+      />
+    </div>
   );
 }

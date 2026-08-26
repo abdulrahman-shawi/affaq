@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CalendarSync, Pencil, Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { BookOpen, CalendarDays, CalendarSync, Pencil, Plus, Trash2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import TimetableGrid, { DAY_LABELS } from "@/components/shared/TimetableGrid";
 import TimetableSlotForm from "@/components/forms/TimetableSlotForm";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import Loading from "@/components/shared/Loading";
+import StatCard from "@/components/shared/StatCard";
 import { useToast } from "@/components/ui/toaster";
 import { useClasses } from "@/hooks/useClasses";
 import { useTimetable } from "@/hooks/useTimetable";
@@ -59,6 +60,15 @@ export default function AdminTimetablePage() {
       setClassId(classes[0].id);
     }
   }, [classes, classId]);
+
+  const stats = useMemo(
+    () => ({
+      total: slots.length,
+      subjects: new Set(slots.map((s) => s.subject)).size,
+      teachers: new Set(slots.map((s) => s.teacherId)).size,
+    }),
+    [slots]
+  );
 
   async function handleDelete(id: string) {
     const res = await fetch(`/api/timetable/${id}`, { method: "DELETE" });
@@ -128,7 +138,33 @@ export default function AdminTimetablePage() {
       {classId && loading ? (
         <Loading label="جارٍ تحميل الجدول..." />
       ) : (
-        <TimetableGrid
+        <>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <StatCard
+              title="إجمالي الحصص الأسبوعية"
+              value={stats.total}
+              icon={CalendarDays}
+              iconClassName="text-blue-600"
+              iconBgClassName="bg-blue-500/10"
+              description="حصص الصف المحدد في الجدول"
+            />
+            <StatCard
+              title="عدد المواد"
+              value={stats.subjects}
+              icon={BookOpen}
+              iconClassName="text-emerald-600"
+              iconBgClassName="bg-emerald-500/10"
+            />
+            <StatCard
+              title="عدد المعلمين"
+              value={stats.teachers}
+              icon={Users}
+              iconClassName="text-violet-600"
+              iconBgClassName="bg-violet-500/10"
+            />
+          </div>
+
+          <TimetableGrid
           slots={slots}
           renderActions={(slot) => (
             <>
@@ -156,6 +192,7 @@ export default function AdminTimetablePage() {
             </>
           )}
         />
+        </>
       )}
     </div>
   );

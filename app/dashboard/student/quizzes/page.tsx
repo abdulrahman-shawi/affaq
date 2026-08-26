@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Eye, Play } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock, Eye, Hourglass, Play } from "lucide-react";
 import DataTable, { type Column } from "@/components/tables/DataTable";
+import StatCard from "@/components/shared/StatCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import TakeQuizDialog from "@/components/forms/TakeQuizDialog";
@@ -47,6 +48,20 @@ export default function StudentQuizzesPage() {
     return quiz.attempts?.find((a) => a.studentId === me?.id);
   }
 
+  // ملخص حالة اختبارات الطالب من قائمة myQuizzes نفسها
+  const stats = useMemo(() => {
+    let pending = 0;
+    let grading = 0;
+    let graded = 0;
+    for (const q of myQuizzes) {
+      const attempt = q.attempts?.find((a) => a.studentId === me?.id);
+      if (!attempt) pending++;
+      else if (attempt.graded === false) grading++;
+      else graded++;
+    }
+    return { total: myQuizzes.length, pending, grading, graded };
+  }, [myQuizzes, me]);
+
   const columns: Column<QuizDTO>[] = [
     { header: "العنوان", cell: (q) => q.title },
     { header: "المادة", cell: (q) => q.subject },
@@ -86,6 +101,38 @@ export default function StudentQuizzesPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-lg font-semibold">اختباراتي</h1>
+      {!loading && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="إجمالي الاختبارات"
+            value={stats.total}
+            icon={BookOpen}
+            iconClassName="text-blue-600"
+            iconBgClassName="bg-blue-500/10"
+          />
+          <StatCard
+            title="لم يُؤدَّ بعد"
+            value={stats.pending}
+            icon={Clock}
+            iconClassName="text-amber-600"
+            iconBgClassName="bg-amber-500/10"
+          />
+          <StatCard
+            title="قيد التصحيح"
+            value={stats.grading}
+            icon={Hourglass}
+            iconClassName="text-violet-600"
+            iconBgClassName="bg-violet-500/10"
+          />
+          <StatCard
+            title="تم التصحيح"
+            value={stats.graded}
+            icon={CheckCircle2}
+            iconClassName="text-emerald-600"
+            iconBgClassName="bg-emerald-500/10"
+          />
+        </div>
+      )}
       <DataTable
         columns={columns}
         data={myQuizzes}

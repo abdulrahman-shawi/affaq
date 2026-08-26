@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Video } from "lucide-react";
+import { BookOpen, CalendarClock, Video } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
+import StatCard from "@/components/shared/StatCard";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDate } from "@/app/lib/utils";
 import type { ClassLevelDTO, SessionDTO, StudentDTO } from "@/types";
@@ -61,6 +62,16 @@ export default function StudentRecordingsPage() {
     return Array.from(groups.entries());
   }, [sessions, classOrder]);
 
+  // ملخص مكتبة التسجيلات من نفس المجموعات المعروضة
+  const stats = useMemo(() => {
+    const all = bySubject.flatMap(([, list]) => list);
+    const latest = all.reduce<string | null>(
+      (acc, s) => (!acc || new Date(s.date) > new Date(acc) ? s.date : acc),
+      null
+    );
+    return { total: all.length, subjects: bySubject.length, latest };
+  }, [bySubject]);
+
   if (loading) {
     return <Loading label="جارٍ تحميل التسجيلات..." />;
   }
@@ -78,6 +89,29 @@ export default function StudentRecordingsPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-lg font-semibold">مكتبة التسجيلات</h1>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          title="إجمالي التسجيلات"
+          value={stats.total}
+          icon={Video}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="عدد المواد"
+          value={stats.subjects}
+          icon={BookOpen}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="أحدث تسجيل"
+          value={stats.latest ? formatDate(stats.latest) : "—"}
+          icon={CalendarClock}
+          iconClassName="text-violet-600"
+          iconBgClassName="bg-violet-500/10"
+        />
+      </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {bySubject.map(([subject, subjectSessions]) => (
           <Card key={subject}>

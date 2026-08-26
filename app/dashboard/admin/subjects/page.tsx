@@ -1,18 +1,29 @@
 "use client";
 
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useMemo } from "react";
+import { BookOpen, CircleAlert, Pencil, Plus, School, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable from "@/components/tables/DataTable";
 import { subjectColumns } from "@/components/tables/Columns";
 import SubjectForm from "@/components/forms/SubjectForm";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import StatCard from "@/components/shared/StatCard";
 import { useSubjects } from "@/hooks/useSubjects";
 import type { SubjectDTO } from "@/types";
 
 export default function AdminSubjectsPage() {
   const { subjects, loading, refetch } = useSubjects();
   const { toast } = useToast();
+
+  const stats = useMemo(
+    () => ({
+      total: subjects.length,
+      withClasses: subjects.filter((s) => s.classes.length > 0).length,
+      withoutClasses: subjects.filter((s) => s.classes.length === 0).length,
+    }),
+    [subjects]
+  );
 
   async function handleDelete(subject: SubjectDTO) {
     try {
@@ -36,6 +47,30 @@ export default function AdminSubjectsPage() {
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          title="إجمالي المواد"
+          value={stats.total}
+          icon={BookOpen}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="مواد مرتبطة بصفوف"
+          value={stats.withClasses}
+          icon={School}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="مواد بدون صفوف"
+          value={stats.withoutClasses}
+          icon={CircleAlert}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+        />
+      </div>
+
       <div className="flex justify-end">
         <SubjectForm
           onSuccess={refetch}

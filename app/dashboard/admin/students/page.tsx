@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Pencil, Plus, Trash2, UserPlus } from "lucide-react";
+import { CalendarClock, Pencil, Plus, Trash2, UserCheck, UserPlus, Users, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable from "@/components/tables/DataTable";
@@ -9,6 +9,7 @@ import { studentColumns } from "@/components/tables/Columns";
 import StudentForm from "@/components/forms/StudentForm";
 import AssignParentDialog from "@/components/forms/AssignParentDialog";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import StatCard from "@/components/shared/StatCard";
 import { useStudents } from "@/hooks/useStudents";
 import { formatDate } from "@/app/lib/utils";
 import type { StudentDTO } from "@/types";
@@ -46,6 +47,21 @@ export default function AdminStudentsPage() {
     [students, classFilter, statusFilter]
   );
 
+  const stats = useMemo(() => {
+    const now = new Date();
+    const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    return {
+      total: students.length,
+      active: students.filter((s) => s.status === "active").length,
+      expiringSoon: students.filter((s) => {
+        if (!s.subEndDate) return false;
+        const end = new Date(s.subEndDate);
+        return end >= now && end <= in30Days;
+      }).length,
+      withoutClass: students.filter((s) => !s.classId).length,
+    };
+  }, [students]);
+
   async function handleDelete(student: StudentDTO) {
     try {
       const res = await fetch(`/api/students/${student.id}`, {
@@ -68,6 +84,38 @@ export default function AdminStudentsPage() {
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="إجمالي الطلاب"
+          value={stats.total}
+          icon={Users}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="الطلاب النشطون"
+          value={stats.active}
+          icon={UserCheck}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="اشتراكات تنتهي قريبًا"
+          value={stats.expiringSoon}
+          icon={CalendarClock}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+          description="خلال 30 يومًا القادمة"
+        />
+        <StatCard
+          title="بدون صف"
+          value={stats.withoutClass}
+          icon={UserX}
+          iconClassName="text-rose-600"
+          iconBgClassName="bg-rose-500/10"
+        />
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-2">
           <select

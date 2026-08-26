@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Pencil, Plus, Trash2, UserCheck, Users, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable from "@/components/tables/DataTable";
 import { parentColumns } from "@/components/tables/Columns";
 import ParentForm from "@/components/forms/ParentForm";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import StatCard from "@/components/shared/StatCard";
 import type { ParentDTO } from "@/types";
 
 export default function AdminParentsPage() {
@@ -31,6 +32,18 @@ export default function AdminParentsPage() {
     refetch();
   }, [refetch]);
 
+  const stats = useMemo(
+    () => ({
+      total: parents.length,
+      withChildren: parents.filter((p) => (p.children?.length ?? 0) > 0)
+        .length,
+      withoutChildren: parents.filter(
+        (p) => (p.children?.length ?? 0) === 0
+      ).length,
+    }),
+    [parents]
+  );
+
   async function handleDelete(parent: ParentDTO) {
     try {
       const res = await fetch(`/api/parents/${parent.id}`, {
@@ -53,6 +66,30 @@ export default function AdminParentsPage() {
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          title="إجمالي أولياء الأمور"
+          value={stats.total}
+          icon={Users}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="لديهم أبناء مسجلون"
+          value={stats.withChildren}
+          icon={UserCheck}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="بدون أبناء"
+          value={stats.withoutChildren}
+          icon={UserX}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+        />
+      </div>
+
       <div className="flex justify-end">
         <ParentForm
           onSuccess={refetch}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Link2, Pencil, Plus, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BookOpen, GraduationCap, Link2, Pencil, Plus, Trash2, Unlink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable from "@/components/tables/DataTable";
@@ -9,6 +9,7 @@ import { teacherColumns } from "@/components/tables/Columns";
 import TeacherForm from "@/components/forms/TeacherForm";
 import TeacherAssignDialog from "@/components/forms/TeacherAssignDialog";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import StatCard from "@/components/shared/StatCard";
 import type { TeacherDTO } from "@/types";
 
 export default function AdminTeachersPage() {
@@ -32,6 +33,15 @@ export default function AdminTeachersPage() {
     refetch();
   }, [refetch]);
 
+  const stats = useMemo(
+    () => ({
+      total: teachers.length,
+      withSubjects: teachers.filter((t) => t.subjects.length > 0).length,
+      withoutClasses: teachers.filter((t) => t.classes.length === 0).length,
+    }),
+    [teachers]
+  );
+
   async function handleDelete(teacher: TeacherDTO) {
     try {
       const res = await fetch(`/api/teachers/${teacher.id}`, {
@@ -54,6 +64,30 @@ export default function AdminTeachersPage() {
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          title="إجمالي المعلمين"
+          value={stats.total}
+          icon={GraduationCap}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="مرتبطون بمواد"
+          value={stats.withSubjects}
+          icon={BookOpen}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="بدون صفوف مرتبطة"
+          value={stats.withoutClasses}
+          icon={Unlink}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+        />
+      </div>
+
       <div className="flex justify-end">
         <TeacherForm
           onSuccess={refetch}

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { CalendarDays, Clock, BookOpen, Users } from "lucide-react";
+import StatCard from "@/components/shared/StatCard";
 import TimetableGrid from "@/components/shared/TimetableGrid";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
@@ -32,6 +34,16 @@ export default function ParentTimetablePage() {
   const { slots, loading } = useTimetable({
     classId: selected?.classId ?? "",
   });
+
+  const stats = useMemo(() => {
+    const today = new Date().getDay(); // 0 = الأحد (مطابق لترميز dayOfWeek)
+    return {
+      weeklySlots: slots.length,
+      todaySlots: slots.filter((s) => s.dayOfWeek === today).length,
+      subjects: new Set(slots.map((s) => s.subject)).size,
+      teachers: new Set(slots.map((s) => s.teacherId)).size,
+    };
+  }, [slots]);
 
   if (studentsLoading) {
     return <Loading label="جارٍ التحميل..." />;
@@ -69,7 +81,40 @@ export default function ParentTimetablePage() {
       ) : loading ? (
         <Loading label="جارٍ تحميل الجدول..." />
       ) : (
-        <TimetableGrid slots={slots} />
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              title="الحصص الأسبوعية"
+              value={stats.weeklySlots}
+              icon={CalendarDays}
+              iconClassName="text-blue-600"
+              iconBgClassName="bg-blue-500/10"
+            />
+            <StatCard
+              title="حصص اليوم"
+              value={stats.todaySlots}
+              icon={Clock}
+              iconClassName="text-emerald-600"
+              iconBgClassName="bg-emerald-500/10"
+            />
+            <StatCard
+              title="المواد الدراسية"
+              value={stats.subjects}
+              icon={BookOpen}
+              iconClassName="text-violet-600"
+              iconBgClassName="bg-violet-500/10"
+            />
+            <StatCard
+              title="المعلمون"
+              value={stats.teachers}
+              icon={Users}
+              iconClassName="text-amber-600"
+              iconBgClassName="bg-amber-500/10"
+            />
+          </div>
+
+          <TimetableGrid slots={slots} />
+        </>
       )}
     </div>
   );

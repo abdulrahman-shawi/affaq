@@ -1,18 +1,29 @@
 "use client";
 
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useMemo } from "react";
+import { BookOpen, CircleAlert, Pencil, Plus, School, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable from "@/components/tables/DataTable";
 import { classColumns } from "@/components/tables/Columns";
 import ClassForm from "@/components/forms/ClassForm";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import StatCard from "@/components/shared/StatCard";
 import { useClasses } from "@/hooks/useClasses";
 import type { ClassLevelDTO } from "@/types";
 
 export default function AdminClassesPage() {
   const { classes, loading, refetch } = useClasses();
   const { toast } = useToast();
+
+  const stats = useMemo(
+    () => ({
+      total: classes.length,
+      totalSubjects: classes.reduce((sum, c) => sum + c.subjects.length, 0),
+      withoutSubjects: classes.filter((c) => c.subjects.length === 0).length,
+    }),
+    [classes]
+  );
 
   async function handleDelete(classLevel: ClassLevelDTO) {
     try {
@@ -36,6 +47,31 @@ export default function AdminClassesPage() {
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          title="إجمالي الصفوف"
+          value={stats.total}
+          icon={School}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="المواد المرتبطة"
+          value={stats.totalSubjects}
+          icon={BookOpen}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+          description="إجمالي ارتباطات المواد بالصفوف"
+        />
+        <StatCard
+          title="صفوف بدون مواد"
+          value={stats.withoutSubjects}
+          icon={CircleAlert}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+        />
+      </div>
+
       <div className="flex justify-end">
         <ClassForm
           onSuccess={refetch}

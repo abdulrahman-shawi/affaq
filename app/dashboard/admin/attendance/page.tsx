@@ -43,18 +43,21 @@ export default function AdminAttendancePage() {
           value={count("present")}
           icon={CheckCircle2}
           iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
         />
         <StatCard
           title="غائب"
           value={count("absent")}
           icon={XCircle}
           iconClassName="text-red-600"
+          iconBgClassName="bg-red-500/10"
         />
         <StatCard
           title="متأخر"
           value={count("late")}
           icon={Clock}
           iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
         />
       </div>
 

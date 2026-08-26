@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { upload } from "@vercel/blob/client";
-import { Paperclip, Upload } from "lucide-react";
+import { CheckCircle2, ClipboardList, Clock, Paperclip, Star, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import DataTable, { type Column } from "@/components/tables/DataTable";
+import StatCard from "@/components/shared/StatCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudents } from "@/hooks/useStudents";
 import { useAssignments } from "@/hooks/useAssignments";
@@ -35,6 +36,22 @@ export default function StudentAssignmentsPage() {
     () => students.find((s) => s.userId === user?.id),
     [students, user]
   );
+
+  // ملخص حالة واجبات الطالب من بيانات الجدول نفسها
+  const stats = useMemo(() => {
+    const mySubmission = (a: AssignmentDTO) =>
+      a.submissions?.find((s) => s.studentId === me?.id);
+    const submitted = assignments.filter((a) => mySubmission(a)).length;
+    const graded = assignments.filter(
+      (a) => mySubmission(a)?.grade != null
+    ).length;
+    return {
+      total: assignments.length,
+      submitted,
+      pending: assignments.length - submitted,
+      graded,
+    };
+  }, [assignments, me]);
 
   async function handleSubmit(assignmentId: string) {
     if (!me) return;
@@ -164,11 +181,45 @@ export default function StudentAssignmentsPage() {
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={assignments}
-      loading={loading}
-      emptyTitle="لا توجد واجبات"
-    />
+    <div className="space-y-4">
+      {!loading && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="إجمالي الواجبات"
+            value={stats.total}
+            icon={ClipboardList}
+            iconClassName="text-blue-600"
+            iconBgClassName="bg-blue-500/10"
+          />
+          <StatCard
+            title="تم التسليم"
+            value={stats.submitted}
+            icon={CheckCircle2}
+            iconClassName="text-emerald-600"
+            iconBgClassName="bg-emerald-500/10"
+          />
+          <StatCard
+            title="لم يُسلّم بعد"
+            value={stats.pending}
+            icon={Clock}
+            iconClassName="text-amber-600"
+            iconBgClassName="bg-amber-500/10"
+          />
+          <StatCard
+            title="واجبات مُقيّمة"
+            value={stats.graded}
+            icon={Star}
+            iconClassName="text-violet-600"
+            iconBgClassName="bg-violet-500/10"
+          />
+        </div>
+      )}
+      <DataTable
+        columns={columns}
+        data={assignments}
+        loading={loading}
+        emptyTitle="لا توجد واجبات"
+      />
+    </div>
   );
 }

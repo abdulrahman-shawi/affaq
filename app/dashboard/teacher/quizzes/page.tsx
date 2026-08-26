@@ -174,18 +174,22 @@ export default function TeacherQuizzesPage() {
           title="عدد الاختبارات"
           value={stats.total}
           icon={ClipboardList}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="متوسط الدرجات"
           value={stats.avgScore}
           icon={Percent}
           iconClassName="text-emerald-500/60"
+          iconBgClassName="bg-emerald-500/10"
         />
         <StatCard
           title="نسبة الإنجاز"
           value={stats.completion}
           icon={CheckCircle2}
           iconClassName="text-sky-500/60"
+          iconBgClassName="bg-sky-500/10"
         />
       </div>
 

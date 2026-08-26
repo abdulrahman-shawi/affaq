@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { ClipboardCheck, ExternalLink, Pencil, Plus, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BookOpen, CalendarClock, CalendarDays, ClipboardCheck, ExternalLink, Pencil, Plus, Trash2, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable, { type Column } from "@/components/tables/DataTable";
 import SessionForm from "@/components/forms/SessionForm";
 import AttendanceDialog from "@/components/forms/AttendanceDialog";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import StatCard from "@/components/shared/StatCard";
 import { formatDate } from "@/app/lib/utils";
 import type { SessionDTO } from "@/types";
 
@@ -56,6 +57,19 @@ export default function TeacherSessionsPage() {
     refetch();
   }, [refetch]);
 
+  const stats = useMemo(() => {
+    const now = new Date();
+    const today = now.toDateString();
+    return {
+      total: sessions.length,
+      today: sessions.filter(
+        (s) => new Date(s.date).toDateString() === today
+      ).length,
+      upcoming: sessions.filter((s) => new Date(s.date) > now).length,
+      withZoom: sessions.filter((s) => s.zoomLink).length,
+    };
+  }, [sessions]);
+
   async function handleDelete(session: SessionDTO) {
     try {
       const res = await fetch(`/api/sessions/${session.id}`, {
@@ -78,6 +92,37 @@ export default function TeacherSessionsPage() {
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="إجمالي الحصص"
+          value={stats.total}
+          icon={BookOpen}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="حصص اليوم"
+          value={stats.today}
+          icon={CalendarDays}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="حصص قادمة"
+          value={stats.upcoming}
+          icon={CalendarClock}
+          iconClassName="text-violet-600"
+          iconBgClassName="bg-violet-500/10"
+        />
+        <StatCard
+          title="حصص برابط Zoom"
+          value={stats.withZoom}
+          icon={Video}
+          iconClassName="text-sky-600"
+          iconBgClassName="bg-sky-500/10"
+        />
+      </div>
+
       <div className="flex justify-end">
         <SessionForm
           onSuccess={refetch}
