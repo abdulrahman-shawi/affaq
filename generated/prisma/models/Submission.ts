@@ -513,14 +513,6 @@ export type SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput = {
   deleteMany?: Prisma.SubmissionScalarWhereInput | Prisma.SubmissionScalarWhereInput[]
 }
 
-export type NullableFloatFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type SubmissionCreateWithoutStudentInput = {
   id?: string
   fileUrl?: string | null

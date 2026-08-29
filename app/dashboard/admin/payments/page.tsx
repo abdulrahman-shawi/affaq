@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, CreditCard, Banknote, Landmark } from "lucide-react";
+import { Plus, CreditCard, Banknote, Landmark, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/shared/StatCard";
 import DataTable from "@/components/tables/DataTable";
@@ -46,10 +46,14 @@ export default function AdminPaymentsPage() {
   const cash = filtered
     .filter((p) => p.method === "cash")
     .reduce((sum, p) => sum + p.amount, 0);
+  const remainingTotal = filtered.reduce(
+    (sum, p) => sum + Math.max(0, (p.dueAmount ?? p.amount) - p.amount),
+    0
+  );
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="إجمالي المدفوعات"
           value={formatCurrency(total)}
@@ -70,6 +74,13 @@ export default function AdminPaymentsPage() {
           icon={Banknote}
           iconClassName="text-blue-600"
           iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="إجمالي المتبقي"
+          value={formatCurrency(remainingTotal)}
+          icon={Wallet}
+          iconClassName="text-red-600"
+          iconBgClassName="bg-red-500/10"
         />
       </div>
 
@@ -124,7 +135,9 @@ export default function AdminPaymentsPage() {
           headers: [
             "التاريخ",
             "الطالب",
-            "المبلغ",
+            "المبلغ المدفوع",
+            "المبلغ المستحق",
+            "المتبقي",
             "طريقة الدفع",
             "الفترة",
             "الأشهر",
@@ -134,6 +147,8 @@ export default function AdminPaymentsPage() {
             formatDate(p.date),
             p.student?.user?.name,
             p.amount,
+            p.dueAmount ?? "",
+            p.dueAmount != null ? Math.max(0, p.dueAmount - p.amount) : "",
             METHOD_LABELS[p.method] ?? p.method,
             PERIOD_LABELS[p.period] ?? p.period,
             p.months,

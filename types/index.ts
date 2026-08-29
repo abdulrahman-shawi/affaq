@@ -60,6 +60,7 @@ export interface PaymentDTO {
   method: string;
   period: string;
   months?: number | null;
+  dueAmount?: number | null;
   note?: string | null;
 }
 
@@ -251,6 +252,7 @@ export interface CreatePaymentInput {
   method: PaymentMethod;
   period: PaymentPeriod;
   months?: number;
+  dueAmount?: number;
   note?: string;
 }
 

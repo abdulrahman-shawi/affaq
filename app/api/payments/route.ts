@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { studentId, amount, method, period, months, note } = body;
+    const { studentId, amount, method, period, months, dueAmount, note } = body;
 
     if (!studentId || !amount || !method || !period) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         method,
         period,
         months: months ? Number(months) : null,
+        dueAmount: dueAmount ? Number(dueAmount) : null,
         note: note || null,
       },
       include: { student: { include: { user: true } } },

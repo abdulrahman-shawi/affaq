@@ -2005,6 +2005,7 @@ export const PaymentScalarFieldEnum = {
   method: 'method',
   period: 'period',
   months: 'months',
+  dueAmount: 'dueAmount',
   note: 'note'
 } as const
 

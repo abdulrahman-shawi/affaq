@@ -55,6 +55,8 @@ export async function GET(req: Request) {
       { width: 16 },
       { width: 14 },
       { width: 14 },
+      { width: 14 },
+      { width: 14 },
       { width: 12 },
       { width: 30 },
     ];
@@ -68,7 +70,9 @@ export async function GET(req: Request) {
       "التاريخ",
       "الطالب",
       "الصف",
-      "المبلغ",
+      "المبلغ المدفوع",
+      "المبلغ المستحق",
+      "المتبقي",
       "طريقة الدفع",
       "الفترة",
       "ملاحظة",
@@ -76,13 +80,21 @@ export async function GET(req: Request) {
     styleHeaderRow(header);
 
     let total = 0;
+    let totalRemaining = 0;
     for (const payment of payments) {
       total += payment.amount;
+      const remaining =
+        payment.dueAmount != null
+          ? Math.max(0, payment.dueAmount - payment.amount)
+          : null;
+      if (remaining != null) totalRemaining += remaining;
       sheet.addRow([
         formatDate(payment.date),
         payment.student.user.name,
         payment.student.class?.name ?? "بدون صف",
         payment.amount,
+        payment.dueAmount ?? "",
+        remaining ?? "",
         METHOD_LABELS[payment.method] ?? payment.method,
         PERIOD_LABELS[payment.period] ?? payment.period,
         payment.note ?? "",
@@ -92,7 +104,7 @@ export async function GET(req: Request) {
     sheet.addRow([]);
     const summary = sheet.addRow(["عدد الدفعات", payments.length]);
     summary.font = { bold: true };
-    const totalRow = sheet.addRow(["الإجمالي", "", "", total]);
+    const totalRow = sheet.addRow(["الإجمالي", "", "", total, "", totalRemaining]);
     totalRow.font = { bold: true };
 
     return xlsxResponse(workbook, `كشف-مدفوعات-${from}-إلى-${to}.xlsx`);

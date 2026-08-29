@@ -40,7 +40,6 @@ model Parent {
   children Student[] @relation("ParentChildren")
 }
 
-
 model Student {
   id          String       @id @default(uuid())
   userId      String       @unique
@@ -81,6 +80,7 @@ model Payment {
   method    String   // "bank", "cash"
   period    String   // "year", "semester", "monthly"
   months    Int?
+  dueAmount Float?  // المبلغ المستحق الكلي للفترة — المتبقي = dueAmount - amount
   note      String?
 }
 

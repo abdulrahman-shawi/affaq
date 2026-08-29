@@ -48,6 +48,8 @@ export async function GET(req: Request) {
       { width: 18 },
       { width: 14 },
       { width: 14 },
+      { width: 14 },
+      { width: 14 },
       { width: 12 },
       { width: 10 },
       { width: 30 },
@@ -61,7 +63,9 @@ export async function GET(req: Request) {
 
     const header = sheet.addRow([
       "التاريخ",
-      "المبلغ",
+      "المبلغ المدفوع",
+      "المبلغ المستحق",
+      "المتبقي",
       "طريقة الدفع",
       "الفترة",
       "الأشهر",
@@ -70,11 +74,19 @@ export async function GET(req: Request) {
     styleHeaderRow(header);
 
     let total = 0;
+    let totalRemaining = 0;
     for (const payment of student.payments) {
       total += payment.amount;
+      const remaining =
+        payment.dueAmount != null
+          ? Math.max(0, payment.dueAmount - payment.amount)
+          : null;
+      if (remaining != null) totalRemaining += remaining;
       sheet.addRow([
         formatDate(payment.date),
         payment.amount,
+        payment.dueAmount ?? "",
+        remaining ?? "",
         METHOD_LABELS[payment.method] ?? payment.method,
         PERIOD_LABELS[payment.period] ?? payment.period,
         payment.months ?? "",
@@ -83,7 +95,7 @@ export async function GET(req: Request) {
     }
 
     sheet.addRow([]);
-    const totalRow = sheet.addRow(["الإجمالي", total]);
+    const totalRow = sheet.addRow(["الإجمالي", total, "", totalRemaining]);
     totalRow.font = { bold: true };
 
     return xlsxResponse(workbook, `كشف-مدفوعات-${student.user.name}.xlsx`);

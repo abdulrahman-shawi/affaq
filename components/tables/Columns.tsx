@@ -91,7 +91,23 @@ const periodLabels: Record<string, string> = {
 export function paymentColumns(): Column<PaymentDTO>[] {
   return [
     { header: "الطالب", cell: (p) => p.student?.user?.name ?? "—" },
-    { header: "المبلغ", cell: (p) => formatCurrency(p.amount) },
+    { header: "المبلغ المدفوع", cell: (p) => formatCurrency(p.amount) },
+    {
+      header: "المبلغ المستحق",
+      cell: (p) => (p.dueAmount != null ? formatCurrency(p.dueAmount) : "—"),
+    },
+    {
+      header: "المتبقي",
+      cell: (p) => {
+        if (p.dueAmount == null) return "—";
+        const remaining = p.dueAmount - p.amount;
+        return remaining > 0 ? (
+          <Badge variant="destructive">{formatCurrency(remaining)}</Badge>
+        ) : (
+          <Badge variant="success">مكتمل</Badge>
+        );
+      },
+    },
     { header: "التاريخ", cell: (p) => formatDate(p.date) },
     { header: "طريقة الدفع", cell: (p) => methodLabels[p.method] ?? p.method },
     { header: "الفترة", cell: (p) => periodLabels[p.period] ?? p.period },

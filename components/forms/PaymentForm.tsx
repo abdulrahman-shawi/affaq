@@ -95,7 +95,7 @@ export default function PaymentForm({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="payment-amount">المبلغ (ر.س)</Label>
+              <Label htmlFor="payment-amount">المبلغ المدفوع (ر.س)</Label>
               <Input
                 id="payment-amount"
                 type="number"
@@ -105,6 +105,28 @@ export default function PaymentForm({
                 onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })}
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="payment-due-amount">المبلغ المستحق (اختياري)</Label>
+              <Input
+                id="payment-due-amount"
+                type="number"
+                min={0}
+                value={form.dueAmount ?? ""}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    dueAmount: e.target.value === "" ? undefined : Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+          </div>
+          {form.dueAmount !== undefined && form.dueAmount > form.amount && (
+            <p className="text-sm text-destructive">
+              المتبقي على الطالب: {form.dueAmount - form.amount} ر.س
+            </p>
+          )}
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="payment-months">عدد الأشهر</Label>
               <Input
