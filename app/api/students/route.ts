@@ -27,10 +27,41 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, phone, password, classId, subEndDate } = body;
+    const {
+      name,
+      email,
+      phone,
+      password,
+      classId,
+      subEndDate,
+      monthlyFee,
+      paymentStatus,
+      paidAmount,
+      paymentMethod,
+    } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
+    }
+
+    const fee = monthlyFee ? Number(monthlyFee) : null;
+    if (
+      (paymentStatus === "paid" || paymentStatus === "partial") &&
+      (!fee || fee <= 0)
+    ) {
+      return NextResponse.json(
+        { error: "يجب إدخال رسم الاشتراك الشهري عند تسجيل دفعة" },
+        { status: 400 }
+      );
+    }
+    if (
+      paymentStatus === "partial" &&
+      (!paidAmount || Number(paidAmount) <= 0)
+    ) {
+      return NextResponse.json(
+        { error: "يجب إدخال المبلغ المدفوع عند الدفع الجزئي" },
+        { status: 400 }
+      );
     }
 
     if (classId) {
@@ -58,10 +89,34 @@ export async function POST(req: Request) {
     }
 
     const hashed = await bcrypt.hash(password || "123456", 10);
+
+    // عند الدفع (كلي أو جزئي) تُنشأ دفعة أولى في جدول المدفوعات
+    const payment =
+      paymentStatus === "paid"
+        ? {
+            amount: fee!,
+            dueAmount: fee,
+            method: paymentMethod === "cash" ? "cash" : "bank",
+            period: "monthly",
+            months: 1,
+            note: "الدفعة الأولى عند التسجيل",
+          }
+        : paymentStatus === "partial"
+          ? {
+              amount: Number(paidAmount),
+              dueAmount: fee,
+              method: paymentMethod === "cash" ? "cash" : "bank",
+              period: "monthly",
+              months: 1,
+              note: "دفعة جزئية عند التسجيل",
+            }
+          : null;
+
     const student = await prisma.student.create({
       data: {
         class: classId ? { connect: { id: classId } } : undefined,
         subEndDate: subEndDate ? new Date(subEndDate) : null,
+        monthlyFee: fee,
         user: {
           create: {
             name,
@@ -71,6 +126,7 @@ export async function POST(req: Request) {
             role: "student",
           },
         },
+        payments: payment ? { create: payment } : undefined,
       },
       include: { user: true, parent: { include: { user: true } }, class: true },
     });

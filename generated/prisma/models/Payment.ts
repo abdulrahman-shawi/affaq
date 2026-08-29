@@ -47,6 +47,7 @@ export type PaymentMinAggregateOutputType = {
   period: string | null
   months: number | null
   dueAmount: number | null
+  receiptUrl: string | null
   note: string | null
 }
 
@@ -59,6 +60,7 @@ export type PaymentMaxAggregateOutputType = {
   period: string | null
   months: number | null
   dueAmount: number | null
+  receiptUrl: string | null
   note: string | null
 }
 
@@ -71,6 +73,7 @@ export type PaymentCountAggregateOutputType = {
   period: number
   months: number
   dueAmount: number
+  receiptUrl: number
   note: number
   _all: number
 }
@@ -97,6 +100,7 @@ export type PaymentMinAggregateInputType = {
   period?: true
   months?: true
   dueAmount?: true
+  receiptUrl?: true
   note?: true
 }
 
@@ -109,6 +113,7 @@ export type PaymentMaxAggregateInputType = {
   period?: true
   months?: true
   dueAmount?: true
+  receiptUrl?: true
   note?: true
 }
 
@@ -121,6 +126,7 @@ export type PaymentCountAggregateInputType = {
   period?: true
   months?: true
   dueAmount?: true
+  receiptUrl?: true
   note?: true
   _all?: true
 }
@@ -220,6 +226,7 @@ export type PaymentGroupByOutputType = {
   period: string
   months: number | null
   dueAmount: number | null
+  receiptUrl: string | null
   note: string | null
   _count: PaymentCountAggregateOutputType | null
   _avg: PaymentAvgAggregateOutputType | null
@@ -255,6 +262,7 @@ export type PaymentWhereInput = {
   period?: Prisma.StringFilter<"Payment"> | string
   months?: Prisma.IntNullableFilter<"Payment"> | number | null
   dueAmount?: Prisma.FloatNullableFilter<"Payment"> | number | null
+  receiptUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
   note?: Prisma.StringNullableFilter<"Payment"> | string | null
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
 }
@@ -268,6 +276,7 @@ export type PaymentOrderByWithRelationInput = {
   period?: Prisma.SortOrder
   months?: Prisma.SortOrderInput | Prisma.SortOrder
   dueAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  receiptUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
 }
@@ -284,6 +293,7 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<{
   period?: Prisma.StringFilter<"Payment"> | string
   months?: Prisma.IntNullableFilter<"Payment"> | number | null
   dueAmount?: Prisma.FloatNullableFilter<"Payment"> | number | null
+  receiptUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
   note?: Prisma.StringNullableFilter<"Payment"> | string | null
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
 }, "id">
@@ -297,6 +307,7 @@ export type PaymentOrderByWithAggregationInput = {
   period?: Prisma.SortOrder
   months?: Prisma.SortOrderInput | Prisma.SortOrder
   dueAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  receiptUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PaymentCountOrderByAggregateInput
   _avg?: Prisma.PaymentAvgOrderByAggregateInput
@@ -317,6 +328,7 @@ export type PaymentScalarWhereWithAggregatesInput = {
   period?: Prisma.StringWithAggregatesFilter<"Payment"> | string
   months?: Prisma.IntNullableWithAggregatesFilter<"Payment"> | number | null
   dueAmount?: Prisma.FloatNullableWithAggregatesFilter<"Payment"> | number | null
+  receiptUrl?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
   note?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
 }
 
@@ -328,6 +340,7 @@ export type PaymentCreateInput = {
   period: string
   months?: number | null
   dueAmount?: number | null
+  receiptUrl?: string | null
   note?: string | null
   student: Prisma.StudentCreateNestedOneWithoutPaymentsInput
 }
@@ -341,6 +354,7 @@ export type PaymentUncheckedCreateInput = {
   period: string
   months?: number | null
   dueAmount?: number | null
+  receiptUrl?: string | null
   note?: string | null
 }
 
@@ -352,6 +366,7 @@ export type PaymentUpdateInput = {
   period?: Prisma.StringFieldUpdateOperationsInput | string
   months?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  receiptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   student?: Prisma.StudentUpdateOneRequiredWithoutPaymentsNestedInput
 }
@@ -365,6 +380,7 @@ export type PaymentUncheckedUpdateInput = {
   period?: Prisma.StringFieldUpdateOperationsInput | string
   months?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  receiptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -377,6 +393,7 @@ export type PaymentCreateManyInput = {
   period: string
   months?: number | null
   dueAmount?: number | null
+  receiptUrl?: string | null
   note?: string | null
 }
 
@@ -388,6 +405,7 @@ export type PaymentUpdateManyMutationInput = {
   period?: Prisma.StringFieldUpdateOperationsInput | string
   months?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  receiptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -400,6 +418,7 @@ export type PaymentUncheckedUpdateManyInput = {
   period?: Prisma.StringFieldUpdateOperationsInput | string
   months?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  receiptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -422,6 +441,7 @@ export type PaymentCountOrderByAggregateInput = {
   period?: Prisma.SortOrder
   months?: Prisma.SortOrder
   dueAmount?: Prisma.SortOrder
+  receiptUrl?: Prisma.SortOrder
   note?: Prisma.SortOrder
 }
 
@@ -440,6 +460,7 @@ export type PaymentMaxOrderByAggregateInput = {
   period?: Prisma.SortOrder
   months?: Prisma.SortOrder
   dueAmount?: Prisma.SortOrder
+  receiptUrl?: Prisma.SortOrder
   note?: Prisma.SortOrder
 }
 
@@ -452,6 +473,7 @@ export type PaymentMinOrderByAggregateInput = {
   period?: Prisma.SortOrder
   months?: Prisma.SortOrder
   dueAmount?: Prisma.SortOrder
+  receiptUrl?: Prisma.SortOrder
   note?: Prisma.SortOrder
 }
 
@@ -519,14 +541,6 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type NullableFloatFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type PaymentCreateWithoutStudentInput = {
   id?: string
   amount: number
@@ -535,6 +549,7 @@ export type PaymentCreateWithoutStudentInput = {
   period: string
   months?: number | null
   dueAmount?: number | null
+  receiptUrl?: string | null
   note?: string | null
 }
 
@@ -546,6 +561,7 @@ export type PaymentUncheckedCreateWithoutStudentInput = {
   period: string
   months?: number | null
   dueAmount?: number | null
+  receiptUrl?: string | null
   note?: string | null
 }
 
@@ -587,6 +603,7 @@ export type PaymentScalarWhereInput = {
   period?: Prisma.StringFilter<"Payment"> | string
   months?: Prisma.IntNullableFilter<"Payment"> | number | null
   dueAmount?: Prisma.FloatNullableFilter<"Payment"> | number | null
+  receiptUrl?: Prisma.StringNullableFilter<"Payment"> | string | null
   note?: Prisma.StringNullableFilter<"Payment"> | string | null
 }
 
@@ -598,6 +615,7 @@ export type PaymentCreateManyStudentInput = {
   period: string
   months?: number | null
   dueAmount?: number | null
+  receiptUrl?: string | null
   note?: string | null
 }
 
@@ -609,6 +627,7 @@ export type PaymentUpdateWithoutStudentInput = {
   period?: Prisma.StringFieldUpdateOperationsInput | string
   months?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  receiptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -620,6 +639,7 @@ export type PaymentUncheckedUpdateWithoutStudentInput = {
   period?: Prisma.StringFieldUpdateOperationsInput | string
   months?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  receiptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -631,6 +651,7 @@ export type PaymentUncheckedUpdateManyWithoutStudentInput = {
   period?: Prisma.StringFieldUpdateOperationsInput | string
   months?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dueAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  receiptUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -645,6 +666,7 @@ export type PaymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   period?: boolean
   months?: boolean
   dueAmount?: boolean
+  receiptUrl?: boolean
   note?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payment"]>
@@ -658,6 +680,7 @@ export type PaymentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   period?: boolean
   months?: boolean
   dueAmount?: boolean
+  receiptUrl?: boolean
   note?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payment"]>
@@ -671,6 +694,7 @@ export type PaymentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   period?: boolean
   months?: boolean
   dueAmount?: boolean
+  receiptUrl?: boolean
   note?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payment"]>
@@ -684,10 +708,11 @@ export type PaymentSelectScalar = {
   period?: boolean
   months?: boolean
   dueAmount?: boolean
+  receiptUrl?: boolean
   note?: boolean
 }
 
-export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "amount" | "date" | "method" | "period" | "months" | "dueAmount" | "note", ExtArgs["result"]["payment"]>
+export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "amount" | "date" | "method" | "period" | "months" | "dueAmount" | "receiptUrl" | "note", ExtArgs["result"]["payment"]>
 export type PaymentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
 }
@@ -712,6 +737,7 @@ export type $PaymentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     period: string
     months: number | null
     dueAmount: number | null
+    receiptUrl: string | null
     note: string | null
   }, ExtArgs["result"]["payment"]>
   composites: {}
@@ -1145,6 +1171,7 @@ export interface PaymentFieldRefs {
   readonly period: Prisma.FieldRef<"Payment", 'String'>
   readonly months: Prisma.FieldRef<"Payment", 'Int'>
   readonly dueAmount: Prisma.FieldRef<"Payment", 'Float'>
+  readonly receiptUrl: Prisma.FieldRef<"Payment", 'String'>
   readonly note: Prisma.FieldRef<"Payment", 'String'>
 }
     

@@ -45,6 +45,9 @@ export default function StudentForm({
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<CreateStudentInput>(initialForm);
   const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
+  const [paymentStatus, setPaymentStatus] = useState<"paid" | "partial" | "unpaid">("unpaid");
+  const [paidAmount, setPaidAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"bank" | "cash">("bank");
 
   useEffect(() => {
     if (open) {
@@ -58,9 +61,13 @@ export default function StudentForm({
               password: "",
               classId: student.classId ?? "",
               subEndDate: toDateInput(student.subEndDate),
+              monthlyFee: student.monthlyFee ?? undefined,
             }
           : initialForm
       );
+      setPaymentStatus("unpaid");
+      setPaidAmount("");
+      setPaymentMethod("bank");
       fetch("/api/classes")
         .then((res) => (res.ok ? res.json() : []))
         .then(setClasses)
@@ -88,6 +95,15 @@ export default function StudentForm({
             password: form.password || undefined,
             classId: form.classId || undefined,
             subEndDate: form.subEndDate || undefined,
+            monthlyFee: form.monthlyFee || undefined,
+            ...(!isEdit
+              ? {
+                  paymentStatus,
+                  paidAmount:
+                    paymentStatus === "partial" ? Number(paidAmount) : undefined,
+                  paymentMethod,
+                }
+              : {}),
           }),
         }
       );
@@ -190,6 +206,86 @@ export default function StudentForm({
               />
             </div>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="student-monthly-fee">رسم الاشتراك الشهري (ر.س)</Label>
+            <Input
+              id="student-monthly-fee"
+              type="number"
+              min={0}
+              value={form.monthlyFee ?? ""}
+              onChange={(e) =>
+                setForm((f) => ({
+                  ...f,
+                  monthlyFee:
+                    e.target.value === "" ? undefined : Number(e.target.value),
+                }))
+              }
+            />
+          </div>
+          {!isEdit && (
+            <div className="space-y-2">
+              <Label>حالة دفع الاشتراك</Label>
+              <div className="flex gap-4 text-sm">
+                {(
+                  [
+                    ["paid", "تم الدفع"],
+                    ["partial", "دفع جزئي"],
+                    ["unpaid", "لم يتم الدفع"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <label key={value} className="flex items-center gap-1.5">
+                    <input
+                      type="radio"
+                      name="payment-status"
+                      checked={paymentStatus === value}
+                      onChange={() => setPaymentStatus(value)}
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
+              {paymentStatus !== "unpaid" && (
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  {paymentStatus === "partial" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="student-paid-amount">
+                        المبلغ المدفوع (ر.س)
+                      </Label>
+                      <Input
+                        id="student-paid-amount"
+                        type="number"
+                        min={0}
+                        required
+                        value={paidAmount}
+                        onChange={(e) => setPaidAmount(e.target.value)}
+                      />
+                      {form.monthlyFee !== undefined &&
+                        Number(paidAmount) > 0 &&
+                        form.monthlyFee > Number(paidAmount) && (
+                          <p className="text-sm text-destructive">
+                            المتبقي: {form.monthlyFee - Number(paidAmount)} ر.س
+                          </p>
+                        )}
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="student-pay-method">طريقة الدفع</Label>
+                    <select
+                      id="student-pay-method"
+                      value={paymentMethod}
+                      onChange={(e) =>
+                        setPaymentMethod(e.target.value as "bank" | "cash")
+                      }
+                      className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      <option value="bank">تحويل بنكي</option>
+                      <option value="cash">نقدي</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting

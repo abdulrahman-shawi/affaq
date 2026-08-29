@@ -51,6 +51,7 @@ model Student {
   status        String       @default("active")
   subEndDate    DateTime?
   subReminderAt DateTime?
+  monthlyFee    Float?        // رسم الاشتراك الشهري
 
   payments     Payment[]
   attendance   Attendance[]
@@ -80,8 +81,9 @@ model Payment {
   method    String   // "bank", "cash"
   period    String   // "year", "semester", "monthly"
   months    Int?
-  dueAmount Float?  // المبلغ المستحق الكلي للفترة — المتبقي = dueAmount - amount
-  note      String?
+  dueAmount  Float?  // المبلغ المستحق الكلي للفترة — المتبقي = dueAmount - amount
+  receiptUrl String? // صورة إشعار الدفع (Vercel Blob)
+  note       String?
 }
 
 model Session {

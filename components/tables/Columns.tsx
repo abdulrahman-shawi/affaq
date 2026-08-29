@@ -111,6 +111,22 @@ export function paymentColumns(): Column<PaymentDTO>[] {
     { header: "التاريخ", cell: (p) => formatDate(p.date) },
     { header: "طريقة الدفع", cell: (p) => methodLabels[p.method] ?? p.method },
     { header: "الفترة", cell: (p) => periodLabels[p.period] ?? p.period },
+    {
+      header: "الإشعار",
+      cell: (p) =>
+        p.receiptUrl ? (
+          <a
+            href={p.receiptUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            عرض
+          </a>
+        ) : (
+          "—"
+        ),
+    },
     { header: "ملاحظة", cell: (p) => p.note ?? "—" },
   ];
 }

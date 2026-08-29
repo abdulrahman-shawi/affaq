@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ export default function PaymentForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [students, setStudents] = useState<StudentDTO[]>([]);
+  const [receipt, setReceipt] = useState<File | null>(null);
   const [form, setForm] = useState<CreatePaymentInput>({
     studentId: "",
     amount: 0,
@@ -46,10 +48,20 @@ export default function PaymentForm({
     setSubmitting(true);
     setError(null);
     try {
+      // رفع صورة الإشعار (إن وُجدت) مباشرة إلى Vercel Blob
+      let receiptUrl: string | undefined;
+      if (receipt) {
+        const blob = await upload(receipt.name, receipt, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        receiptUrl = blob.url;
+      }
+
       const res = await fetch("/api/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, receiptUrl }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
@@ -57,6 +69,7 @@ export default function PaymentForm({
       }
       setOpen(false);
       setForm({ studentId: "", amount: 0, method: "bank", period: "monthly", months: 1, note: "" });
+      setReceipt(null);
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
@@ -83,7 +96,12 @@ export default function PaymentForm({
               required
               className={selectClass}
               value={form.studentId}
-              onChange={(e) => setForm({ ...form, studentId: e.target.value })}
+              onChange={(e) => {
+                const studentId = e.target.value;
+                const fee = students.find((s) => s.id === studentId)?.monthlyFee;
+                // تعبئة المبلغ المستحق تلقائيًا من رسم الاشتراك الشهري للطالب
+                setForm({ ...form, studentId, dueAmount: fee ?? undefined });
+              }}
             >
               <option value="">اختر الطالب</option>
               {students.map((s) => (
@@ -92,6 +110,14 @@ export default function PaymentForm({
                 </option>
               ))}
             </select>
+            {(() => {
+              const fee = students.find((s) => s.id === form.studentId)?.monthlyFee;
+              return fee != null ? (
+                <p className="text-sm text-muted-foreground">
+                  المبلغ المترتب شهريًا على الطالب: {fee} ر.س
+                </p>
+              ) : null;
+            })()}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -171,6 +197,15 @@ export default function PaymentForm({
                 <option value="year">سنوي</option>
               </select>
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="payment-receipt">صورة الإشعار (اختياري)</Label>
+            <Input
+              id="payment-receipt"
+              type="file"
+              accept="image/*,application/pdf"
+              onChange={(e) => setReceipt(e.target.files?.[0] ?? null)}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="payment-note">ملاحظة</Label>

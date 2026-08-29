@@ -24,7 +24,8 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, email, phone, password, classId, subEndDate } = body;
+    const { name, email, phone, password, classId, subEndDate, monthlyFee } =
+      body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -59,6 +60,7 @@ export async function PATCH(
       data: {
         class: classId ? { connect: { id: classId } } : { disconnect: true },
         subEndDate: subEndDate ? new Date(subEndDate) : null,
+        monthlyFee: monthlyFee ? Number(monthlyFee) : null,
         user: {
           update: {
             name,
