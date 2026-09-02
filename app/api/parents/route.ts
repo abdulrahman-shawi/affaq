@@ -29,11 +29,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, password, phone } = body;
+    const { name, email, password, phone, phones } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
+
+    // أرقام إضافية لولي الأمر — يُحتفظ بالقيم غير الفارغة فقط
+    const extraPhones: string[] = Array.isArray(phones)
+      ? phones.filter((p): p is string => typeof p === "string" && p.trim() !== "")
+      : [];
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
@@ -53,6 +58,7 @@ export async function POST(req: Request) {
     const hashed = await bcrypt.hash(password || "123456", 10);
     const parent = await prisma.parent.create({
       data: {
+        phones: extraPhones,
         user: {
           create: {
             name,

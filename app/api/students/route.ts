@@ -38,6 +38,9 @@ export async function POST(req: Request) {
       address,
       birthDate,
       regGoal,
+      fatherName,
+      motherName,
+      guardianPhones,
       paymentStatus,
       paidAmount,
       paymentMethod,
@@ -93,6 +96,11 @@ export async function POST(req: Request) {
 
     const hashed = await bcrypt.hash(password || "123456", 10);
 
+    // أرقام هواتف ولي الأمر — يُحتفظ بالقيم غير الفارغة فقط
+    const guardianPhoneList: string[] = Array.isArray(guardianPhones)
+      ? guardianPhones.filter((p): p is string => typeof p === "string" && p.trim() !== "")
+      : [];
+
     // عند الدفع (كلي أو جزئي) تُنشأ دفعة أولى في جدول المدفوعات
     const payment =
       paymentStatus === "paid"
@@ -123,6 +131,9 @@ export async function POST(req: Request) {
         address: address || null,
         birthDate: birthDate ? new Date(birthDate) : null,
         regGoal: regGoal || null,
+        fatherName: fatherName || null,
+        motherName: motherName || null,
+        guardianPhones: guardianPhoneList,
         user: {
           create: {
             name,

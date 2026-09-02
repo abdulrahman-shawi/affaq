@@ -27,6 +27,7 @@
     "pg": "^8.22.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-phone-number-input": "^3.4.18",
     "recharts": "^3.10.1",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7"

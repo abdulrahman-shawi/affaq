@@ -29,8 +29,14 @@ const statusVariants: Record<string, "success" | "destructive" | "warning"> = {
 export function studentColumns(): Column<StudentDTO>[] {
   return [
     { header: "الاسم", cell: (s) => s.user?.name ?? "—" },
+    { header: "اسم الأب", cell: (s) => s.fatherName ?? "—" },
+    { header: "اسم الأم", cell: (s) => s.motherName ?? "—" },
     { header: "البريد الإلكتروني", cell: (s) => s.user?.email ?? "—" },
     { header: "رقم الهاتف", cell: (s) => s.user?.phone ?? "—" },
+    {
+      header: "هواتف ولي الأمر",
+      cell: (s) => (s.guardianPhones?.length ? s.guardianPhones.join("، ") : "—"),
+    },
     { header: "الصف", cell: (s) => s.class?.name ?? "—" },
     {
       header: "ولي الأمر",
@@ -70,7 +76,11 @@ export function parentColumns(): Column<ParentDTO>[] {
   return [
     { header: "الاسم", cell: (p) => p.user?.name ?? "—" },
     { header: "البريد الإلكتروني", cell: (p) => p.user?.email ?? "—" },
-    { header: "رقم الهاتف", cell: (p) => p.user?.phone ?? "—" },
+    {
+      header: "أرقام الهاتف",
+      cell: (p) =>
+        [p.user?.phone, ...(p.phones ?? [])].filter(Boolean).join("، ") || "—",
+    },
     {
       header: "الأبناء",
       cell: (p) =>

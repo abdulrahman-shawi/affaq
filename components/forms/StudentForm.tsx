@@ -11,6 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import PhoneInput from "@/components/ui/phone-input";
+import { Plus, X } from "lucide-react";
 import { useToast } from "@/components/ui/toaster";
 import type { ClassLevelDTO, CreateStudentInput, StudentDTO } from "@/types";
 
@@ -24,6 +26,9 @@ const initialForm: CreateStudentInput = {
   address: "",
   birthDate: "",
   regGoal: "",
+  fatherName: "",
+  motherName: "",
+  guardianPhones: [],
 };
 
 function toDateInput(date?: string | null): string {
@@ -68,6 +73,9 @@ export default function StudentForm({
               address: student.address ?? "",
               birthDate: toDateInput(student.birthDate),
               regGoal: student.regGoal ?? "",
+              fatherName: student.fatherName ?? "",
+              motherName: student.motherName ?? "",
+              guardianPhones: student.guardianPhones ?? [],
             }
           : initialForm
       );
@@ -105,6 +113,11 @@ export default function StudentForm({
             address: form.address || undefined,
             birthDate: form.birthDate || undefined,
             regGoal: form.regGoal || undefined,
+            fatherName: form.fatherName || undefined,
+            motherName: form.motherName || undefined,
+            guardianPhones: (form.guardianPhones ?? []).filter(
+              (p) => p.trim() !== ""
+            ),
             ...(!isEdit
               ? {
                   paymentStatus,
@@ -165,12 +178,10 @@ export default function StudentForm({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="student-phone">رقم الهاتف</Label>
-              <Input
+              <PhoneInput
                 id="student-phone"
-                type="tel"
-                dir="ltr"
                 value={form.phone}
-                onChange={(e) => set("phone", e.target.value)}
+                onChange={(v) => set("phone", v)}
               />
             </div>
             <div className="space-y-2">
@@ -215,6 +226,73 @@ export default function StudentForm({
               value={form.regGoal}
               onChange={(e) => set("regGoal", e.target.value)}
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="student-father">اسم الأب</Label>
+              <Input
+                id="student-father"
+                value={form.fatherName}
+                onChange={(e) => set("fatherName", e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="student-mother">اسم الأم</Label>
+              <Input
+                id="student-mother"
+                value={form.motherName}
+                onChange={(e) => set("motherName", e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>أرقام هواتف ولي الأمر</Label>
+            {(form.guardianPhones ?? []).map((p, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="flex-1">
+                  <PhoneInput
+                    value={p}
+                    onChange={(v) =>
+                      setForm((f) => ({
+                        ...f,
+                        guardianPhones: (f.guardianPhones ?? []).map(
+                          (item, idx) => (idx === i ? v : item)
+                        ),
+                      }))
+                    }
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    setForm((f) => ({
+                      ...f,
+                      guardianPhones: (f.guardianPhones ?? []).filter(
+                        (_, idx) => idx !== i
+                      ),
+                    }))
+                  }
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setForm((f) => ({
+                  ...f,
+                  guardianPhones: [...(f.guardianPhones ?? []), ""],
+                }))
+              }
+            >
+              <Plus className="h-4 w-4" />
+              إضافة رقم آخر
+            </Button>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

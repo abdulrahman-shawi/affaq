@@ -35,6 +35,9 @@ export async function PATCH(
       address,
       birthDate,
       regGoal,
+      fatherName,
+      motherName,
+      guardianPhones,
     } = body;
 
     if (!name || !email) {
@@ -74,6 +77,11 @@ export async function PATCH(
         address: address || null,
         birthDate: birthDate ? new Date(birthDate) : null,
         regGoal: regGoal || null,
+        fatherName: fatherName || null,
+        motherName: motherName || null,
+        guardianPhones: Array.isArray(guardianPhones)
+          ? guardianPhones.filter((p): p is string => typeof p === "string" && p.trim() !== "")
+          : [],
         user: {
           update: {
             name,

@@ -25,7 +25,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, email, phone, password } = body;
+    const { name, email, phone, password, phones } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -49,6 +49,14 @@ export async function PATCH(
     const updated = await prisma.parent.update({
       where: { id: params.id },
       data: {
+        // أرقام إضافية — تُستبدل القائمة كاملة عند تمريرها
+        ...(Array.isArray(phones)
+          ? {
+              phones: phones.filter(
+                (p): p is string => typeof p === "string" && p.trim() !== ""
+              ),
+            }
+          : {}),
         user: {
           update: {
             name,

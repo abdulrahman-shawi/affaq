@@ -11,6 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import PhoneInput from "@/components/ui/phone-input";
+import { Plus, X } from "lucide-react";
 import { useToast } from "@/components/ui/toaster";
 import type { ParentDTO } from "@/types";
 
@@ -32,6 +34,7 @@ export default function ParentForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
+  const [extraPhones, setExtraPhones] = useState<string[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -46,6 +49,7 @@ export default function ParentForm({
             }
           : emptyForm
       );
+      setExtraPhones(parent?.phones ?? []);
     }
   }, [open, parent]);
 
@@ -64,6 +68,7 @@ export default function ParentForm({
             email: form.email,
             password: form.password || undefined,
             phone: form.phone || undefined,
+            phones: extraPhones.filter((p) => p.trim() !== ""),
           }),
         }
       );
@@ -130,14 +135,48 @@ export default function ParentForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="parent-phone">رقم الهاتف</Label>
-            <Input
+            <Label htmlFor="parent-phone">رقم الهاتف الأساسي</Label>
+            <PhoneInput
               id="parent-phone"
-              type="tel"
-              dir="ltr"
               value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              onChange={(v) => setForm({ ...form, phone: v })}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>أرقام هواتف إضافية</Label>
+            {extraPhones.map((p, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="flex-1">
+                  <PhoneInput
+                    value={p}
+                    onChange={(v) =>
+                      setExtraPhones((list) =>
+                        list.map((item, idx) => (idx === i ? v : item))
+                      )
+                    }
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    setExtraPhones((list) => list.filter((_, idx) => idx !== i))
+                  }
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setExtraPhones((list) => [...list, ""])}
+            >
+              <Plus className="h-4 w-4" />
+              إضافة رقم آخر
+            </Button>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>

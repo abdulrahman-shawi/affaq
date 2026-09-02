@@ -53,3 +53,14 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/40;
 }
+
+/* حقل الهاتف مع رمز الدولة — يطابق تنسيق بقية الحقول */
+.phone-input .PhoneInputInput {
+  @apply flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring;
+}
+.phone-input .PhoneInputCountry {
+  @apply rounded-md border border-input bg-background px-2 shadow-sm;
+}
+.phone-input .PhoneInputCountrySelect {
+  @apply text-sm;
+}

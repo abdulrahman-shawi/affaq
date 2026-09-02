@@ -1970,7 +1970,8 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const ParentScalarFieldEnum = {
   id: 'id',
-  userId: 'userId'
+  userId: 'userId',
+  phones: 'phones'
 } as const
 
 export type ParentScalarFieldEnum = (typeof ParentScalarFieldEnum)[keyof typeof ParentScalarFieldEnum]
@@ -1987,7 +1988,10 @@ export const StudentScalarFieldEnum = {
   monthlyFee: 'monthlyFee',
   address: 'address',
   birthDate: 'birthDate',
-  regGoal: 'regGoal'
+  regGoal: 'regGoal',
+  fatherName: 'fatherName',
+  motherName: 'motherName',
+  guardianPhones: 'guardianPhones'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]

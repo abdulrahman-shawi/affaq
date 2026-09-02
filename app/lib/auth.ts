@@ -12,14 +12,20 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "البريد الإلكتروني", type: "email" },
+        identifier: { label: "الاسم أو البريد الإلكتروني", type: "text" },
         password: { label: "كلمة المرور", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) return null;
+        if (!credentials?.identifier || !credentials.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+        // تسجيل الدخول بالاسم أو البريد الإلكتروني لجميع الأدوار
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: credentials.identifier },
+              { name: credentials.identifier },
+            ],
+          },
         });
         if (!user) return null;
 

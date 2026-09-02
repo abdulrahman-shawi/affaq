@@ -46,6 +46,8 @@ export type StudentMinAggregateOutputType = {
   address: string | null
   birthDate: Date | null
   regGoal: string | null
+  fatherName: string | null
+  motherName: string | null
 }
 
 export type StudentMaxAggregateOutputType = {
@@ -60,6 +62,8 @@ export type StudentMaxAggregateOutputType = {
   address: string | null
   birthDate: Date | null
   regGoal: string | null
+  fatherName: string | null
+  motherName: string | null
 }
 
 export type StudentCountAggregateOutputType = {
@@ -74,6 +78,9 @@ export type StudentCountAggregateOutputType = {
   address: number
   birthDate: number
   regGoal: number
+  fatherName: number
+  motherName: number
+  guardianPhones: number
   _all: number
 }
 
@@ -98,6 +105,8 @@ export type StudentMinAggregateInputType = {
   address?: true
   birthDate?: true
   regGoal?: true
+  fatherName?: true
+  motherName?: true
 }
 
 export type StudentMaxAggregateInputType = {
@@ -112,6 +121,8 @@ export type StudentMaxAggregateInputType = {
   address?: true
   birthDate?: true
   regGoal?: true
+  fatherName?: true
+  motherName?: true
 }
 
 export type StudentCountAggregateInputType = {
@@ -126,6 +137,9 @@ export type StudentCountAggregateInputType = {
   address?: true
   birthDate?: true
   regGoal?: true
+  fatherName?: true
+  motherName?: true
+  guardianPhones?: true
   _all?: true
 }
 
@@ -227,6 +241,9 @@ export type StudentGroupByOutputType = {
   address: string | null
   birthDate: Date | null
   regGoal: string | null
+  fatherName: string | null
+  motherName: string | null
+  guardianPhones: string[]
   _count: StudentCountAggregateOutputType | null
   _avg: StudentAvgAggregateOutputType | null
   _sum: StudentSumAggregateOutputType | null
@@ -264,6 +281,9 @@ export type StudentWhereInput = {
   address?: Prisma.StringNullableFilter<"Student"> | string | null
   birthDate?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   regGoal?: Prisma.StringNullableFilter<"Student"> | string | null
+  fatherName?: Prisma.StringNullableFilter<"Student"> | string | null
+  motherName?: Prisma.StringNullableFilter<"Student"> | string | null
+  guardianPhones?: Prisma.StringNullableListFilter<"Student">
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
   class?: Prisma.XOR<Prisma.ClassLevelNullableScalarRelationFilter, Prisma.ClassLevelWhereInput> | null
@@ -286,6 +306,9 @@ export type StudentOrderByWithRelationInput = {
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   birthDate?: Prisma.SortOrderInput | Prisma.SortOrder
   regGoal?: Prisma.SortOrderInput | Prisma.SortOrder
+  fatherName?: Prisma.SortOrderInput | Prisma.SortOrder
+  motherName?: Prisma.SortOrderInput | Prisma.SortOrder
+  guardianPhones?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   parent?: Prisma.ParentOrderByWithRelationInput
   class?: Prisma.ClassLevelOrderByWithRelationInput
@@ -311,6 +334,9 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   address?: Prisma.StringNullableFilter<"Student"> | string | null
   birthDate?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   regGoal?: Prisma.StringNullableFilter<"Student"> | string | null
+  fatherName?: Prisma.StringNullableFilter<"Student"> | string | null
+  motherName?: Prisma.StringNullableFilter<"Student"> | string | null
+  guardianPhones?: Prisma.StringNullableListFilter<"Student">
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
   class?: Prisma.XOR<Prisma.ClassLevelNullableScalarRelationFilter, Prisma.ClassLevelWhereInput> | null
@@ -333,6 +359,9 @@ export type StudentOrderByWithAggregationInput = {
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   birthDate?: Prisma.SortOrderInput | Prisma.SortOrder
   regGoal?: Prisma.SortOrderInput | Prisma.SortOrder
+  fatherName?: Prisma.SortOrderInput | Prisma.SortOrder
+  motherName?: Prisma.SortOrderInput | Prisma.SortOrder
+  guardianPhones?: Prisma.SortOrder
   _count?: Prisma.StudentCountOrderByAggregateInput
   _avg?: Prisma.StudentAvgOrderByAggregateInput
   _max?: Prisma.StudentMaxOrderByAggregateInput
@@ -355,6 +384,9 @@ export type StudentScalarWhereWithAggregatesInput = {
   address?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   birthDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Student"> | Date | string | null
   regGoal?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
+  fatherName?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
+  motherName?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
+  guardianPhones?: Prisma.StringNullableListFilter<"Student">
 }
 
 export type StudentCreateInput = {
@@ -366,6 +398,9 @@ export type StudentCreateInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
@@ -388,6 +423,9 @@ export type StudentUncheckedCreateInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
@@ -404,6 +442,9 @@ export type StudentUpdateInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
@@ -426,6 +467,9 @@ export type StudentUncheckedUpdateInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
@@ -445,6 +489,9 @@ export type StudentCreateManyInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
 }
 
 export type StudentUpdateManyMutationInput = {
@@ -456,6 +503,9 @@ export type StudentUpdateManyMutationInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
 }
 
 export type StudentUncheckedUpdateManyInput = {
@@ -470,6 +520,9 @@ export type StudentUncheckedUpdateManyInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
 }
 
 export type StudentNullableScalarRelationFilter = {
@@ -499,6 +552,9 @@ export type StudentCountOrderByAggregateInput = {
   address?: Prisma.SortOrder
   birthDate?: Prisma.SortOrder
   regGoal?: Prisma.SortOrder
+  fatherName?: Prisma.SortOrder
+  motherName?: Prisma.SortOrder
+  guardianPhones?: Prisma.SortOrder
 }
 
 export type StudentAvgOrderByAggregateInput = {
@@ -517,6 +573,8 @@ export type StudentMaxOrderByAggregateInput = {
   address?: Prisma.SortOrder
   birthDate?: Prisma.SortOrder
   regGoal?: Prisma.SortOrder
+  fatherName?: Prisma.SortOrder
+  motherName?: Prisma.SortOrder
 }
 
 export type StudentMinOrderByAggregateInput = {
@@ -531,6 +589,8 @@ export type StudentMinOrderByAggregateInput = {
   address?: Prisma.SortOrder
   birthDate?: Prisma.SortOrder
   regGoal?: Prisma.SortOrder
+  fatherName?: Prisma.SortOrder
+  motherName?: Prisma.SortOrder
 }
 
 export type StudentSumOrderByAggregateInput = {
@@ -616,6 +676,10 @@ export type StudentUncheckedUpdateManyWithoutParentNestedInput = {
   deleteMany?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
 }
 
+export type StudentCreateguardianPhonesInput = {
+  set: string[]
+}
+
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
@@ -626,6 +690,11 @@ export type NullableFloatFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type StudentUpdateguardianPhonesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type StudentCreateNestedOneWithoutPaymentsInput = {
@@ -749,6 +818,9 @@ export type StudentCreateWithoutUserInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -769,6 +841,9 @@ export type StudentUncheckedCreateWithoutUserInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
@@ -801,6 +876,9 @@ export type StudentUpdateWithoutUserInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -821,6 +899,9 @@ export type StudentUncheckedUpdateWithoutUserInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
@@ -837,6 +918,9 @@ export type StudentCreateWithoutParentInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -857,6 +941,9 @@ export type StudentUncheckedCreateWithoutParentInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
@@ -905,6 +992,9 @@ export type StudentScalarWhereInput = {
   address?: Prisma.StringNullableFilter<"Student"> | string | null
   birthDate?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   regGoal?: Prisma.StringNullableFilter<"Student"> | string | null
+  fatherName?: Prisma.StringNullableFilter<"Student"> | string | null
+  motherName?: Prisma.StringNullableFilter<"Student"> | string | null
+  guardianPhones?: Prisma.StringNullableListFilter<"Student">
 }
 
 export type StudentCreateWithoutPaymentsInput = {
@@ -916,6 +1006,9 @@ export type StudentCreateWithoutPaymentsInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
@@ -937,6 +1030,9 @@ export type StudentUncheckedCreateWithoutPaymentsInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
   grades?: Prisma.GradeUncheckedCreateNestedManyWithoutStudentInput
@@ -968,6 +1064,9 @@ export type StudentUpdateWithoutPaymentsInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
@@ -989,6 +1088,9 @@ export type StudentUncheckedUpdateWithoutPaymentsInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
   grades?: Prisma.GradeUncheckedUpdateManyWithoutStudentNestedInput
@@ -1004,6 +1106,9 @@ export type StudentCreateWithoutAttendanceInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
@@ -1025,6 +1130,9 @@ export type StudentUncheckedCreateWithoutAttendanceInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
   grades?: Prisma.GradeUncheckedCreateNestedManyWithoutStudentInput
@@ -1056,6 +1164,9 @@ export type StudentUpdateWithoutAttendanceInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
@@ -1077,6 +1188,9 @@ export type StudentUncheckedUpdateWithoutAttendanceInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
   grades?: Prisma.GradeUncheckedUpdateManyWithoutStudentNestedInput
@@ -1092,6 +1206,9 @@ export type StudentCreateWithoutSubmissionsInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
@@ -1113,6 +1230,9 @@ export type StudentUncheckedCreateWithoutSubmissionsInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   grades?: Prisma.GradeUncheckedCreateNestedManyWithoutStudentInput
@@ -1144,6 +1264,9 @@ export type StudentUpdateWithoutSubmissionsInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
@@ -1165,6 +1288,9 @@ export type StudentUncheckedUpdateWithoutSubmissionsInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   grades?: Prisma.GradeUncheckedUpdateManyWithoutStudentNestedInput
@@ -1180,6 +1306,9 @@ export type StudentCreateWithoutGradesInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
@@ -1201,6 +1330,9 @@ export type StudentUncheckedCreateWithoutGradesInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
@@ -1232,6 +1364,9 @@ export type StudentUpdateWithoutGradesInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
@@ -1253,6 +1388,9 @@ export type StudentUncheckedUpdateWithoutGradesInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
@@ -1268,6 +1406,9 @@ export type StudentCreateWithoutClassInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -1288,6 +1429,9 @@ export type StudentUncheckedCreateWithoutClassInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
@@ -1330,6 +1474,9 @@ export type StudentCreateWithoutQuizAttemptsInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   user: Prisma.UserCreateNestedOneWithoutStudentInput
   parent?: Prisma.ParentCreateNestedOneWithoutChildrenInput
   class?: Prisma.ClassLevelCreateNestedOneWithoutStudentsInput
@@ -1351,6 +1498,9 @@ export type StudentUncheckedCreateWithoutQuizAttemptsInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
@@ -1382,6 +1532,9 @@ export type StudentUpdateWithoutQuizAttemptsInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
@@ -1403,6 +1556,9 @@ export type StudentUncheckedUpdateWithoutQuizAttemptsInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
@@ -1420,6 +1576,9 @@ export type StudentCreateManyParentInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
 }
 
 export type StudentUpdateWithoutParentInput = {
@@ -1431,6 +1590,9 @@ export type StudentUpdateWithoutParentInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   class?: Prisma.ClassLevelUpdateOneWithoutStudentsNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -1451,6 +1613,9 @@ export type StudentUncheckedUpdateWithoutParentInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
@@ -1469,6 +1634,9 @@ export type StudentUncheckedUpdateManyWithoutParentInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
 }
 
 export type StudentCreateManyClassInput = {
@@ -1482,6 +1650,9 @@ export type StudentCreateManyClassInput = {
   address?: string | null
   birthDate?: Date | string | null
   regGoal?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  guardianPhones?: Prisma.StudentCreateguardianPhonesInput | string[]
 }
 
 export type StudentUpdateWithoutClassInput = {
@@ -1493,6 +1664,9 @@ export type StudentUpdateWithoutClassInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   user?: Prisma.UserUpdateOneRequiredWithoutStudentNestedInput
   parent?: Prisma.ParentUpdateOneWithoutChildrenNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -1513,6 +1687,9 @@ export type StudentUncheckedUpdateWithoutClassInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
@@ -1531,6 +1708,9 @@ export type StudentUncheckedUpdateManyWithoutClassInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   regGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  guardianPhones?: Prisma.StudentUpdateguardianPhonesInput | string[]
 }
 
 
@@ -1612,6 +1792,9 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   address?: boolean
   birthDate?: boolean
   regGoal?: boolean
+  fatherName?: boolean
+  motherName?: boolean
+  guardianPhones?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Student$parentArgs<ExtArgs>
   class?: boolean | Prisma.Student$classArgs<ExtArgs>
@@ -1635,6 +1818,9 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   address?: boolean
   birthDate?: boolean
   regGoal?: boolean
+  fatherName?: boolean
+  motherName?: boolean
+  guardianPhones?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Student$parentArgs<ExtArgs>
   class?: boolean | Prisma.Student$classArgs<ExtArgs>
@@ -1652,6 +1838,9 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   address?: boolean
   birthDate?: boolean
   regGoal?: boolean
+  fatherName?: boolean
+  motherName?: boolean
+  guardianPhones?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Student$parentArgs<ExtArgs>
   class?: boolean | Prisma.Student$classArgs<ExtArgs>
@@ -1669,9 +1858,12 @@ export type StudentSelectScalar = {
   address?: boolean
   birthDate?: boolean
   regGoal?: boolean
+  fatherName?: boolean
+  motherName?: boolean
+  guardianPhones?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "parentId" | "classId" | "status" | "subEndDate" | "subReminderAt" | "monthlyFee" | "address" | "birthDate" | "regGoal", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "parentId" | "classId" | "status" | "subEndDate" | "subReminderAt" | "monthlyFee" | "address" | "birthDate" | "regGoal" | "fatherName" | "motherName" | "guardianPhones", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   parent?: boolean | Prisma.Student$parentArgs<ExtArgs>
@@ -1718,6 +1910,9 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     address: string | null
     birthDate: Date | null
     regGoal: string | null
+    fatherName: string | null
+    motherName: string | null
+    guardianPhones: string[]
   }, ExtArgs["result"]["student"]>
   composites: {}
 }
@@ -2160,6 +2355,9 @@ export interface StudentFieldRefs {
   readonly address: Prisma.FieldRef<"Student", 'String'>
   readonly birthDate: Prisma.FieldRef<"Student", 'DateTime'>
   readonly regGoal: Prisma.FieldRef<"Student", 'String'>
+  readonly fatherName: Prisma.FieldRef<"Student", 'String'>
+  readonly motherName: Prisma.FieldRef<"Student", 'String'>
+  readonly guardianPhones: Prisma.FieldRef<"Student", 'String[]'>
 }
     
 

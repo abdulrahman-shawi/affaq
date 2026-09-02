@@ -28,6 +28,8 @@ export interface ParentDTO {
   id: string;
   userId: string;
   user?: UserDTO;
+  /** أرقام هواتف إضافية — الرقم الأساسي في user.phone */
+  phones?: string[];
   children?: StudentDTO[];
 }
 
@@ -45,6 +47,10 @@ export interface StudentDTO {
   address?: string | null;
   birthDate?: string | null;
   regGoal?: string | null;
+  fatherName?: string | null;
+  motherName?: string | null;
+  /** أرقام هواتف ولي الأمر (يمكن أكثر من رقم) */
+  guardianPhones?: string[];
 }
 
 export interface TeacherDTO {
@@ -244,6 +250,10 @@ export interface CreateStudentInput {
   address?: string;
   birthDate?: string;
   regGoal?: string;
+  fatherName?: string;
+  motherName?: string;
+  /** أرقام هواتف ولي الأمر */
+  guardianPhones?: string[];
   /** حالة دفع الاشتراك الأول — عند paid/partial تُنشأ دفعة تلقائيًا */
   paymentStatus?: "paid" | "partial" | "unpaid";
   paidAmount?: number;

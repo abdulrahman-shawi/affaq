@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import PhoneInput from "@/components/ui/phone-input";
 import { useToast } from "@/components/ui/toaster";
 import type { TeacherDTO } from "@/types";
 
@@ -116,12 +117,10 @@ export default function TeacherForm({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="teacher-phone">رقم الهاتف</Label>
-              <Input
+              <PhoneInput
                 id="teacher-phone"
-                type="tel"
-                dir="ltr"
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                onChange={(v) => setForm({ ...form, phone: v })}
               />
             </div>
             <div className="space-y-2">

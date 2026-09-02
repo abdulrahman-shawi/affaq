@@ -18,7 +18,7 @@ import { roleDashboardPath } from "@/app/lib/roles";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -30,12 +30,12 @@ export default function LoginPage() {
 
     const result = await signIn("credentials", {
       redirect: false,
-      email,
+      identifier,
       password,
     });
 
     if (result?.error) {
-      setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      setError("الاسم أو البريد الإلكتروني أو كلمة المرور غير صحيحة");
       setLoading(false);
       return;
     }
@@ -56,15 +56,15 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">البريد الإلكتروني</Label>
+              <Label htmlFor="identifier">الاسم أو البريد الإلكتروني</Label>
               <Input
-                id="email"
-                type="email"
+                id="identifier"
+                type="text"
                 required
                 dir="ltr"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="الاسم أو name@example.com"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
               />
             </div>
             <div className="space-y-2">

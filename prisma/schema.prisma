@@ -38,6 +38,8 @@ model Parent {
   user     User      @relation(fields: [userId], references: [id])
 
   children Student[] @relation("ParentChildren")
+
+  phones String[] // أرقام هواتف إضافية — الرقم الأساسي في User.phone
 }
 
 model Student {
@@ -55,6 +57,9 @@ model Student {
   address       String?       // السكن الحالي
   birthDate     DateTime?     // تاريخ الميلاد
   regGoal       String?       // هدف التسجيل
+  fatherName    String?       // اسم الأب
+  motherName    String?       // اسم الأم
+  guardianPhones String[]     // أرقام هواتف ولي الأمر (يمكن أكثر من رقم)
 
   payments     Payment[]
   attendance   Attendance[]
