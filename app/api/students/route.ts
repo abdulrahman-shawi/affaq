@@ -35,6 +35,9 @@ export async function POST(req: Request) {
       classId,
       subEndDate,
       monthlyFee,
+      address,
+      birthDate,
+      regGoal,
       paymentStatus,
       paidAmount,
       paymentMethod,
@@ -117,6 +120,9 @@ export async function POST(req: Request) {
         class: classId ? { connect: { id: classId } } : undefined,
         subEndDate: subEndDate ? new Date(subEndDate) : null,
         monthlyFee: fee,
+        address: address || null,
+        birthDate: birthDate ? new Date(birthDate) : null,
+        regGoal: regGoal || null,
         user: {
           create: {
             name,

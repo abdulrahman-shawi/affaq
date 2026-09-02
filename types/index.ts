@@ -42,6 +42,9 @@ export interface StudentDTO {
   status: string;
   subEndDate?: string | null;
   monthlyFee?: number | null;
+  address?: string | null;
+  birthDate?: string | null;
+  regGoal?: string | null;
 }
 
 export interface TeacherDTO {
@@ -238,6 +241,9 @@ export interface CreateStudentInput {
   classId?: string;
   subEndDate?: string;
   monthlyFee?: number;
+  address?: string;
+  birthDate?: string;
+  regGoal?: string;
   /** حالة دفع الاشتراك الأول — عند paid/partial تُنشأ دفعة تلقائيًا */
   paymentStatus?: "paid" | "partial" | "unpaid";
   paidAmount?: number;

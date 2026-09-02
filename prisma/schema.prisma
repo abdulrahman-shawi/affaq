@@ -52,6 +52,9 @@ model Student {
   subEndDate    DateTime?
   subReminderAt DateTime?
   monthlyFee    Float?        // رسم الاشتراك الشهري
+  address       String?       // السكن الحالي
+  birthDate     DateTime?     // تاريخ الميلاد
+  regGoal       String?       // هدف التسجيل
 
   payments     Payment[]
   attendance   Attendance[]

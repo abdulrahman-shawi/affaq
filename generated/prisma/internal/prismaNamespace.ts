@@ -1984,7 +1984,10 @@ export const StudentScalarFieldEnum = {
   status: 'status',
   subEndDate: 'subEndDate',
   subReminderAt: 'subReminderAt',
-  monthlyFee: 'monthlyFee'
+  monthlyFee: 'monthlyFee',
+  address: 'address',
+  birthDate: 'birthDate',
+  regGoal: 'regGoal'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]

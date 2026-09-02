@@ -21,6 +21,9 @@ const initialForm: CreateStudentInput = {
   password: "",
   classId: "",
   subEndDate: "",
+  address: "",
+  birthDate: "",
+  regGoal: "",
 };
 
 function toDateInput(date?: string | null): string {
@@ -62,6 +65,9 @@ export default function StudentForm({
               classId: student.classId ?? "",
               subEndDate: toDateInput(student.subEndDate),
               monthlyFee: student.monthlyFee ?? undefined,
+              address: student.address ?? "",
+              birthDate: toDateInput(student.birthDate),
+              regGoal: student.regGoal ?? "",
             }
           : initialForm
       );
@@ -96,6 +102,9 @@ export default function StudentForm({
             classId: form.classId || undefined,
             subEndDate: form.subEndDate || undefined,
             monthlyFee: form.monthlyFee || undefined,
+            address: form.address || undefined,
+            birthDate: form.birthDate || undefined,
+            regGoal: form.regGoal || undefined,
             ...(!isEdit
               ? {
                   paymentStatus,
@@ -177,6 +186,35 @@ export default function StudentForm({
                 onChange={(e) => set("password", e.target.value)}
               />
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="student-birthdate">المواليد</Label>
+              <Input
+                id="student-birthdate"
+                type="date"
+                dir="ltr"
+                value={form.birthDate}
+                onChange={(e) => set("birthDate", e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="student-address">السكن الحالي</Label>
+              <Input
+                id="student-address"
+                value={form.address}
+                onChange={(e) => set("address", e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="student-reggoal">هدف التسجيل</Label>
+            <Input
+              id="student-reggoal"
+              placeholder="مثال: تحسين المستوى في الرياضيات"
+              value={form.regGoal}
+              onChange={(e) => set("regGoal", e.target.value)}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
