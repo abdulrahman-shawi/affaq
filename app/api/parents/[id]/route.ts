@@ -27,16 +27,18 @@ export async function PATCH(
     const body = await req.json();
     const { name, email, phone, password, phones } = body;
 
-    if (!name || !email) {
+    if (!name) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    const emailOwner = await prisma.user.findUnique({ where: { email } });
-    if (emailOwner && emailOwner.id !== parent.userId) {
-      return NextResponse.json(
-        { error: "البريد الإلكتروني مستخدم مسبقًا" },
-        { status: 409 }
-      );
+    if (email) {
+      const emailOwner = await prisma.user.findUnique({ where: { email } });
+      if (emailOwner && emailOwner.id !== parent.userId) {
+        return NextResponse.json(
+          { error: "البريد الإلكتروني مستخدم مسبقًا" },
+          { status: 409 }
+        );
+      }
     }
 
     if (phone && (await isPhoneTaken(phone, parent.userId))) {
@@ -60,7 +62,7 @@ export async function PATCH(
         user: {
           update: {
             name,
-            email,
+            email: email || null,
             phone: phone || null,
             ...(password ? { password: await bcrypt.hash(password, 10) } : {}),
           },

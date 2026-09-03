@@ -65,7 +65,7 @@ export default function ParentForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: form.name,
-            email: form.email,
+            email: form.email || undefined,
             password: form.password || undefined,
             phone: form.phone || undefined,
             phones: extraPhones.filter((p) => p.trim() !== ""),
@@ -115,7 +115,6 @@ export default function ParentForm({
             <Input
               id="parent-email"
               type="email"
-              required
               dir="ltr"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
