@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import { getSiteSettings } from "@/app/lib/settings";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,10 +20,13 @@ const cairo = Cairo({
   variable: "--font-cairo",
 });
 
-export const metadata: Metadata = {
-  title: "آفاق أكاديمي",
-  description: "منصة تعليمية متكاملة لإدارة الطلاب والمعلمين والحصص والدرجات",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: settings.siteName,
+    description: "منصة تعليمية متكاملة لإدارة الطلاب والمعلمين والحصص والدرجات",
+  };
+}
 
 export default function RootLayout({
   children,

@@ -19,9 +19,11 @@ import {
   School,
   Video,
   ClipboardCheck,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/app/lib/utils";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 import type { Role } from "@/types";
 
 export interface NavItem {
@@ -44,6 +46,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/admin/grades", label: "الدرجات", icon: ClipboardList },
     { href: "/dashboard/admin/messages", label: "الرسائل", icon: MessagesSquare },
     { href: "/dashboard/admin/reports", label: "التقارير", icon: ChartBar },
+    { href: "/dashboard/admin/settings", label: "الإعدادات", icon: Settings },
   ],
   teacher: [
     { href: "/dashboard/teacher", label: "لوحة التحكم", icon: LayoutDashboard },
@@ -94,12 +97,18 @@ export default function Sidebar({ role }: { role: Role }) {
   const pathname = usePathname();
   const items = roleNav[role];
   const accent = roleAccent[role];
+  const { academyName, logoUrl } = useSiteSettings();
 
   return (
     <aside className="flex h-full w-64 flex-col border-l bg-card print:hidden">
       <div className="flex items-center gap-2 border-b p-6">
-        <GraduationCap className={cn("h-8 w-8", accent.logo)} />
-        <span className="text-xl font-bold">آفاق أكاديمي</span>
+        {logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} alt={academyName} className="h-8 w-8 rounded object-contain" />
+        ) : (
+          <GraduationCap className={cn("h-8 w-8", accent.logo)} />
+        )}
+        <span className="text-xl font-bold">{academyName}</span>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-4">
         {items.map((item) => {

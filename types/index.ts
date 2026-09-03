@@ -24,6 +24,12 @@ export interface UserDTO {
   createdAt: string;
 }
 
+export interface SiteSettingsDTO {
+  siteName: string;
+  academyName: string;
+  logoUrl: string | null;
+}
+
 export interface ParentDTO {
   id: string;
   userId: string;

@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getSiteSettings } from "@/app/lib/settings";
+
+export const dynamic = "force-dynamic";
 
 const features = [
   {
@@ -58,17 +61,28 @@ const highlights = [
   { value: "1", label: "مكان واحد", note: "لكل ما يخص العملية التعليمية" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const settings = await getSiteSettings();
+
+  const logo = settings.logoUrl ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={settings.logoUrl}
+      alt={settings.academyName}
+      className="h-6 w-6 rounded object-contain"
+    />
+  ) : (
+    <GraduationCap className="h-6 w-6 text-primary" />
+  );
+
   return (
     <main className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-lg bg-primary/10 p-2">
-              <GraduationCap className="h-6 w-6 text-primary" />
-            </div>
-            <span className="text-lg font-bold">آفاق أكاديمي</span>
+            <div className="rounded-lg bg-primary/10 p-2">{logo}</div>
+            <span className="text-lg font-bold">{settings.academyName}</span>
           </div>
           <Button asChild>
             <Link href="/login">تسجيل الدخول</Link>
@@ -92,8 +106,8 @@ export default function Home() {
             <span className="text-primary"> وتواصل بلا حدود</span>
           </h1>
           <p className="max-w-2xl text-lg text-muted-foreground sm:text-xl">
-            آفاق أكاديمي تجمع الطالب والمعلم وولي الأمر في مكان واحد — حضور،
-            درجات، واجبات، مدفوعات، وتواصل مستمر.
+            {settings.academyName} تجمع الطالب والمعلم وولي الأمر في مكان واحد —
+            حضور، درجات، واجبات، مدفوعات، وتواصل مستمر.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="px-8 text-base">
@@ -184,8 +198,19 @@ export default function Home() {
       <footer className="border-t py-8">
         <div className="container flex flex-col items-center justify-between gap-4 text-sm text-muted-foreground sm:flex-row">
           <div className="flex items-center gap-2">
-            <GraduationCap className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-foreground">آفاق أكاديمي</span>
+            {settings.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={settings.logoUrl}
+                alt={settings.academyName}
+                className="h-5 w-5 rounded object-contain"
+              />
+            ) : (
+              <GraduationCap className="h-5 w-5 text-primary" />
+            )}
+            <span className="font-semibold text-foreground">
+              {settings.academyName}
+            </span>
           </div>
           <p>منصة تعليمية متكاملة لإدارة الأكاديميات</p>
         </div>

@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { roleDashboardPath } from "@/app/lib/roles";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { academyName, logoUrl } = useSiteSettings();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,8 +51,17 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="items-center text-center">
-          <GraduationCap className="mb-2 h-10 w-10 text-primary" />
-          <CardTitle className="text-2xl">آفاق أكاديمي</CardTitle>
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logoUrl}
+              alt={academyName}
+              className="mb-2 h-14 w-14 rounded object-contain"
+            />
+          ) : (
+            <GraduationCap className="mb-2 h-10 w-10 text-primary" />
+          )}
+          <CardTitle className="text-2xl">{academyName}</CardTitle>
           <CardDescription>سجّل الدخول للوصول إلى لوحة التحكم</CardDescription>
         </CardHeader>
         <CardContent>

@@ -271,3 +271,12 @@ model Notification {
   link      String?
   createdAt DateTime @default(now())
 }
+
+// إعدادات الموقع — صف واحد ثابت (singleton) بمعرف "site"
+model SiteSettings {
+  id          String   @id @default("site")
+  siteName    String   @default("آفاق أكاديمي") // اسم الموقع (عنوان المتصفح)
+  academyName String   @default("آفاق أكاديمي") // اسم الأكاديمية الظاهر في الواجهة
+  logoUrl     String?  // رابط اللوغو المرفوع
+  updatedAt   DateTime @updatedAt
+}
