@@ -117,3 +117,8 @@ export type QuizAttempt = Prisma.QuizAttemptModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model SiteSettings
+ * 
+ */
+export type SiteSettings = Prisma.SiteSettingsModel

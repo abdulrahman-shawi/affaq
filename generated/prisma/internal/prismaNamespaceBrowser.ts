@@ -70,7 +70,8 @@ export const ModelName = {
   Quiz: 'Quiz',
   QuizQuestion: 'QuizQuestion',
   QuizAttempt: 'QuizAttempt',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  SiteSettings: 'SiteSettings'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -335,6 +336,17 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const SiteSettingsScalarFieldEnum = {
+  id: 'id',
+  siteName: 'siteName',
+  academyName: 'academyName',
+  logoUrl: 'logoUrl',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[keyof typeof SiteSettingsScalarFieldEnum]
 
 
 export const SortOrder = {
