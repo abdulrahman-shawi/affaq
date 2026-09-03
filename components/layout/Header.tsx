@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Bell, LogOut } from "lucide-react";
+import { Bell, LogOut, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,7 +17,15 @@ import { roleNav, roleLabels } from "./Sidebar";
 import { formatDate } from "@/app/lib/utils";
 import type { Role } from "@/types";
 
-export default function Header({ role }: { role: Role }) {
+export default function Header({
+  role,
+  sidebarOpen,
+  onToggleSidebar,
+}: {
+  role: Role;
+  sidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
+}) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { notifications, unreadCount, markRead } = useNotifications();
@@ -29,7 +37,21 @@ export default function Header({ role }: { role: Role }) {
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-card px-6">
-      <h1 className="text-lg font-semibold">{current?.label ?? "لوحة التحكم"}</h1>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleSidebar}
+          title={sidebarOpen ? "إخفاء القائمة الجانبية" : "إظهار القائمة الجانبية"}
+        >
+          {sidebarOpen ? (
+            <PanelRightClose className="h-5 w-5" />
+          ) : (
+            <PanelRightOpen className="h-5 w-5" />
+          )}
+        </Button>
+        <h1 className="text-lg font-semibold">{current?.label ?? "لوحة التحكم"}</h1>
+      </div>
 
       <div className="flex items-center gap-4">
         <Dialog>
