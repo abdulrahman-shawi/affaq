@@ -113,6 +113,7 @@ export type ParentScalarFieldEnum = (typeof ParentScalarFieldEnum)[keyof typeof 
 
 export const StudentScalarFieldEnum = {
   id: 'id',
+  studentNumber: 'studentNumber',
   userId: 'userId',
   parentId: 'parentId',
   classId: 'classId',

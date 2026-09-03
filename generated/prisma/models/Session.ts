@@ -459,14 +459,6 @@ export type SessionUncheckedUpdateManyWithoutTeacherNestedInput = {
   deleteMany?: Prisma.SessionScalarWhereInput | Prisma.SessionScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type SessionCreateNestedOneWithoutAttendanceInput = {
   create?: Prisma.XOR<Prisma.SessionCreateWithoutAttendanceInput, Prisma.SessionUncheckedCreateWithoutAttendanceInput>
   connectOrCreate?: Prisma.SessionCreateOrConnectWithoutAttendanceInput

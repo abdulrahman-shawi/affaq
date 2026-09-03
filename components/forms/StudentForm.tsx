@@ -104,7 +104,7 @@ export default function StudentForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: form.name,
-            email: form.email,
+            email: form.email || undefined,
             phone: form.phone || undefined,
             password: form.password || undefined,
             classId: form.classId || undefined,
@@ -165,13 +165,12 @@ export default function StudentForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="student-email">البريد الإلكتروني</Label>
+            <Label htmlFor="student-email">البريد الإلكتروني (اختياري)</Label>
             <Input
               id="student-email"
               type="email"
-              required
               dir="ltr"
-              value={form.email}
+              value={form.email ?? ""}
               onChange={(e) => set("email", e.target.value)}
             />
           </div>

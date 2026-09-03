@@ -28,6 +28,7 @@ const statusVariants: Record<string, "success" | "destructive" | "warning"> = {
 
 export function studentColumns(): Column<StudentDTO>[] {
   return [
+    { header: "رقم الطالب", cell: (s) => s.studentNumber ?? "—" },
     { header: "الاسم", cell: (s) => s.user?.name ?? "—" },
     { header: "اسم الأب", cell: (s) => s.fatherName ?? "—" },
     { header: "اسم الأم", cell: (s) => s.motherName ?? "—" },

@@ -17,7 +17,7 @@ export type NotificationType =
 
 export interface UserDTO {
   id: string;
-  email: string;
+  email: string | null;
   name: string;
   role: Role;
   phone?: string | null;
@@ -35,6 +35,7 @@ export interface ParentDTO {
 
 export interface StudentDTO {
   id: string;
+  studentNumber?: number;
   userId: string;
   user?: UserDTO;
   parentId?: string | null;
@@ -241,7 +242,7 @@ export interface SubjectDTO {
 
 export interface CreateStudentInput {
   name: string;
-  email: string;
+  email?: string;
   phone?: string;
   password?: string;
   classId?: string;

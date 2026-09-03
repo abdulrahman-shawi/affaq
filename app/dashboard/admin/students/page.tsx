@@ -163,6 +163,7 @@ export default function AdminStudentsPage() {
         csv={{
           filename: "الطلاب.csv",
           headers: [
+            "رقم الطالب",
             "الاسم",
             "البريد",
             "الجوال",
@@ -172,6 +173,7 @@ export default function AdminStudentsPage() {
             "ولي الأمر",
           ],
           row: (s) => [
+            s.studentNumber,
             s.user?.name,
             s.user?.email,
             s.user?.phone,
@@ -182,11 +184,11 @@ export default function AdminStudentsPage() {
           ],
         }}
         searchValue={(s) =>
-          [s.user?.name, s.user?.email, s.user?.phone, s.parent?.user?.name]
+          [s.studentNumber, s.user?.name, s.user?.email, s.user?.phone, s.parent?.user?.name]
             .filter(Boolean)
             .join(" ")
         }
-        searchPlaceholder="ابحث بالاسم أو البريد أو ولي الأمر..."
+        searchPlaceholder="ابحث بالرقم أو الاسم أو البريد أو ولي الأمر..."
         selectable
         bulkActions={(selected, clear) => (
           <AssignParentDialog
