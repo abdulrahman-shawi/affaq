@@ -39,6 +39,7 @@ export async function PATCH(
       motherName,
       guardianPhones,
       shift,
+      currency,
     } = body;
 
     if (!name) {
@@ -86,6 +87,7 @@ export async function PATCH(
           ? guardianPhones.filter((p): p is string => typeof p === "string" && p.trim() !== "")
           : [],
         shift: shift === "morning" || shift === "evening" ? shift : null,
+        currency: ["SYP", "USD", "SAR", "AED"].includes(currency) ? currency : null,
         user: {
           update: {
             name,

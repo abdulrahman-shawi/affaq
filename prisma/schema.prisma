@@ -62,6 +62,7 @@ model Student {
   motherName    String?       // اسم الأم
   guardianPhones String[]     // أرقام هواتف ولي الأمر (يمكن أكثر من رقم)
   shift         String?       // دوام الطالب: "morning" صباحي | "evening" مسائي
+  currency      String?       // عملة رسوم الطالب: "SYP" ليرة سورية | "USD" دولار | "SAR" ريال سعودي | "AED" درهم إماراتي
 
   payments     Payment[]
   attendance   Attendance[]

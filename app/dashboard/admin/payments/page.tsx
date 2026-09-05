@@ -8,8 +8,8 @@ import DataTable from "@/components/tables/DataTable";
 import { studentPaymentSummaryColumns } from "@/components/tables/Columns";
 import PaymentForm from "@/components/forms/PaymentForm";
 import { usePayments } from "@/hooks/usePayments";
-import { formatCurrency } from "@/app/lib/utils";
-import type { StudentPaymentsSummary } from "@/types";
+import { formatCurrencyBreakdown, CURRENCY_LABELS } from "@/app/lib/utils";
+import type { Currency, PaymentDTO, StudentPaymentsSummary } from "@/types";
 
 const METHOD_LABELS: Record<string, string> = {
   bank: "تحويل بنكي",
@@ -49,6 +49,7 @@ export default function AdminPaymentsPage() {
         s = {
           studentId: p.studentId,
           studentName: p.student?.user?.name ?? "—",
+          currency: p.student?.currency ?? null,
           payments: [],
           invoiceCount: 0,
           totalPaid: 0,
@@ -70,42 +71,58 @@ export default function AdminPaymentsPage() {
     );
   }, [filtered]);
 
-  const total = filtered.reduce((sum, p) => sum + p.amount, 0);
-  const bank = filtered
-    .filter((p) => p.method === "bank")
-    .reduce((sum, p) => sum + p.amount, 0);
-  const cash = filtered
-    .filter((p) => p.method === "cash")
-    .reduce((sum, p) => sum + p.amount, 0);
-  const remainingTotal = summaries.reduce((sum, s) => sum + (s.remaining ?? 0), 0);
+  // المبالغ تُجمع لكل عملة على حدة — لا يصح جمع عملات مختلفة في رقم واحد
+  const sumByCurrency = (list: PaymentDTO[]) => {
+    const map: Partial<Record<Currency, number>> = {};
+    for (const p of list) {
+      const cur: Currency = p.student?.currency ?? "SAR";
+      map[cur] = (map[cur] ?? 0) + p.amount;
+    }
+    return map;
+  };
+
+  const totalByCurrency = sumByCurrency(filtered);
+  const bankByCurrency = sumByCurrency(
+    filtered.filter((p) => p.method === "bank")
+  );
+  const cashByCurrency = sumByCurrency(
+    filtered.filter((p) => p.method === "cash")
+  );
+  const remainingByCurrency: Partial<Record<Currency, number>> = {};
+  for (const s of summaries) {
+    if (s.remaining != null && s.remaining > 0) {
+      const cur: Currency = s.currency ?? "SAR";
+      remainingByCurrency[cur] = (remainingByCurrency[cur] ?? 0) + s.remaining;
+    }
+  }
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="إجمالي المدفوعات"
-          value={formatCurrency(total)}
+          value={formatCurrencyBreakdown(totalByCurrency)}
           icon={CreditCard}
           iconClassName="text-blue-600"
           iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="تحويل بنكي"
-          value={formatCurrency(bank)}
+          value={formatCurrencyBreakdown(bankByCurrency)}
           icon={Landmark}
           iconClassName="text-blue-600"
           iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="نقدي"
-          value={formatCurrency(cash)}
+          value={formatCurrencyBreakdown(cashByCurrency)}
           icon={Banknote}
           iconClassName="text-blue-600"
           iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="إجمالي المتبقي"
-          value={formatCurrency(remainingTotal)}
+          value={formatCurrencyBreakdown(remainingByCurrency)}
           icon={Wallet}
           iconClassName="text-red-600"
           iconBgClassName="bg-red-500/10"
@@ -162,6 +179,7 @@ export default function AdminPaymentsPage() {
           filename: "المدفوعات.csv",
           headers: [
             "الطالب",
+            "العملة",
             "عدد الفواتير",
             "إجمالي المدفوع",
             "إجمالي المستحق",
@@ -169,6 +187,7 @@ export default function AdminPaymentsPage() {
           ],
           row: (s) => [
             s.studentName,
+            CURRENCY_LABELS[s.currency ?? "SAR"],
             s.invoiceCount,
             s.totalPaid,
             s.totalDue ?? "",

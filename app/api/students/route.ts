@@ -42,6 +42,7 @@ export async function POST(req: Request) {
       motherName,
       guardianPhones,
       shift,
+      currency,
       paymentStatus,
       paidAmount,
       paymentMethod,
@@ -138,6 +139,7 @@ export async function POST(req: Request) {
         motherName: motherName || null,
         guardianPhones: guardianPhoneList,
         shift: shift === "morning" || shift === "evening" ? shift : null,
+        currency: ["SYP", "USD", "SAR", "AED"].includes(currency) ? currency : null,
         user: {
           create: {
             name,

@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import PhoneInput from "@/components/ui/phone-input";
 import { Plus, X } from "lucide-react";
 import { useToast } from "@/components/ui/toaster";
+import { CURRENCY_LABELS } from "@/app/lib/utils";
 import type { ClassLevelDTO, CreateStudentInput, StudentDTO } from "@/types";
 
 const initialForm: CreateStudentInput = {
@@ -29,6 +30,7 @@ const initialForm: CreateStudentInput = {
   fatherName: "",
   motherName: "",
   guardianPhones: [],
+  currency: "SAR",
 };
 
 function toDateInput(date?: string | null): string {
@@ -77,6 +79,7 @@ export default function StudentForm({
               motherName: student.motherName ?? "",
               guardianPhones: student.guardianPhones ?? [],
               shift: student.shift ?? undefined,
+              currency: student.currency ?? "SAR",
             }
           : initialForm
       );
@@ -120,6 +123,7 @@ export default function StudentForm({
               (p) => p.trim() !== ""
             ),
             shift: form.shift || undefined,
+            currency: form.currency || undefined,
             ...(!isEdit
               ? {
                   paymentStatus,
@@ -323,9 +327,9 @@ export default function StudentForm({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="student-monthly-fee">رسم الاشتراك الشهري (ر.س)</Label>
+              <Label htmlFor="student-monthly-fee">رسم الاشتراك الشهري</Label>
               <Input
                 id="student-monthly-fee"
                 type="number"
@@ -358,6 +362,27 @@ export default function StudentForm({
                 <option value="evening">مسائي</option>
               </select>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="student-currency">العملة</Label>
+              <select
+                id="student-currency"
+                required
+                value={form.currency ?? "SAR"}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    currency: e.target.value as CreateStudentInput["currency"],
+                  }))
+                }
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                {Object.entries(CURRENCY_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           {!isEdit && (
             <div className="space-y-2">
@@ -386,7 +411,7 @@ export default function StudentForm({
                   {paymentStatus === "partial" && (
                     <div className="space-y-2">
                       <Label htmlFor="student-paid-amount">
-                        المبلغ المدفوع (ر.س)
+                        المبلغ المدفوع ({CURRENCY_LABELS[form.currency ?? "SAR"]})
                       </Label>
                       <Input
                         id="student-paid-amount"
@@ -400,7 +425,8 @@ export default function StudentForm({
                         Number(paidAmount) > 0 &&
                         form.monthlyFee > Number(paidAmount) && (
                           <p className="text-sm text-destructive">
-                            المتبقي: {form.monthlyFee - Number(paidAmount)} ر.س
+                            المتبقي: {form.monthlyFee - Number(paidAmount)}{" "}
+                            {CURRENCY_LABELS[form.currency ?? "SAR"]}
                           </p>
                         )}
                     </div>

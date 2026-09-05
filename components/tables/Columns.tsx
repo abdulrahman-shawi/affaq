@@ -127,10 +127,10 @@ export function studentPaymentSummaryColumns(): Column<StudentPaymentsSummary>[]
         />
       ),
     },
-    { header: "إجمالي المدفوع", cell: (s) => formatCurrency(s.totalPaid) },
+    { header: "إجمالي المدفوع", cell: (s) => formatCurrency(s.totalPaid, s.currency) },
     {
       header: "إجمالي المستحق",
-      cell: (s) => (s.totalDue != null ? formatCurrency(s.totalDue) : "—"),
+      cell: (s) => (s.totalDue != null ? formatCurrency(s.totalDue, s.currency) : "—"),
     },
     {
       header: "المتبقي",
@@ -138,7 +138,7 @@ export function studentPaymentSummaryColumns(): Column<StudentPaymentsSummary>[]
         s.remaining == null ? (
           "—"
         ) : s.remaining > 0 ? (
-          <Badge variant="destructive">{formatCurrency(s.remaining)}</Badge>
+          <Badge variant="destructive">{formatCurrency(s.remaining, s.currency)}</Badge>
         ) : (
           <Badge variant="success">مكتمل</Badge>
         ),

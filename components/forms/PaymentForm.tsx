@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CURRENCY_LABELS } from "@/app/lib/utils";
 import type { CreatePaymentInput, StudentDTO } from "@/types";
 
 export default function PaymentForm({
@@ -81,6 +82,9 @@ export default function PaymentForm({
   const selectClass =
     "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
+  const selectedStudent = students.find((s) => s.id === form.studentId);
+  const currencyLabel = CURRENCY_LABELS[selectedStudent?.currency ?? "SAR"];
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -114,14 +118,14 @@ export default function PaymentForm({
               const fee = students.find((s) => s.id === form.studentId)?.monthlyFee;
               return fee != null ? (
                 <p className="text-sm text-muted-foreground">
-                  المبلغ المترتب شهريًا على الطالب: {fee} ر.س
+                  المبلغ المترتب شهريًا على الطالب: {fee} {currencyLabel}
                 </p>
               ) : null;
             })()}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="payment-amount">المبلغ المدفوع (ر.س)</Label>
+              <Label htmlFor="payment-amount">المبلغ المدفوع ({currencyLabel})</Label>
               <Input
                 id="payment-amount"
                 type="number"
@@ -149,7 +153,7 @@ export default function PaymentForm({
           </div>
           {form.dueAmount !== undefined && form.dueAmount > form.amount && (
             <p className="text-sm text-destructive">
-              المتبقي على الطالب: {form.dueAmount - form.amount} ر.س
+              المتبقي على الطالب: {form.dueAmount - form.amount} {currencyLabel}
             </p>
           )}
           <div className="grid grid-cols-2 gap-4">

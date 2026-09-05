@@ -24,8 +24,8 @@ import {
 import { useStudents } from "@/hooks/useStudents";
 import { usePayments } from "@/hooks/usePayments";
 import { useAttendance } from "@/hooks/useAttendance";
-import { formatCurrency } from "@/app/lib/utils";
-import type { GradeDTO } from "@/types";
+import { formatCurrencyBreakdown } from "@/app/lib/utils";
+import type { Currency, GradeDTO } from "@/types";
 
 type Period = "all" | "month" | "quarter" | "year";
 
@@ -82,15 +82,26 @@ export default function AdminReportsPage() {
     [attendance, periodStart]
   );
 
-  const revenue = filteredPayments.reduce((sum, p) => sum + p.amount, 0);
+  // الإيرادات تُجمع لكل عملة على حدة — لا يصح جمع عملات مختلفة في رقم واحد
+  const sumByCurrency = (list: typeof payments) => {
+    const map: Partial<Record<Currency, number>> = {};
+    for (const p of list) {
+      const cur: Currency = p.student?.currency ?? "SAR";
+      map[cur] = (map[cur] ?? 0) + p.amount;
+    }
+    return map;
+  };
+  const revenueByCurrency = sumByCurrency(filteredPayments);
 
   // مقارنة إيرادات هذا الشهر بالشهر الماضي (غير متأثرة بالفلتر)
   const now = new Date();
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const thisMonthRevenue = payments
-    .filter((p) => new Date(p.date) >= thisMonthStart)
-    .reduce((sum, p) => sum + p.amount, 0);
+  const thisMonthPayments = payments.filter(
+    (p) => new Date(p.date) >= thisMonthStart
+  );
+  const thisMonthRevenue = thisMonthPayments.reduce((sum, p) => sum + p.amount, 0);
+  const thisMonthByCurrency = sumByCurrency(thisMonthPayments);
   const lastMonthRevenue = payments
     .filter((p) => {
       const d = new Date(p.date);
@@ -210,7 +221,7 @@ export default function AdminReportsPage() {
         />
         <StatCard
           title={`إجمالي الإيرادات (${PERIOD_LABELS[period]})`}
-          value={formatCurrency(revenue)}
+          value={formatCurrencyBreakdown(revenueByCurrency)}
           icon={CreditCard}
           iconClassName="text-blue-600"
           iconBgClassName="bg-blue-500/10"
@@ -223,7 +234,7 @@ export default function AdminReportsPage() {
                   revenueDelta >= 0 ? "+" : ""
                 }${revenueDelta}% عن الشهر الماضي)`
           }
-          value={formatCurrency(thisMonthRevenue)}
+          value={formatCurrencyBreakdown(thisMonthByCurrency)}
           icon={
             revenueDelta !== null && revenueDelta < 0
               ? TrendingDown

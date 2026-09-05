@@ -106,14 +106,14 @@ export default function StudentDashboard() {
         />
         <StatCard
           title="إجمالي مدفوعاتي"
-          value={formatCurrency(totalPaid)}
+          value={formatCurrency(totalPaid, me?.currency)}
           icon={CreditCard}
           iconClassName="text-blue-600"
           iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="المتبقي عليّ"
-          value={remaining != null ? formatCurrency(remaining) : "—"}
+          value={remaining != null ? formatCurrency(remaining, me?.currency) : "—"}
           icon={Wallet}
           iconClassName="text-red-600"
           iconBgClassName="bg-red-500/10"

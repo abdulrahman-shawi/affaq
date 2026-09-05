@@ -14,12 +14,35 @@ export function formatDate(date: string | Date | null | undefined): string {
   }).format(new Date(date));
 }
 
-export function formatCurrency(amount: number | null | undefined): string {
+import type { Currency } from "@/types";
+
+/** أسماء العملات المعتمدة في النظام */
+export const CURRENCY_LABELS: Record<Currency, string> = {
+  SYP: "ليرة سورية",
+  USD: "دولار",
+  SAR: "ريال سعودي",
+  AED: "درهم إماراتي",
+};
+
+export function formatCurrency(
+  amount: number | null | undefined,
+  currency: Currency | null | undefined = "SAR"
+): string {
   return new Intl.NumberFormat("ar-SA", {
     style: "currency",
-    currency: "SAR",
+    currency: currency ?? "SAR",
     maximumFractionDigits: 0,
   }).format(amount ?? 0);
+}
+
+/** تنسيق مجموع مبالغ موزعة على عملات متعددة — مثال: "١٠٠ ر.س + ٥٠ $" */
+export function formatCurrencyBreakdown(
+  totals: Partial<Record<Currency, number>>
+): string {
+  const parts = (Object.entries(totals) as [Currency, number][])
+    .filter(([, sum]) => sum !== 0)
+    .map(([cur, sum]) => formatCurrency(sum, cur));
+  return parts.length > 0 ? parts.join(" + ") : formatCurrency(0);
 }
 
 /**

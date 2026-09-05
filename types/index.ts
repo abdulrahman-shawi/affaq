@@ -8,6 +8,8 @@ export type AttendanceStatus = "present" | "absent" | "late";
 export type PaymentMethod = "bank" | "cash";
 export type PaymentPeriod = "year" | "semester" | "monthly";
 export type Shift = "morning" | "evening";
+/** عملات الرسوم والمدفوعات */
+export type Currency = "SYP" | "USD" | "SAR" | "AED";
 export type GradeType = "quiz" | "exam" | "homework";
 export type NotificationType =
   | "subscription"
@@ -61,6 +63,8 @@ export interface StudentDTO {
   guardianPhones?: string[];
   /** دوام الطالب: صباحي أو مسائي */
   shift?: Shift | null;
+  /** عملة رسوم الطالب */
+  currency?: Currency | null;
 }
 
 export interface TeacherDTO {
@@ -91,6 +95,8 @@ export interface PaymentDTO {
 export interface StudentPaymentsSummary {
   studentId: string;
   studentName: string;
+  /** عملة رسوم الطالب — تُستخدم لتنسيق المبالغ */
+  currency?: Currency | null;
   payments: PaymentDTO[];
   /** عدد الفواتير المدفوعة */
   invoiceCount: number;
@@ -284,6 +290,8 @@ export interface CreateStudentInput {
   guardianPhones?: string[];
   /** دوام الطالب: صباحي أو مسائي */
   shift?: Shift;
+  /** عملة رسوم الطالب */
+  currency?: Currency;
   /** حالة دفع الاشتراك الأول — عند paid/partial تُنشأ دفعة تلقائيًا */
   paymentStatus?: "paid" | "partial" | "unpaid";
   paidAmount?: number;

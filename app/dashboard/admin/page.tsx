@@ -28,8 +28,9 @@ import { useStudents } from "@/hooks/useStudents";
 import { usePayments } from "@/hooks/usePayments";
 import { useAttendance } from "@/hooks/useAttendance";
 import { useNotifications } from "@/hooks/useNotifications";
-import { formatCurrency, formatDate } from "@/app/lib/utils";
+import { formatCurrency, formatCurrencyBreakdown, formatDate } from "@/app/lib/utils";
 import type {
+  Currency,
   QuizDTO,
   SubmissionDTO,
   TeacherDTO,
@@ -68,7 +69,12 @@ export default function AdminDashboard() {
       .catch(() => setQuizzes([]));
   }, []);
 
-  const revenue = payments.reduce((sum, p) => sum + p.amount, 0);
+  // الإيرادات تُجمع لكل عملة على حدة — لا يصح جمع عملات مختلفة في رقم واحد
+  const revenueByCurrency: Partial<Record<Currency, number>> = {};
+  for (const p of payments) {
+    const cur: Currency = p.student?.currency ?? "SAR";
+    revenueByCurrency[cur] = (revenueByCurrency[cur] ?? 0) + p.amount;
+  }
   const present = attendance.filter((a) => a.status === "present").length;
   const attendanceRate =
     attendance.length > 0 ? Math.round((present / attendance.length) * 100) : 0;
@@ -227,7 +233,7 @@ export default function AdminDashboard() {
         />
         <StatCard
           title="الإيرادات"
-          value={formatCurrency(revenue)}
+          value={formatCurrencyBreakdown(revenueByCurrency)}
           icon={CreditCard}
           iconClassName="text-amber-600"
           iconBgClassName="bg-amber-500/10"
@@ -368,7 +374,7 @@ export default function AdminDashboard() {
               >
                 <span>{p.student?.user?.name ?? "طالب"}</span>
                 <span className="text-muted-foreground">
-                  {formatCurrency(p.amount)} — {formatDate(p.date)}
+                  {formatCurrency(p.amount, p.student?.currency)} — {formatDate(p.date)}
                 </span>
               </div>
             ))}

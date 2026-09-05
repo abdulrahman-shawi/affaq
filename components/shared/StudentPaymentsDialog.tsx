@@ -67,21 +67,22 @@ export default function StudentPaymentsDialog({
             </TableHeader>
             <TableBody>
               {sorted.map((p) => {
+                const cur = p.student?.currency ?? "SAR";
                 const remaining =
                   p.dueAmount != null ? Math.max(0, p.dueAmount - p.amount) : null;
                 return (
                   <TableRow key={p.id}>
                     <TableCell>{formatDate(p.date)}</TableCell>
-                    <TableCell>{formatCurrency(p.amount)}</TableCell>
+                    <TableCell>{formatCurrency(p.amount, cur)}</TableCell>
                     <TableCell>
-                      {p.dueAmount != null ? formatCurrency(p.dueAmount) : "—"}
+                      {p.dueAmount != null ? formatCurrency(p.dueAmount, cur) : "—"}
                     </TableCell>
                     <TableCell>
                       {remaining == null ? (
                         "—"
                       ) : remaining > 0 ? (
                         <Badge variant="destructive">
-                          {formatCurrency(remaining)}
+                          {formatCurrency(remaining, cur)}
                         </Badge>
                       ) : (
                         <Badge variant="success">مكتمل</Badge>
