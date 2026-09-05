@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, order, subjectIds } = body;
+    const { name, order, shift, subjectIds } = body;
 
     if (!name || typeof name !== "string" || !name.trim()) {
       return NextResponse.json({ error: "اسم الصف مطلوب" }, { status: 400 });
@@ -50,6 +50,7 @@ export async function POST(req: Request) {
       data: {
         name: name.trim(),
         order: Number.isInteger(Number(order)) ? Number(order) : 0,
+        shift: shift === "morning" || shift === "evening" ? shift : null,
         ...(Array.isArray(subjectIds) && subjectIds.length > 0
           ? { subjects: { connect: subjectIds.map((id: string) => ({ id })) } }
           : {}),

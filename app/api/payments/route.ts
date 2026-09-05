@@ -4,9 +4,13 @@ import { getSessionUser } from "@/app/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const studentId = searchParams.get("studentId");
+
     const payments = await prisma.payment.findMany({
+      where: studentId ? { studentId } : undefined,
       include: { student: { include: { user: true } } },
       orderBy: { date: "desc" },
     });

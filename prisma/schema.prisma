@@ -61,6 +61,7 @@ model Student {
   fatherName    String?       // اسم الأب
   motherName    String?       // اسم الأم
   guardianPhones String[]     // أرقام هواتف ولي الأمر (يمكن أكثر من رقم)
+  shift         String?       // دوام الطالب: "morning" صباحي | "evening" مسائي
 
   payments     Payment[]
   attendance   Attendance[]
@@ -73,6 +74,7 @@ model Teacher {
   id       String       @id @default(uuid())
   userId   String       @unique
   user     User         @relation(fields: [userId], references: [id])
+  shift    String?      // دوام المعلم: "morning" صباحي | "evening" مسائي
   subjects Subject[]
   classes  ClassLevel[]
 
@@ -188,6 +190,7 @@ model ClassLevel {
   id             String          @id @default(uuid())
   name           String          @unique
   order          Int             @default(0)
+  shift          String?         // دوام الصف: "morning" صباحي | "evening" مسائي
   subjects       Subject[]
   students       Student[]
   teachers       Teacher[]

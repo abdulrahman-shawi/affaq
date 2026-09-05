@@ -1,15 +1,16 @@
 import type { Column } from "./DataTable";
 import { Badge } from "@/components/ui/badge";
+import StudentPaymentsDialog from "@/components/shared/StudentPaymentsDialog";
 import { formatCurrency, formatDate, getSubscriptionStatus } from "@/app/lib/utils";
 import type {
   StudentDTO,
   TeacherDTO,
   ParentDTO,
-  PaymentDTO,
   AttendanceDTO,
   GradeDTO,
   ClassLevelDTO,
   SubjectDTO,
+  StudentPaymentsSummary,
 } from "@/types";
 
 const statusLabels: Record<string, string> = {
@@ -26,6 +27,11 @@ const statusVariants: Record<string, "success" | "destructive" | "warning"> = {
   suspended: "destructive",
 };
 
+const shiftLabels: Record<string, string> = {
+  morning: "صباحي",
+  evening: "مسائي",
+};
+
 export function studentColumns(): Column<StudentDTO>[] {
   return [
     { header: "رقم الطالب", cell: (s) => s.studentNumber ?? "—" },
@@ -39,6 +45,7 @@ export function studentColumns(): Column<StudentDTO>[] {
       cell: (s) => (s.guardianPhones?.length ? s.guardianPhones.join("، ") : "—"),
     },
     { header: "الصف", cell: (s) => s.class?.name ?? "—" },
+    { header: "الدوام", cell: (s) => (s.shift ? (shiftLabels[s.shift] ?? s.shift) : "—") },
     {
       header: "ولي الأمر",
       cell: (s) => s.parent?.user?.name ?? "—",
@@ -62,6 +69,7 @@ export function teacherColumns(): Column<TeacherDTO>[] {
   return [
     { header: "الاسم", cell: (t) => t.user?.name ?? "—" },
     { header: "البريد الإلكتروني", cell: (t) => t.user?.email ?? "—" },
+    { header: "الدوام", cell: (t) => (t.shift ? (shiftLabels[t.shift] ?? t.shift) : "—") },
     {
       header: "المواد",
       cell: (t) => t.subjects?.map((s) => s.name).join("، ") || "—",
@@ -99,46 +107,42 @@ const periodLabels: Record<string, string> = {
   monthly: "شهري",
 };
 
-export function paymentColumns(): Column<PaymentDTO>[] {
+export function studentPaymentSummaryColumns(): Column<StudentPaymentsSummary>[] {
   return [
-    { header: "الطالب", cell: (p) => p.student?.user?.name ?? "—" },
-    { header: "المبلغ المدفوع", cell: (p) => formatCurrency(p.amount) },
+    { header: "الطالب", cell: (s) => s.studentName },
     {
-      header: "المبلغ المستحق",
-      cell: (p) => (p.dueAmount != null ? formatCurrency(p.dueAmount) : "—"),
+      header: "عدد الفواتير",
+      cell: (s) => (
+        <StudentPaymentsDialog
+          studentName={s.studentName}
+          payments={s.payments}
+          trigger={
+            <button
+              type="button"
+              className="font-semibold text-primary underline underline-offset-4"
+            >
+              {s.invoiceCount}
+            </button>
+          }
+        />
+      ),
+    },
+    { header: "إجمالي المدفوع", cell: (s) => formatCurrency(s.totalPaid) },
+    {
+      header: "إجمالي المستحق",
+      cell: (s) => (s.totalDue != null ? formatCurrency(s.totalDue) : "—"),
     },
     {
       header: "المتبقي",
-      cell: (p) => {
-        if (p.dueAmount == null) return "—";
-        const remaining = p.dueAmount - p.amount;
-        return remaining > 0 ? (
-          <Badge variant="destructive">{formatCurrency(remaining)}</Badge>
+      cell: (s) =>
+        s.remaining == null ? (
+          "—"
+        ) : s.remaining > 0 ? (
+          <Badge variant="destructive">{formatCurrency(s.remaining)}</Badge>
         ) : (
           <Badge variant="success">مكتمل</Badge>
-        );
-      },
-    },
-    { header: "التاريخ", cell: (p) => formatDate(p.date) },
-    { header: "طريقة الدفع", cell: (p) => methodLabels[p.method] ?? p.method },
-    { header: "الفترة", cell: (p) => periodLabels[p.period] ?? p.period },
-    {
-      header: "الإشعار",
-      cell: (p) =>
-        p.receiptUrl ? (
-          <a
-            href={p.receiptUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline"
-          >
-            عرض
-          </a>
-        ) : (
-          "—"
         ),
     },
-    { header: "ملاحظة", cell: (p) => p.note ?? "—" },
   ];
 }
 
@@ -192,6 +196,7 @@ export function classColumns(): Column<ClassLevelDTO>[] {
   return [
     { header: "الاسم", cell: (c) => c.name },
     { header: "الترتيب", cell: (c) => c.order },
+    { header: "الدوام", cell: (c) => (c.shift ? (shiftLabels[c.shift] ?? c.shift) : "—") },
     {
       header: "المواد",
       cell: (c) =>

@@ -31,6 +31,7 @@ export default function ClassForm({
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [order, setOrder] = useState(0);
+  const [shift, setShift] = useState("");
   const [subjectIds, setSubjectIds] = useState<string[]>([]);
   const [subjects, setSubjects] = useState<SubjectDTO[]>([]);
 
@@ -39,6 +40,7 @@ export default function ClassForm({
       setError(null);
       setName(classLevel?.name ?? "");
       setOrder(classLevel?.order ?? 0);
+      setShift(classLevel?.shift ?? "");
       setSubjectIds(classLevel?.subjects?.map((s) => s.id) ?? []);
       fetch("/api/subjects")
         .then((res) => (res.ok ? res.json() : []))
@@ -62,7 +64,7 @@ export default function ClassForm({
         {
           method: isEdit ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, order, subjectIds }),
+          body: JSON.stringify({ name, order, shift: shift || null, subjectIds }),
         }
       );
       if (!res.ok) {
@@ -90,7 +92,7 @@ export default function ClassForm({
           <DialogTitle>{isEdit ? "تعديل الصف" : "إضافة صف جديد"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="class-name">اسم الصف</Label>
               <Input
@@ -110,6 +112,19 @@ export default function ClassForm({
                 value={order}
                 onChange={(e) => setOrder(Number(e.target.value))}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="class-shift">الدوام</Label>
+              <select
+                id="class-shift"
+                value={shift}
+                onChange={(e) => setShift(e.target.value)}
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">غير محدد</option>
+                <option value="morning">صباحي</option>
+                <option value="evening">مسائي</option>
+              </select>
             </div>
           </div>
           <div className="space-y-2">

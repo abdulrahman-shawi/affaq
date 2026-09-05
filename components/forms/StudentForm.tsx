@@ -76,6 +76,7 @@ export default function StudentForm({
               fatherName: student.fatherName ?? "",
               motherName: student.motherName ?? "",
               guardianPhones: student.guardianPhones ?? [],
+              shift: student.shift ?? undefined,
             }
           : initialForm
       );
@@ -118,6 +119,7 @@ export default function StudentForm({
             guardianPhones: (form.guardianPhones ?? []).filter(
               (p) => p.trim() !== ""
             ),
+            shift: form.shift || undefined,
             ...(!isEdit
               ? {
                   paymentStatus,
@@ -321,21 +323,41 @@ export default function StudentForm({
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="student-monthly-fee">رسم الاشتراك الشهري (ر.س)</Label>
-            <Input
-              id="student-monthly-fee"
-              type="number"
-              min={0}
-              value={form.monthlyFee ?? ""}
-              onChange={(e) =>
-                setForm((f) => ({
-                  ...f,
-                  monthlyFee:
-                    e.target.value === "" ? undefined : Number(e.target.value),
-                }))
-              }
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="student-monthly-fee">رسم الاشتراك الشهري (ر.س)</Label>
+              <Input
+                id="student-monthly-fee"
+                type="number"
+                min={0}
+                value={form.monthlyFee ?? ""}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    monthlyFee:
+                      e.target.value === "" ? undefined : Number(e.target.value),
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="student-shift">الدوام</Label>
+              <select
+                id="student-shift"
+                value={form.shift ?? ""}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    shift: (e.target.value || undefined) as CreateStudentInput["shift"],
+                  }))
+                }
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">غير محدد</option>
+                <option value="morning">صباحي</option>
+                <option value="evening">مسائي</option>
+              </select>
+            </div>
           </div>
           {!isEdit && (
             <div className="space-y-2">

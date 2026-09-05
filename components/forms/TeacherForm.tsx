@@ -15,7 +15,7 @@ import PhoneInput from "@/components/ui/phone-input";
 import { useToast } from "@/components/ui/toaster";
 import type { TeacherDTO } from "@/types";
 
-const initialForm = { name: "", email: "", phone: "", password: "" };
+const initialForm = { name: "", email: "", phone: "", password: "", shift: "" };
 
 export default function TeacherForm({
   trigger,
@@ -44,6 +44,7 @@ export default function TeacherForm({
               email: teacher.user?.email ?? "",
               phone: teacher.user?.phone ?? "",
               password: "",
+              shift: teacher.shift ?? "",
             }
           : initialForm
       );
@@ -65,6 +66,7 @@ export default function TeacherForm({
             email: form.email,
             phone: form.phone || undefined,
             password: form.password || undefined,
+            shift: form.shift || null,
           }),
         }
       );
@@ -123,6 +125,8 @@ export default function TeacherForm({
                 onChange={(v) => setForm({ ...form, phone: v })}
               />
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="teacher-password">كلمة المرور</Label>
               <Input
@@ -135,6 +139,19 @@ export default function TeacherForm({
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="teacher-shift">الدوام</Label>
+              <select
+                id="teacher-shift"
+                value={form.shift}
+                onChange={(e) => setForm({ ...form, shift: e.target.value })}
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">غير محدد</option>
+                <option value="morning">صباحي</option>
+                <option value="evening">مسائي</option>
+              </select>
             </div>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}

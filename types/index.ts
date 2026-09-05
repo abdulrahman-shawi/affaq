@@ -7,6 +7,7 @@ export type StudentStatus = "active" | "expired" | "suspended";
 export type AttendanceStatus = "present" | "absent" | "late";
 export type PaymentMethod = "bank" | "cash";
 export type PaymentPeriod = "year" | "semester" | "monthly";
+export type Shift = "morning" | "evening";
 export type GradeType = "quiz" | "exam" | "homework";
 export type NotificationType =
   | "subscription"
@@ -58,12 +59,16 @@ export interface StudentDTO {
   motherName?: string | null;
   /** أرقام هواتف ولي الأمر (يمكن أكثر من رقم) */
   guardianPhones?: string[];
+  /** دوام الطالب: صباحي أو مسائي */
+  shift?: Shift | null;
 }
 
 export interface TeacherDTO {
   id: string;
   userId: string;
   user?: UserDTO;
+  /** دوام المعلم: صباحي أو مسائي */
+  shift?: Shift | null;
   subjects: { id: string; name: string }[];
   classes: { id: string; name: string; order: number }[];
 }
@@ -80,6 +85,20 @@ export interface PaymentDTO {
   dueAmount?: number | null;
   receiptUrl?: string | null;
   note?: string | null;
+}
+
+/** تجميعة فواتير طالب واحد — تُحسب في العميل من قائمة PaymentDTO */
+export interface StudentPaymentsSummary {
+  studentId: string;
+  studentName: string;
+  payments: PaymentDTO[];
+  /** عدد الفواتير المدفوعة */
+  invoiceCount: number;
+  totalPaid: number;
+  /** إجمالي المستحق — null إن لم تُسجل أي فاتورة بمبلغ مستحق */
+  totalDue: number | null;
+  /** المتبقي = totalDue - totalPaid — null إن لم يوجد مبلغ مستحق */
+  remaining: number | null;
 }
 
 export interface SessionDTO {
@@ -233,6 +252,8 @@ export interface ClassLevelDTO {
   id: string;
   name: string;
   order: number;
+  /** دوام الصف: صباحي أو مسائي */
+  shift?: Shift | null;
   createdAt: string;
   subjects: { id: string; name: string }[];
 }
@@ -261,6 +282,8 @@ export interface CreateStudentInput {
   motherName?: string;
   /** أرقام هواتف ولي الأمر */
   guardianPhones?: string[];
+  /** دوام الطالب: صباحي أو مسائي */
+  shift?: Shift;
   /** حالة دفع الاشتراك الأول — عند paid/partial تُنشأ دفعة تلقائيًا */
   paymentStatus?: "paid" | "partial" | "unpaid";
   paidAmount?: number;
@@ -272,6 +295,8 @@ export interface CreateTeacherInput {
   email: string;
   password?: string;
   phone?: string;
+  /** دوام المعلم: صباحي أو مسائي */
+  shift?: Shift;
   subjectIds?: string[];
   classIds?: string[];
 }
@@ -378,6 +403,8 @@ export interface SubmitQuizInput {
 export interface CreateClassInput {
   name: string;
   order?: number;
+  /** دوام الصف: صباحي أو مسائي */
+  shift?: Shift;
   subjectIds?: string[];
 }
 

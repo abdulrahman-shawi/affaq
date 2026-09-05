@@ -38,6 +38,7 @@ export type ClassLevelMinAggregateOutputType = {
   id: string | null
   name: string | null
   order: number | null
+  shift: string | null
   createdAt: Date | null
 }
 
@@ -45,6 +46,7 @@ export type ClassLevelMaxAggregateOutputType = {
   id: string | null
   name: string | null
   order: number | null
+  shift: string | null
   createdAt: Date | null
 }
 
@@ -52,6 +54,7 @@ export type ClassLevelCountAggregateOutputType = {
   id: number
   name: number
   order: number
+  shift: number
   createdAt: number
   _all: number
 }
@@ -69,6 +72,7 @@ export type ClassLevelMinAggregateInputType = {
   id?: true
   name?: true
   order?: true
+  shift?: true
   createdAt?: true
 }
 
@@ -76,6 +80,7 @@ export type ClassLevelMaxAggregateInputType = {
   id?: true
   name?: true
   order?: true
+  shift?: true
   createdAt?: true
 }
 
@@ -83,6 +88,7 @@ export type ClassLevelCountAggregateInputType = {
   id?: true
   name?: true
   order?: true
+  shift?: true
   createdAt?: true
   _all?: true
 }
@@ -177,6 +183,7 @@ export type ClassLevelGroupByOutputType = {
   id: string
   name: string
   order: number
+  shift: string | null
   createdAt: Date
   _count: ClassLevelCountAggregateOutputType | null
   _avg: ClassLevelAvgAggregateOutputType | null
@@ -207,6 +214,7 @@ export type ClassLevelWhereInput = {
   id?: Prisma.StringFilter<"ClassLevel"> | string
   name?: Prisma.StringFilter<"ClassLevel"> | string
   order?: Prisma.IntFilter<"ClassLevel"> | number
+  shift?: Prisma.StringNullableFilter<"ClassLevel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ClassLevel"> | Date | string
   subjects?: Prisma.SubjectListRelationFilter
   students?: Prisma.StudentListRelationFilter
@@ -219,6 +227,7 @@ export type ClassLevelOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  shift?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   subjects?: Prisma.SubjectOrderByRelationAggregateInput
   students?: Prisma.StudentOrderByRelationAggregateInput
@@ -234,6 +243,7 @@ export type ClassLevelWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ClassLevelWhereInput[]
   NOT?: Prisma.ClassLevelWhereInput | Prisma.ClassLevelWhereInput[]
   order?: Prisma.IntFilter<"ClassLevel"> | number
+  shift?: Prisma.StringNullableFilter<"ClassLevel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ClassLevel"> | Date | string
   subjects?: Prisma.SubjectListRelationFilter
   students?: Prisma.StudentListRelationFilter
@@ -246,6 +256,7 @@ export type ClassLevelOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  shift?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ClassLevelCountOrderByAggregateInput
   _avg?: Prisma.ClassLevelAvgOrderByAggregateInput
@@ -261,6 +272,7 @@ export type ClassLevelScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"ClassLevel"> | string
   name?: Prisma.StringWithAggregatesFilter<"ClassLevel"> | string
   order?: Prisma.IntWithAggregatesFilter<"ClassLevel"> | number
+  shift?: Prisma.StringNullableWithAggregatesFilter<"ClassLevel"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ClassLevel"> | Date | string
 }
 
@@ -268,6 +280,7 @@ export type ClassLevelCreateInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -280,6 +293,7 @@ export type ClassLevelUncheckedCreateInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -292,6 +306,7 @@ export type ClassLevelUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -304,6 +319,7 @@ export type ClassLevelUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUncheckedUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -316,6 +332,7 @@ export type ClassLevelCreateManyInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
 }
 
@@ -323,6 +340,7 @@ export type ClassLevelUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -330,6 +348,7 @@ export type ClassLevelUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -357,6 +376,7 @@ export type ClassLevelCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -368,6 +388,7 @@ export type ClassLevelMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -375,6 +396,7 @@ export type ClassLevelMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  shift?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -506,6 +528,7 @@ export type ClassLevelCreateWithoutStudentsInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectCreateNestedManyWithoutClassesInput
   teachers?: Prisma.TeacherCreateNestedManyWithoutClassesInput
@@ -517,6 +540,7 @@ export type ClassLevelUncheckedCreateWithoutStudentsInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutClassesInput
   teachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutClassesInput
@@ -544,6 +568,7 @@ export type ClassLevelUpdateWithoutStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUpdateManyWithoutClassesNestedInput
   teachers?: Prisma.TeacherUpdateManyWithoutClassesNestedInput
@@ -555,6 +580,7 @@ export type ClassLevelUncheckedUpdateWithoutStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUncheckedUpdateManyWithoutClassesNestedInput
   teachers?: Prisma.TeacherUncheckedUpdateManyWithoutClassesNestedInput
@@ -566,6 +592,7 @@ export type ClassLevelCreateWithoutTeachersInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -577,6 +604,7 @@ export type ClassLevelUncheckedCreateWithoutTeachersInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -612,6 +640,7 @@ export type ClassLevelScalarWhereInput = {
   id?: Prisma.StringFilter<"ClassLevel"> | string
   name?: Prisma.StringFilter<"ClassLevel"> | string
   order?: Prisma.IntFilter<"ClassLevel"> | number
+  shift?: Prisma.StringNullableFilter<"ClassLevel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ClassLevel"> | Date | string
 }
 
@@ -619,6 +648,7 @@ export type ClassLevelCreateWithoutMessagesInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -630,6 +660,7 @@ export type ClassLevelUncheckedCreateWithoutMessagesInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -657,6 +688,7 @@ export type ClassLevelUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -668,6 +700,7 @@ export type ClassLevelUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUncheckedUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -679,6 +712,7 @@ export type ClassLevelCreateWithoutSubjectsInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
   teachers?: Prisma.TeacherCreateNestedManyWithoutClassesInput
@@ -690,6 +724,7 @@ export type ClassLevelUncheckedCreateWithoutSubjectsInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
   teachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutClassesInput
@@ -722,6 +757,7 @@ export type ClassLevelCreateWithoutTimetableSlotsInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -733,6 +769,7 @@ export type ClassLevelUncheckedCreateWithoutTimetableSlotsInput = {
   id?: string
   name: string
   order?: number
+  shift?: string | null
   createdAt?: Date | string
   subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutClassesInput
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -760,6 +797,7 @@ export type ClassLevelUpdateWithoutTimetableSlotsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -771,6 +809,7 @@ export type ClassLevelUncheckedUpdateWithoutTimetableSlotsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUncheckedUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -782,6 +821,7 @@ export type ClassLevelUpdateWithoutTeachersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -793,6 +833,7 @@ export type ClassLevelUncheckedUpdateWithoutTeachersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subjects?: Prisma.SubjectUncheckedUpdateManyWithoutClassesNestedInput
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -804,6 +845,7 @@ export type ClassLevelUncheckedUpdateManyWithoutTeachersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -811,6 +853,7 @@ export type ClassLevelUpdateWithoutSubjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
   teachers?: Prisma.TeacherUpdateManyWithoutClassesNestedInput
@@ -822,6 +865,7 @@ export type ClassLevelUncheckedUpdateWithoutSubjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
   teachers?: Prisma.TeacherUncheckedUpdateManyWithoutClassesNestedInput
@@ -833,6 +877,7 @@ export type ClassLevelUncheckedUpdateManyWithoutSubjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -907,6 +952,7 @@ export type ClassLevelSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   name?: boolean
   order?: boolean
+  shift?: boolean
   createdAt?: boolean
   subjects?: boolean | Prisma.ClassLevel$subjectsArgs<ExtArgs>
   students?: boolean | Prisma.ClassLevel$studentsArgs<ExtArgs>
@@ -920,6 +966,7 @@ export type ClassLevelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   name?: boolean
   order?: boolean
+  shift?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["classLevel"]>
 
@@ -927,6 +974,7 @@ export type ClassLevelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   name?: boolean
   order?: boolean
+  shift?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["classLevel"]>
 
@@ -934,10 +982,11 @@ export type ClassLevelSelectScalar = {
   id?: boolean
   name?: boolean
   order?: boolean
+  shift?: boolean
   createdAt?: boolean
 }
 
-export type ClassLevelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "order" | "createdAt", ExtArgs["result"]["classLevel"]>
+export type ClassLevelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "order" | "shift" | "createdAt", ExtArgs["result"]["classLevel"]>
 export type ClassLevelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   subjects?: boolean | Prisma.ClassLevel$subjectsArgs<ExtArgs>
   students?: boolean | Prisma.ClassLevel$studentsArgs<ExtArgs>
@@ -962,6 +1011,7 @@ export type $ClassLevelPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     name: string
     order: number
+    shift: string | null
     createdAt: Date
   }, ExtArgs["result"]["classLevel"]>
   composites: {}
@@ -1394,6 +1444,7 @@ export interface ClassLevelFieldRefs {
   readonly id: Prisma.FieldRef<"ClassLevel", 'String'>
   readonly name: Prisma.FieldRef<"ClassLevel", 'String'>
   readonly order: Prisma.FieldRef<"ClassLevel", 'Int'>
+  readonly shift: Prisma.FieldRef<"ClassLevel", 'String'>
   readonly createdAt: Prisma.FieldRef<"ClassLevel", 'DateTime'>
 }
     

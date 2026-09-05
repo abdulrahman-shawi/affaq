@@ -5,10 +5,11 @@ import { Plus, CreditCard, Banknote, Landmark, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/shared/StatCard";
 import DataTable from "@/components/tables/DataTable";
-import { paymentColumns } from "@/components/tables/Columns";
+import { studentPaymentSummaryColumns } from "@/components/tables/Columns";
 import PaymentForm from "@/components/forms/PaymentForm";
 import { usePayments } from "@/hooks/usePayments";
-import { formatCurrency, formatDate } from "@/app/lib/utils";
+import { formatCurrency } from "@/app/lib/utils";
+import type { StudentPaymentsSummary } from "@/types";
 
 const METHOD_LABELS: Record<string, string> = {
   bank: "تحويل بنكي",
@@ -39,6 +40,36 @@ export default function AdminPaymentsPage() {
     [payments, methodFilter, periodFilter]
   );
 
+  // تجميع فواتير كل طالب في صف واحد — إجمالي المدفوع والمستحق والمتبقي
+  const summaries = useMemo<StudentPaymentsSummary[]>(() => {
+    const byStudent = new Map<string, StudentPaymentsSummary>();
+    for (const p of filtered) {
+      let s = byStudent.get(p.studentId);
+      if (!s) {
+        s = {
+          studentId: p.studentId,
+          studentName: p.student?.user?.name ?? "—",
+          payments: [],
+          invoiceCount: 0,
+          totalPaid: 0,
+          totalDue: null,
+          remaining: null,
+        };
+        byStudent.set(p.studentId, s);
+      }
+      s.payments.push(p);
+      s.invoiceCount += 1;
+      s.totalPaid += p.amount;
+      if (p.dueAmount != null) s.totalDue = (s.totalDue ?? 0) + p.dueAmount;
+    }
+    for (const s of Array.from(byStudent.values())) {
+      s.remaining = s.totalDue != null ? Math.max(0, s.totalDue - s.totalPaid) : null;
+    }
+    return Array.from(byStudent.values()).sort((a, b) =>
+      a.studentName.localeCompare(b.studentName, "ar")
+    );
+  }, [filtered]);
+
   const total = filtered.reduce((sum, p) => sum + p.amount, 0);
   const bank = filtered
     .filter((p) => p.method === "bank")
@@ -46,10 +77,7 @@ export default function AdminPaymentsPage() {
   const cash = filtered
     .filter((p) => p.method === "cash")
     .reduce((sum, p) => sum + p.amount, 0);
-  const remainingTotal = filtered.reduce(
-    (sum, p) => sum + Math.max(0, (p.dueAmount ?? p.amount) - p.amount),
-    0
-  );
+  const remainingTotal = summaries.reduce((sum, s) => sum + (s.remaining ?? 0), 0);
 
   return (
     <div className="space-y-6">
@@ -123,36 +151,28 @@ export default function AdminPaymentsPage() {
       </div>
 
       <DataTable
-        columns={paymentColumns()}
-        data={filtered}
+        columns={studentPaymentSummaryColumns()}
+        data={summaries}
         loading={loading}
         emptyTitle="لا توجد مدفوعات"
         emptyMessage="لم يتم تسجيل أي دفعة بعد"
-        searchValue={(p) => p.student?.user?.name ?? ""}
+        searchValue={(s) => s.studentName}
         searchPlaceholder="ابحث باسم الطالب..."
         csv={{
           filename: "المدفوعات.csv",
           headers: [
-            "التاريخ",
             "الطالب",
-            "المبلغ المدفوع",
-            "المبلغ المستحق",
+            "عدد الفواتير",
+            "إجمالي المدفوع",
+            "إجمالي المستحق",
             "المتبقي",
-            "طريقة الدفع",
-            "الفترة",
-            "الأشهر",
-            "ملاحظة",
           ],
-          row: (p) => [
-            formatDate(p.date),
-            p.student?.user?.name,
-            p.amount,
-            p.dueAmount ?? "",
-            p.dueAmount != null ? Math.max(0, p.dueAmount - p.amount) : "",
-            METHOD_LABELS[p.method] ?? p.method,
-            PERIOD_LABELS[p.period] ?? p.period,
-            p.months,
-            p.note,
+          row: (s) => [
+            s.studentName,
+            s.invoiceCount,
+            s.totalPaid,
+            s.totalDue ?? "",
+            s.remaining ?? "",
           ],
         }}
       />

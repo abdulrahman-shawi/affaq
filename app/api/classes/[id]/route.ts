@@ -22,7 +22,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, order, subjectIds } = body;
+    const { name, order, shift, subjectIds } = body;
 
     if (!name || typeof name !== "string" || !name.trim()) {
       return NextResponse.json({ error: "اسم الصف مطلوب" }, { status: 400 });
@@ -42,6 +42,9 @@ export async function PATCH(
       where: { id: params.id },
       data: {
         name: name.trim(),
+        ...(shift === "morning" || shift === "evening" || shift === null
+          ? { shift }
+          : {}),
         ...(order !== undefined && Number.isInteger(Number(order))
           ? { order: Number(order) }
           : {}),

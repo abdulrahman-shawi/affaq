@@ -24,7 +24,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, email, phone, password, subjectIds, classIds } = body;
+    const { name, email, phone, password, shift, subjectIds, classIds } = body;
 
     const hasProfileUpdate =
       name !== undefined ||
@@ -56,6 +56,9 @@ export async function PATCH(
     const updated = await prisma.teacher.update({
       where: { id: params.id },
       data: {
+        ...(shift === "morning" || shift === "evening" || shift === null
+          ? { shift }
+          : {}),
         ...(Array.isArray(subjectIds)
           ? { subjects: { set: subjectIds.map((id: string) => ({ id })) } }
           : {}),

@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, password, phone, subjectIds, classIds } = body;
+    const { name, email, password, phone, shift, subjectIds, classIds } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -50,6 +50,7 @@ export async function POST(req: Request) {
     const hashed = await bcrypt.hash(password || "123456", 10);
     const teacher = await prisma.teacher.create({
       data: {
+        shift: shift === "morning" || shift === "evening" ? shift : null,
         ...(Array.isArray(subjectIds) && subjectIds.length > 0
           ? { subjects: { connect: subjectIds.map((id: string) => ({ id })) } }
           : {}),

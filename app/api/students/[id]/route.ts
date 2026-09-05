@@ -38,6 +38,7 @@ export async function PATCH(
       fatherName,
       motherName,
       guardianPhones,
+      shift,
     } = body;
 
     if (!name) {
@@ -84,6 +85,7 @@ export async function PATCH(
         guardianPhones: Array.isArray(guardianPhones)
           ? guardianPhones.filter((p): p is string => typeof p === "string" && p.trim() !== "")
           : [],
+        shift: shift === "morning" || shift === "evening" ? shift : null,
         user: {
           update: {
             name,

@@ -41,6 +41,7 @@ export async function POST(req: Request) {
       fatherName,
       motherName,
       guardianPhones,
+      shift,
       paymentStatus,
       paidAmount,
       paymentMethod,
@@ -136,6 +137,7 @@ export async function POST(req: Request) {
         fatherName: fatherName || null,
         motherName: motherName || null,
         guardianPhones: guardianPhoneList,
+        shift: shift === "morning" || shift === "evening" ? shift : null,
         user: {
           create: {
             name,

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { FileText, ClipboardList, CalendarCheck } from "lucide-react";
+import { FileText, ClipboardList, CalendarCheck, CreditCard, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,8 +12,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useStudents } from "@/hooks/useStudents";
 import { useAssignments } from "@/hooks/useAssignments";
 import { useAttendance } from "@/hooks/useAttendance";
-import { formatDate } from "@/app/lib/utils";
-import type { GradeDTO } from "@/types";
+import { formatCurrency, formatDate } from "@/app/lib/utils";
+import type { GradeDTO, PaymentDTO } from "@/types";
 
 export default function StudentDashboard() {
   const { user } = useAuth();
@@ -33,6 +33,25 @@ export default function StudentDashboard() {
     () => students.find((s) => s.userId === user?.id),
     [students, user]
   );
+
+  // فواتير الطالب الحالي — لحساب إجمالي المدفوع والمتبقي
+  const [payments, setPayments] = useState<PaymentDTO[]>([]);
+
+  useEffect(() => {
+    if (!me?.id) return;
+    fetch(`/api/payments?studentId=${me.id}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setPayments)
+      .catch(() => setPayments([]));
+  }, [me?.id]);
+
+  const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+  const totalDue = payments.reduce(
+    (sum: number | null, p) =>
+      p.dueAmount != null ? (sum ?? 0) + p.dueAmount : sum,
+    null
+  );
+  const remaining = totalDue != null ? Math.max(0, totalDue - totalPaid) : null;
 
   const myGrades = useMemo(
     () => grades.filter((g) => g.studentId === me?.id).slice(0, 5),
@@ -63,7 +82,7 @@ export default function StudentDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <StatCard
           title="واجبات قادمة"
           value={upcoming.length}
@@ -84,6 +103,20 @@ export default function StudentDashboard() {
           icon={CalendarCheck}
           iconClassName="text-emerald-600"
           iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="إجمالي مدفوعاتي"
+          value={formatCurrency(totalPaid)}
+          icon={CreditCard}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="المتبقي عليّ"
+          value={remaining != null ? formatCurrency(remaining) : "—"}
+          icon={Wallet}
+          iconClassName="text-red-600"
+          iconBgClassName="bg-red-500/10"
         />
       </div>
 
