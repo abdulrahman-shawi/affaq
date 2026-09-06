@@ -10,6 +10,7 @@ import type {
   GradeDTO,
   ClassLevelDTO,
   SubjectDTO,
+  SupervisorDTO,
   StudentPaymentsSummary,
 } from "@/types";
 
@@ -233,6 +234,15 @@ export function subjectColumns(): Column<SubjectDTO>[] {
           "—"
         ),
     },
+  ];
+}
+
+export function supervisorColumns(): Column<SupervisorDTO>[] {
+  return [
+    { header: "الاسم", cell: (s) => s.name },
+    { header: "البريد الإلكتروني", cell: (s) => s.email ?? "—" },
+    { header: "رقم الهاتف", cell: (s) => s.phone ?? "—" },
+    { header: "تاريخ الإضافة", cell: (s) => formatDate(s.createdAt) },
   ];
 }
 

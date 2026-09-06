@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { isAdminAreaRole } from "@/app/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export async function GET(req: Request) {
     const params = new URL(req.url).searchParams;
     const classId = params.get("classId");
     const teacherId = params.get("teacherId");
-    if (!classId && !teacherId && sessionUser.role !== "admin") {
+    if (!classId && !teacherId && !isAdminAreaRole(sessionUser.role)) {
       return NextResponse.json(
         { error: "يجب تحديد classId أو teacherId" },
         { status: 400 }
@@ -69,7 +70,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const sessionUser = await getSessionUser();
-  if (!sessionUser || !["admin", "teacher"].includes(sessionUser.role)) {
+  if (!sessionUser || !["admin", "supervisor", "teacher"].includes(sessionUser.role)) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
 

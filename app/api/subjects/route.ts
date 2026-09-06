@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { isAdminAreaRole } from "@/app/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const sessionUser = await getSessionUser();
-    if (sessionUser?.role !== "admin") {
+    if (!isAdminAreaRole(sessionUser?.role)) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 

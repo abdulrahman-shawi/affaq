@@ -20,6 +20,7 @@ import {
   Video,
   ClipboardCheck,
   Settings,
+  UserCog,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/app/lib/utils";
@@ -32,22 +33,29 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
+const adminNav: NavItem[] = [
+  { href: "/dashboard/admin", label: "لوحة التحكم", icon: LayoutDashboard },
+  { href: "/dashboard/admin/students", label: "الطلاب", icon: GraduationCap },
+  { href: "/dashboard/admin/teachers", label: "المعلمون", icon: Users },
+  { href: "/dashboard/admin/supervisors", label: "المشرفون", icon: UserCog },
+  { href: "/dashboard/admin/parents", label: "أولياء الأمور", icon: Baby },
+  { href: "/dashboard/admin/classes", label: "الصفوف", icon: School },
+  { href: "/dashboard/admin/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
+  { href: "/dashboard/admin/subjects", label: "المواد", icon: BookOpen },
+  { href: "/dashboard/admin/payments", label: "المدفوعات", icon: CreditCard },
+  { href: "/dashboard/admin/attendance", label: "الحضور", icon: CalendarCheck },
+  { href: "/dashboard/admin/grades", label: "الدرجات", icon: ClipboardList },
+  { href: "/dashboard/admin/messages", label: "الرسائل", icon: MessagesSquare },
+  { href: "/dashboard/admin/reports", label: "التقارير", icon: ChartBar },
+  { href: "/dashboard/admin/settings", label: "الإعدادات", icon: Settings },
+];
+
+// صفحات لا تظهر للمشرف — المدفوعات وإدارة المشرفين خاصة بالأدمن
+const SUPERVISOR_HIDDEN = ["/dashboard/admin/payments", "/dashboard/admin/supervisors"];
+
 export const roleNav: Record<Role, NavItem[]> = {
-  admin: [
-    { href: "/dashboard/admin", label: "لوحة التحكم", icon: LayoutDashboard },
-    { href: "/dashboard/admin/students", label: "الطلاب", icon: GraduationCap },
-    { href: "/dashboard/admin/teachers", label: "المعلمون", icon: Users },
-    { href: "/dashboard/admin/parents", label: "أولياء الأمور", icon: Baby },
-    { href: "/dashboard/admin/classes", label: "الصفوف", icon: School },
-    { href: "/dashboard/admin/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
-    { href: "/dashboard/admin/subjects", label: "المواد", icon: BookOpen },
-    { href: "/dashboard/admin/payments", label: "المدفوعات", icon: CreditCard },
-    { href: "/dashboard/admin/attendance", label: "الحضور", icon: CalendarCheck },
-    { href: "/dashboard/admin/grades", label: "الدرجات", icon: ClipboardList },
-    { href: "/dashboard/admin/messages", label: "الرسائل", icon: MessagesSquare },
-    { href: "/dashboard/admin/reports", label: "التقارير", icon: ChartBar },
-    { href: "/dashboard/admin/settings", label: "الإعدادات", icon: Settings },
-  ],
+  admin: adminNav,
+  supervisor: adminNav.filter((i) => !SUPERVISOR_HIDDEN.includes(i.href)),
   teacher: [
     { href: "/dashboard/teacher", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/dashboard/teacher/students", label: "طلابي", icon: GraduationCap },
@@ -81,6 +89,7 @@ export const roleNav: Record<Role, NavItem[]> = {
 
 export const roleAccent: Record<Role, { active: string; logo: string }> = {
   admin: { active: "bg-blue-100 text-blue-700", logo: "text-blue-600" },
+  supervisor: { active: "bg-cyan-100 text-cyan-700", logo: "text-cyan-600" },
   teacher: { active: "bg-emerald-100 text-emerald-700", logo: "text-emerald-600" },
   parent: { active: "bg-amber-100 text-amber-700", logo: "text-amber-600" },
   student: { active: "bg-violet-100 text-violet-700", logo: "text-violet-600" },
@@ -88,6 +97,7 @@ export const roleAccent: Record<Role, { active: string; logo: string }> = {
 
 export const roleLabels: Record<Role, string> = {
   admin: "مدير النظام",
+  supervisor: "مشرف",
   teacher: "معلم",
   parent: "ولي أمر",
   student: "طالب",
@@ -98,6 +108,8 @@ export default function Sidebar({ role }: { role: Role }) {
   const items = roleNav[role];
   const accent = roleAccent[role];
   const { academyName, logoUrl } = useSiteSettings();
+  // أول عنصر هو الصفحة الرئيسية للوحة — يُفعّل عند التطابق التام فقط
+  const homeHref = items[0]?.href;
 
   return (
     <aside className="flex h-full w-64 flex-col border-l bg-card print:hidden">
@@ -113,7 +125,7 @@ export default function Sidebar({ role }: { role: Role }) {
       <nav className="flex-1 space-y-1 overflow-y-auto p-4">
         {items.map((item) => {
           const isActive =
-            item.href === `/dashboard/${role}`
+            item.href === homeHref
               ? pathname === item.href
               : pathname.startsWith(item.href);
           return (

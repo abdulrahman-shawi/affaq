@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { isAdminAreaRole } from "@/app/lib/roles";
 import { newWorkbook, addSheet, styleHeaderRow, xlsxResponse } from "@/app/lib/excel";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   const sessionUser = await getSessionUser();
-  if (sessionUser?.role !== "admin") {
+  if (!isAdminAreaRole(sessionUser?.role)) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
 

@@ -15,6 +15,16 @@ import { Label } from "@/components/ui/label";
 import { CURRENCY_LABELS } from "@/app/lib/utils";
 import type { CreatePaymentInput, PaymentDTO, StudentDTO } from "@/types";
 
+// حقل number لا يقبل الأرقام العربية (٠-٩) من لوحة المفاتيح العربية — نستخدم text ونحوّلها
+function parseNumericInput(v: string): number | undefined {
+  const normalized = v
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+    .replace(/[٫,]/g, ".");
+  if (normalized.trim() === "") return undefined;
+  const n = Number(normalized);
+  return Number.isNaN(n) ? undefined : n;
+}
+
 export default function PaymentForm({
   trigger,
   onSuccess,
@@ -154,25 +164,25 @@ export default function PaymentForm({
               <Label htmlFor="payment-amount">المبلغ المدفوع ({currencyLabel})</Label>
               <Input
                 id="payment-amount"
-                type="number"
-                min={0}
+                type="text"
+                inputMode="decimal"
                 required
-                value={form.amount}
-                onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })}
+                placeholder="0"
+                value={form.amount === 0 ? "" : String(form.amount)}
+                onChange={(e) =>
+                  setForm({ ...form, amount: parseNumericInput(e.target.value) ?? 0 })
+                }
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="payment-due-amount">المبلغ المستحق (اختياري)</Label>
               <Input
                 id="payment-due-amount"
-                type="number"
-                min={0}
+                type="text"
+                inputMode="decimal"
                 value={form.dueAmount ?? ""}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    dueAmount: e.target.value === "" ? undefined : Number(e.target.value),
-                  })
+                  setForm({ ...form, dueAmount: parseNumericInput(e.target.value) })
                 }
               />
             </div>
@@ -187,10 +197,15 @@ export default function PaymentForm({
               <Label htmlFor="payment-months">عدد الأشهر</Label>
               <Input
                 id="payment-months"
-                type="number"
-                min={1}
+                type="text"
+                inputMode="numeric"
                 value={form.months ?? 1}
-                onChange={(e) => setForm({ ...form, months: Number(e.target.value) })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    months: Math.max(1, parseNumericInput(e.target.value) ?? 1),
+                  })
+                }
               />
             </div>
           </div>

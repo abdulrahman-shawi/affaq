@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { isAdminAreaRole } from "@/app/lib/roles";
 import { getAllowedTargets } from "@/app/lib/messageTargets";
 import {
   containsLinkOrPhone,
@@ -40,7 +41,7 @@ async function visibilityFilter(
   userId: string,
   role: string
 ): Promise<Prisma.MessageWhereInput> {
-  if (role === "admin") return {};
+  if (isAdminAreaRole(role)) return {};
 
   let classIds: string[] = [];
   if (role === "teacher") {

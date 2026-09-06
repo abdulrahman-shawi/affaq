@@ -1,7 +1,7 @@
 // Shared types mirroring the Prisma models (serialized over the API,
 // so DateTime fields are strings) plus API DTOs.
 
-export type Role = "admin" | "teacher" | "parent" | "student";
+export type Role = "admin" | "supervisor" | "teacher" | "parent" | "student";
 
 export type StudentStatus = "active" | "expired" | "suspended";
 export type AttendanceStatus = "present" | "absent" | "late";
@@ -24,6 +24,15 @@ export interface UserDTO {
   name: string;
   role: Role;
   phone?: string | null;
+  createdAt: string;
+}
+
+/** مشرف — مستخدم بدور supervisor يرى لوحة الأدمن عدا المدفوعات وإدارة المشرفين */
+export interface SupervisorDTO {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
   createdAt: string;
 }
 
@@ -272,6 +281,14 @@ export interface SubjectDTO {
 }
 
 // API input DTOs
+
+export interface CreateSupervisorInput {
+  name: string;
+  email?: string;
+  phone?: string;
+  /** كلمة المرور — اختيارية عند التعديل، الافتراضي عند الإنشاء 123456 */
+  password?: string;
+}
 
 export interface CreateStudentInput {
   name: string;
