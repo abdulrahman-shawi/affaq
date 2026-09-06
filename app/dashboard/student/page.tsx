@@ -46,11 +46,11 @@ export default function StudentDashboard() {
   }, [me?.id]);
 
   const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
-  const totalDue = payments.reduce(
-    (sum: number | null, p) =>
-      p.dueAmount != null ? (sum ?? 0) + p.dueAmount : sum,
-    null
-  );
+  // المستحق ثابت = رسم الاشتراك الشهري، لا يُجمع من الفواتير
+  const totalDue =
+    me?.monthlyFee ??
+    payments.find((p) => p.dueAmount != null)?.dueAmount ??
+    null;
   const remaining = totalDue != null ? Math.max(0, totalDue - totalPaid) : null;
 
   const myGrades = useMemo(

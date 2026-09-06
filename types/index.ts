@@ -101,7 +101,7 @@ export interface StudentPaymentsSummary {
   /** عدد الفواتير المدفوعة */
   invoiceCount: number;
   totalPaid: number;
-  /** إجمالي المستحق — null إن لم تُسجل أي فاتورة بمبلغ مستحق */
+  /** إجمالي المستحق — ثابت لكل طالب (رسم الاشتراك)، null إن لم يُحدد */
   totalDue: number | null;
   /** المتبقي = totalDue - totalPaid — null إن لم يوجد مبلغ مستحق */
   remaining: number | null;

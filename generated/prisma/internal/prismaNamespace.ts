@@ -2068,7 +2068,8 @@ export const StudentScalarFieldEnum = {
   fatherName: 'fatherName',
   motherName: 'motherName',
   guardianPhones: 'guardianPhones',
-  shift: 'shift'
+  shift: 'shift',
+  currency: 'currency'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]

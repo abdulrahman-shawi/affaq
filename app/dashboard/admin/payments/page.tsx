@@ -61,7 +61,9 @@ export default function AdminPaymentsPage() {
       s.payments.push(p);
       s.invoiceCount += 1;
       s.totalPaid += p.amount;
-      if (p.dueAmount != null) s.totalDue = (s.totalDue ?? 0) + p.dueAmount;
+      // المستحق ثابت لكل طالب = رسم الاشتراك الشهري، لا يُجمع مع كل فاتورة
+      if (s.totalDue == null)
+        s.totalDue = p.student?.monthlyFee ?? p.dueAmount ?? null;
     }
     for (const s of Array.from(byStudent.values())) {
       s.remaining = s.totalDue != null ? Math.max(0, s.totalDue - s.totalPaid) : null;

@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CURRENCY_LABELS } from "@/app/lib/utils";
-import type { CreatePaymentInput, StudentDTO } from "@/types";
+import type { CreatePaymentInput, PaymentDTO, StudentDTO } from "@/types";
 
 export default function PaymentForm({
   trigger,
@@ -27,6 +27,8 @@ export default function PaymentForm({
   const [error, setError] = useState<string | null>(null);
   const [students, setStudents] = useState<StudentDTO[]>([]);
   const [receipt, setReceipt] = useState<File | null>(null);
+  // إجمالي ما دفعه الطالب المختار سابقًا — لحساب المتبقي
+  const [paidTotal, setPaidTotal] = useState(0);
   const [form, setForm] = useState<CreatePaymentInput>({
     studentId: "",
     amount: 0,
@@ -102,9 +104,27 @@ export default function PaymentForm({
               value={form.studentId}
               onChange={(e) => {
                 const studentId = e.target.value;
-                const fee = students.find((s) => s.id === studentId)?.monthlyFee;
-                // تعبئة المبلغ المستحق تلقائيًا من رسم الاشتراك الشهري للطالب
-                setForm({ ...form, studentId, dueAmount: fee ?? undefined });
+                const student = students.find((s) => s.id === studentId);
+                setForm({ ...form, studentId, dueAmount: undefined });
+                setPaidTotal(0);
+                if (!studentId) return;
+                // جلب مدفوعات الطالب السابقة لحساب المتبقي = المستحق الشهري - المدفوع
+                fetch(`/api/payments?studentId=${studentId}`)
+                  .then((res) => (res.ok ? res.json() : []))
+                  .then((list: PaymentDTO[]) => {
+                    const paid = list.reduce((sum, p) => sum + p.amount, 0);
+                    setPaidTotal(paid);
+                    const remaining = (student?.monthlyFee ?? 0) - paid;
+                    // تعبئة المبلغ المستحق بالقيمة المتبقية على الطالب
+                    if (remaining > 0) {
+                      setForm((f) =>
+                        f.studentId === studentId
+                          ? { ...f, dueAmount: remaining }
+                          : f
+                      );
+                    }
+                  })
+                  .catch(() => {});
               }}
             >
               <option value="">اختر الطالب</option>
@@ -114,14 +134,20 @@ export default function PaymentForm({
                 </option>
               ))}
             </select>
-            {(() => {
-              const fee = students.find((s) => s.id === form.studentId)?.monthlyFee;
-              return fee != null ? (
-                <p className="text-sm text-muted-foreground">
-                  المبلغ المترتب شهريًا على الطالب: {fee} {currencyLabel}
-                </p>
-              ) : null;
-            })()}
+            {selectedStudent?.monthlyFee != null && (
+              <p className="text-sm text-muted-foreground">
+                المبلغ المترتب شهريًا على الطالب: {selectedStudent.monthlyFee}{" "}
+                {currencyLabel}
+                {paidTotal > 0 && (
+                  <>
+                    {" "}
+                    — المدفوع سابقًا: {paidTotal} {currencyLabel} — المتبقي:{" "}
+                    {Math.max(0, selectedStudent.monthlyFee - paidTotal)}{" "}
+                    {currencyLabel}
+                  </>
+                )}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
