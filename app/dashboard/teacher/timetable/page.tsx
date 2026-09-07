@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CalendarCheck, CalendarDays, Plus, School } from "lucide-react";
+import { BookOpen, CalendarCheck, CalendarDays, School, Video } from "lucide-react";
 import TimetableGrid from "@/components/shared/TimetableGrid";
-import TimetableSlotForm from "@/components/forms/TimetableSlotForm";
+import ZoomLinkForm from "@/components/forms/ZoomLinkForm";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import StatCard from "@/components/shared/StatCard";
@@ -12,14 +12,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTimetable } from "@/hooks/useTimetable";
 import type { TeacherDTO } from "@/types";
 
-const selectClass =
-  "flex h-9 w-full max-w-xs rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
-
 export default function TeacherTimetablePage() {
   const { user } = useAuth();
   const [teacher, setTeacher] = useState<TeacherDTO | null>(null);
   const [resolving, setResolving] = useState(true);
-  const [classId, setClassId] = useState("");
   const { slots, loading, refetch } = useTimetable({
     teacherId: teacher?.id ?? "",
   });
@@ -37,13 +33,6 @@ export default function TeacherTimetablePage() {
       }
     })();
   }, [user]);
-
-  // اختيار أول صف يدرّسه المعلم تلقائيًا
-  useEffect(() => {
-    if (!classId && teacher && teacher.classes.length > 0) {
-      setClassId(teacher.classes[0].id);
-    }
-  }, [teacher, classId]);
 
   const stats = useMemo(
     () => ({
@@ -97,36 +86,26 @@ export default function TeacherTimetablePage() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-lg font-semibold">جدولي الأسبوعي</h1>
-        {teacher.classes.length > 0 && (
-          <div className="flex items-center gap-2">
-            <select
-              className={selectClass}
-              value={classId}
-              onChange={(e) => setClassId(e.target.value)}
-            >
-              {teacher.classes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            {classId && (
-              <TimetableSlotForm
-                classId={classId}
-                fixedTeacherId={teacher.id}
-                onSuccess={refetch}
-                trigger={
-                  <Button>
-                    <Plus className="h-4 w-4" />
-                    إضافة حصة
-                  </Button>
-                }
-              />
-            )}
-          </div>
-        )}
       </div>
-      <TimetableGrid slots={slots} />
+      <TimetableGrid
+        slots={slots}
+        renderActions={(slot) => (
+          <ZoomLinkForm
+            slot={slot}
+            onSuccess={refetch}
+            trigger={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                title="رابط زوم"
+              >
+                <Video className="h-3.5 w-3.5 text-sky-700" />
+              </Button>
+            }
+          />
+        )}
+      />
     </div>
   );
 }

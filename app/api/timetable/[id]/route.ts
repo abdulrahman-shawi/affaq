@@ -23,7 +23,8 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const sessionUser = await getSessionUser();
-  if (!isAdminAreaRole(sessionUser?.role)) {
+  const isAdmin = isAdminAreaRole(sessionUser?.role);
+  if (!isAdmin && sessionUser?.role !== "teacher") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
 
@@ -39,6 +40,32 @@ export async function PATCH(
     }
 
     const body = await req.json();
+
+    // المعلم يستطيع تعديل رابط زوم فقط، ولحصصه هو فقط
+    if (!isAdmin) {
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: sessionUser!.id },
+      });
+      if (!teacher || existing.teacherId !== teacher.id) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
+      let zoomLink: string | null;
+      try {
+        zoomLink = normalizeZoomLink(body.zoomLink);
+      } catch (e) {
+        return NextResponse.json(
+          { error: e instanceof Error ? e.message : "رابط زوم غير صالح" },
+          { status: 400 }
+        );
+      }
+      const slot = await prisma.timetableSlot.update({
+        where: { id: params.id },
+        data: { zoomLink },
+        include: { teacher: { include: { user: true } }, class: true },
+      });
+      return NextResponse.json(slot);
+    }
+
     const data: Record<string, unknown> = {};
     if (body.subject !== undefined) data.subject = String(body.subject).trim();
     if (body.dayOfWeek !== undefined) data.dayOfWeek = Number(body.dayOfWeek);
