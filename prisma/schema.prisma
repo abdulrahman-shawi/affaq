@@ -21,6 +21,7 @@ model User {
   name          String
   role          String         // "admin", "supervisor", "teacher", "parent", "student"
   phone         String?        @unique
+  image         String?        // رابط الصورة الشخصية
   createdAt     DateTime       @default(now())
 
   teacher       Teacher?

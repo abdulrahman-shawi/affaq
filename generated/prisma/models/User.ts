@@ -31,6 +31,7 @@ export type UserMinAggregateOutputType = {
   name: string | null
   role: string | null
   phone: string | null
+  image: string | null
   createdAt: Date | null
 }
 
@@ -41,6 +42,7 @@ export type UserMaxAggregateOutputType = {
   name: string | null
   role: string | null
   phone: string | null
+  image: string | null
   createdAt: Date | null
 }
 
@@ -51,6 +53,7 @@ export type UserCountAggregateOutputType = {
   name: number
   role: number
   phone: number
+  image: number
   createdAt: number
   _all: number
 }
@@ -63,6 +66,7 @@ export type UserMinAggregateInputType = {
   name?: true
   role?: true
   phone?: true
+  image?: true
   createdAt?: true
 }
 
@@ -73,6 +77,7 @@ export type UserMaxAggregateInputType = {
   name?: true
   role?: true
   phone?: true
+  image?: true
   createdAt?: true
 }
 
@@ -83,6 +88,7 @@ export type UserCountAggregateInputType = {
   name?: true
   role?: true
   phone?: true
+  image?: true
   createdAt?: true
   _all?: true
 }
@@ -166,6 +172,7 @@ export type UserGroupByOutputType = {
   name: string
   role: string
   phone: string | null
+  image: string | null
   createdAt: Date
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
@@ -197,6 +204,7 @@ export type UserWhereInput = {
   name?: Prisma.StringFilter<"User"> | string
   role?: Prisma.StringFilter<"User"> | string
   phone?: Prisma.StringNullableFilter<"User"> | string | null
+  image?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
@@ -213,6 +221,7 @@ export type UserOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   teacher?: Prisma.TeacherOrderByWithRelationInput
   parent?: Prisma.ParentOrderByWithRelationInput
@@ -232,6 +241,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   name?: Prisma.StringFilter<"User"> | string
   role?: Prisma.StringFilter<"User"> | string
+  image?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   parent?: Prisma.XOR<Prisma.ParentNullableScalarRelationFilter, Prisma.ParentWhereInput> | null
@@ -248,6 +258,7 @@ export type UserOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -264,6 +275,7 @@ export type UserScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.StringWithAggregatesFilter<"User"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  image?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
 
@@ -274,6 +286,7 @@ export type UserCreateInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
@@ -290,6 +303,7 @@ export type UserUncheckedCreateInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
@@ -306,6 +320,7 @@ export type UserUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
@@ -322,6 +337,7 @@ export type UserUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
@@ -338,6 +354,7 @@ export type UserCreateManyInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
 }
 
@@ -348,6 +365,7 @@ export type UserUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -358,6 +376,7 @@ export type UserUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -368,6 +387,7 @@ export type UserCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -378,6 +398,7 @@ export type UserMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -388,6 +409,7 @@ export type UserMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -499,6 +521,7 @@ export type UserCreateWithoutParentInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
@@ -514,6 +537,7 @@ export type UserUncheckedCreateWithoutParentInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
@@ -545,6 +569,7 @@ export type UserUpdateWithoutParentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
@@ -560,6 +585,7 @@ export type UserUncheckedUpdateWithoutParentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
@@ -575,6 +601,7 @@ export type UserCreateWithoutStudentInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
@@ -590,6 +617,7 @@ export type UserUncheckedCreateWithoutStudentInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
@@ -621,6 +649,7 @@ export type UserUpdateWithoutStudentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
@@ -636,6 +665,7 @@ export type UserUncheckedUpdateWithoutStudentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
@@ -651,6 +681,7 @@ export type UserCreateWithoutTeacherInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
@@ -666,6 +697,7 @@ export type UserUncheckedCreateWithoutTeacherInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
@@ -697,6 +729,7 @@ export type UserUpdateWithoutTeacherInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
@@ -712,6 +745,7 @@ export type UserUncheckedUpdateWithoutTeacherInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
@@ -727,6 +761,7 @@ export type UserCreateWithoutSentMessagesInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
@@ -742,6 +777,7 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
@@ -773,6 +809,7 @@ export type UserUpdateWithoutSentMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
@@ -788,6 +825,7 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
@@ -803,6 +841,7 @@ export type UserCreateWithoutMessageRecipientsInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
@@ -818,6 +857,7 @@ export type UserUncheckedCreateWithoutMessageRecipientsInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
@@ -849,6 +889,7 @@ export type UserUpdateWithoutMessageRecipientsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
@@ -864,6 +905,7 @@ export type UserUncheckedUpdateWithoutMessageRecipientsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
@@ -879,6 +921,7 @@ export type UserCreateWithoutNotificationsInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentCreateNestedOneWithoutUserInput
@@ -894,6 +937,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   name: string
   role: string
   phone?: string | null
+  image?: string | null
   createdAt?: Date | string
   teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
   parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
@@ -925,6 +969,7 @@ export type UserUpdateWithoutNotificationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
@@ -940,6 +985,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
   parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
@@ -1004,6 +1050,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   name?: boolean
   role?: boolean
   phone?: boolean
+  image?: boolean
   createdAt?: boolean
   teacher?: boolean | Prisma.User$teacherArgs<ExtArgs>
   parent?: boolean | Prisma.User$parentArgs<ExtArgs>
@@ -1021,6 +1068,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   role?: boolean
   phone?: boolean
+  image?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["user"]>
 
@@ -1031,6 +1079,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   role?: boolean
   phone?: boolean
+  image?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["user"]>
 
@@ -1041,10 +1090,11 @@ export type UserSelectScalar = {
   name?: boolean
   role?: boolean
   phone?: boolean
+  image?: boolean
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "role" | "phone" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "role" | "phone" | "image" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.User$teacherArgs<ExtArgs>
   parent?: boolean | Prisma.User$parentArgs<ExtArgs>
@@ -1074,6 +1124,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     role: string
     phone: string | null
+    image: string | null
     createdAt: Date
   }, ExtArgs["result"]["user"]>
   composites: {}
@@ -1510,6 +1561,7 @@ export interface UserFieldRefs {
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'String'>
   readonly phone: Prisma.FieldRef<"User", 'String'>
+  readonly image: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     

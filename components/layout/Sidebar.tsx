@@ -21,6 +21,7 @@ import {
   ClipboardCheck,
   Settings,
   UserCog,
+  User,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/app/lib/utils";
@@ -48,6 +49,7 @@ const adminNav: NavItem[] = [
   { href: "/dashboard/admin/messages", label: "الرسائل", icon: MessagesSquare },
   { href: "/dashboard/admin/reports", label: "التقارير", icon: ChartBar },
   { href: "/dashboard/admin/settings", label: "الإعدادات", icon: Settings },
+  { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
 ];
 
 // صفحات لا تظهر للمشرف — المدفوعات وإدارة المشرفين خاصة بالأدمن
@@ -66,6 +68,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/teacher/submissions", label: "التسليمات", icon: Inbox },
     { href: "/dashboard/teacher/grades", label: "الدرجات", icon: ClipboardList },
     { href: "/dashboard/teacher/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
   ],
   parent: [
     { href: "/dashboard/parent", label: "لوحة التحكم", icon: LayoutDashboard },
@@ -74,6 +77,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/parent/attendance", label: "الحضور", icon: CalendarCheck },
     { href: "/dashboard/parent/grades", label: "الدرجات", icon: ClipboardList },
     { href: "/dashboard/parent/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
   ],
   student: [
     { href: "/dashboard/student", label: "لوحة التحكم", icon: LayoutDashboard },
@@ -84,6 +88,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/student/recordings", label: "التسجيلات", icon: Video },
     { href: "/dashboard/student/grades", label: "درجاتي", icon: ClipboardList },
     { href: "/dashboard/student/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
   ],
 };
 

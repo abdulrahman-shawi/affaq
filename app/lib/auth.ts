@@ -37,15 +37,23 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role as Role,
+          image: user.image,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.image = user.image ?? null;
+      }
+      // تحديث الجلسة من العميل بعد تعديل الملف الشخصي (update() من useSession)
+      if (trigger === "update" && session) {
+        if (session.name !== undefined) token.name = session.name;
+        if (session.email !== undefined) token.email = session.email;
+        if (session.image !== undefined) token.image = session.image;
       }
       return token;
     },
@@ -53,6 +61,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.image = token.image ?? null;
       }
       return session;
     },

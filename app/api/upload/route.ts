@@ -15,10 +15,7 @@ export async function POST(req: Request) {
       request: req,
       onBeforeGenerateToken: async () => {
         const sessionUser = await getSessionUser();
-        if (
-          !sessionUser ||
-          !["admin", "teacher", "student"].includes(sessionUser.role)
-        ) {
+        if (!sessionUser) {
           throw new Error("غير مصرح");
         }
         return {
