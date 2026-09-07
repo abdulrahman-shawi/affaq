@@ -18,8 +18,8 @@ export const DAY_LABELS = [
 // الأسبوع الدراسي الافتراضي: الأحد–الخميس
 const SCHOOL_DAYS = [0, 1, 2, 3, 4];
 
-const HOUR_PX = 72;
-const MIN_CARD_PX = 40;
+const HOUR_PX = 96;
+const MIN_CARD_PX = 56;
 
 // ألوان pastel لبطاقات الحصص — تُسند لكل مادة
 const PALETTE = [
@@ -103,7 +103,7 @@ export default function TimetableGrid({
             {hourMarks.map((t) => (
               <span
                 key={t}
-                className="absolute right-0 left-0 -translate-y-1/2 text-center text-[11px] text-muted-foreground"
+                className="absolute right-0 left-0 -translate-y-1/2 text-center text-xs text-muted-foreground"
                 style={{ top: (t - minMinutes) / 60 * HOUR_PX }}
               >
                 {formatTime12(t)}
@@ -137,7 +137,7 @@ export default function TimetableGrid({
                   return (
                     <div
                       key={slot.id}
-                      className={`absolute right-1 left-1 overflow-hidden rounded-lg border p-1.5 text-[11px] leading-snug shadow-sm ${subjectColors.get(
+                      className={`absolute right-1 left-1 overflow-hidden rounded-lg border p-2 text-xs leading-snug shadow-sm ${subjectColors.get(
                         slot.subject
                       )}`}
                       style={{

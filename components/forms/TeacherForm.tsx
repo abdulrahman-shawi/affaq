@@ -106,11 +106,10 @@ export default function TeacherForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="teacher-email">البريد الإلكتروني</Label>
+            <Label htmlFor="teacher-email">البريد الإلكتروني (اختياري)</Label>
             <Input
               id="teacher-email"
               type="email"
-              required
               dir="ltr"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}

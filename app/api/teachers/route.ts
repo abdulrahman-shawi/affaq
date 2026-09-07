@@ -29,16 +29,18 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { name, email, password, phone, shift, subjectIds, classIds } = body;
 
-    if (!name || !email) {
+    if (!name) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return NextResponse.json(
-        { error: "البريد الإلكتروني مستخدم مسبقًا" },
-        { status: 409 }
-      );
+    if (email) {
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (existing) {
+        return NextResponse.json(
+          { error: "البريد الإلكتروني مستخدم مسبقًا" },
+          { status: 409 }
+        );
+      }
     }
 
     if (phone && (await isPhoneTaken(phone))) {
@@ -61,7 +63,7 @@ export async function POST(req: Request) {
         user: {
           create: {
             name,
-            email,
+            email: email || null,
             phone: phone || null,
             password: hashed,
             role: "teacher",
