@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { isAdminAreaRole } from "@/app/lib/roles";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -11,8 +11,10 @@ export async function GET() {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
+    const scoped = await getSupervisorClassIds(sessionUser);
 
     const classes = await prisma.classLevel.findMany({
+      where: scoped ? { id: { in: scoped } } : undefined,
       include: { subjects: true },
       orderBy: [{ order: "asc" }, { name: "asc" }],
     });
@@ -22,11 +24,11 @@ export async function GET() {
   }
 }
 
-// إضافة صف — يمكن ربطه بمواد موجودة عبر subjectIds
+// إضافة صف — للأدمن فقط (بنية المنهج لا يديرها المشرف) — يمكن ربطه بمواد موجودة عبر subjectIds
 export async function POST(req: Request) {
   try {
     const sessionUser = await getSessionUser();
-    if (!isAdminAreaRole(sessionUser?.role)) {
+    if (sessionUser?.role !== "admin") {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 

@@ -12,6 +12,25 @@ async function requireAdmin() {
   return sessionUser?.role === "admin" ? sessionUser : null;
 }
 
+const supervisorSelect = {
+  id: true,
+  name: true,
+  email: true,
+  phone: true,
+  createdAt: true,
+  supervisedClasses: {
+    select: { id: true, name: true },
+    orderBy: { order: "asc" as const },
+  },
+};
+
+function toDTO<T extends { supervisedClasses: { id: string; name: string }[] }>(
+  supervisor: T
+) {
+  const { supervisedClasses, ...rest } = supervisor;
+  return { ...rest, classes: supervisedClasses };
+}
+
 export async function GET() {
   try {
     if (!(await requireAdmin())) {
@@ -20,10 +39,10 @@ export async function GET() {
 
     const supervisors = await prisma.user.findMany({
       where: { role: "supervisor" },
-      select: { id: true, name: true, email: true, phone: true, createdAt: true },
+      select: supervisorSelect,
       orderBy: { name: "asc" },
     });
-    return NextResponse.json(supervisors);
+    return NextResponse.json(supervisors.map(toDTO));
   } catch {
     return NextResponse.json({ error: "فشل في تحميل المشرفين" }, { status: 500 });
   }
@@ -36,7 +55,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, phone, password } = body;
+    const { name, email, phone, password, classIds } = body;
 
     if (!name) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -68,11 +87,18 @@ export async function POST(req: Request) {
         phone: phone || null,
         password: hashed,
         role: "supervisor",
+        ...(Array.isArray(classIds) && classIds.length > 0
+          ? {
+              supervisedClasses: {
+                connect: classIds.map((id: string) => ({ id })),
+              },
+            }
+          : {}),
       },
-      select: { id: true, name: true, email: true, phone: true, createdAt: true },
+      select: supervisorSelect,
     });
 
-    return NextResponse.json(supervisor, { status: 201 });
+    return NextResponse.json(toDTO(supervisor), { status: 201 });
   } catch {
     return NextResponse.json({ error: "فشل في إضافة المشرف" }, { status: 500 });
   }

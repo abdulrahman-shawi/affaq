@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { isAdminAreaRole } from "@/app/lib/roles";
 import { formatDate } from "@/app/lib/utils";
 import { newWorkbook, addSheet, styleHeaderRow, xlsxResponse } from "@/app/lib/excel";
 
@@ -17,7 +16,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export async function GET() {
   const sessionUser = await getSessionUser();
-  if (!isAdminAreaRole(sessionUser?.role)) {
+  // التقارير والتحليلات للأدمن فقط — ممنوعة على المشرف
+  if (sessionUser?.role !== "admin") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
 

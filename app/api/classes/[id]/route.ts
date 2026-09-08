@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { isAdminAreaRole } from "@/app/lib/roles";
+
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export async function PATCH(
 ) {
   try {
     const sessionUser = await getSessionUser();
-    if (!isAdminAreaRole(sessionUser?.role)) {
+    if (sessionUser?.role !== "admin") {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
@@ -69,7 +69,7 @@ export async function DELETE(
 ) {
   try {
     const sessionUser = await getSessionUser();
-    if (!isAdminAreaRole(sessionUser?.role)) {
+    if (sessionUser?.role !== "admin") {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 

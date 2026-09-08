@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { isAdminAreaRole } from "@/app/lib/roles";
 import { getAllowedTargets } from "@/app/lib/messageTargets";
 import {
   containsLinkOrPhone,
@@ -41,7 +40,7 @@ async function visibilityFilter(
   userId: string,
   role: string
 ): Promise<Prisma.MessageWhereInput> {
-  if (isAdminAreaRole(role)) return {};
+  if (role === "admin") return {};
 
   let classIds: string[] = [];
   if (role === "teacher") {
@@ -50,6 +49,12 @@ async function visibilityFilter(
       select: { classes: { select: { id: true } } },
     });
     classIds = teacher?.classes.map((c) => c.id) ?? [];
+  } else if (role === "supervisor") {
+    const supervisor = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { supervisedClasses: { select: { id: true } } },
+    });
+    classIds = supervisor?.supervisedClasses.map((c) => c.id) ?? [];
   } else if (role === "student") {
     const student = await prisma.student.findUnique({
       where: { userId },

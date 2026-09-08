@@ -3,13 +3,21 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 import { isPhoneTaken } from "@/app/lib/phone";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+    }
+    const scoped = await getSupervisorClassIds(sessionUser);
+
     const students = await prisma.student.findMany({
+      where: scoped ? { classId: { in: scoped } } : undefined,
       include: { user: true, parent: { include: { user: true } }, class: true },
       orderBy: { user: { name: "asc" } },
     });
@@ -26,6 +34,7 @@ export async function POST(req: Request) {
     if (!isAdminAreaRole(sessionUser?.role)) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
+    const scoped = await getSupervisorClassIds(sessionUser);
 
     const body = await req.json();
     const {
@@ -48,6 +57,11 @@ export async function POST(req: Request) {
       paidAmount,
       paymentMethod,
     } = body;
+
+    // المشرف يضيف طلابًا في صفوفه فقط
+    if (scoped && (!classId || !scoped.includes(classId))) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    }
 
     if (!name) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });

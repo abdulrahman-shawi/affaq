@@ -1,12 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+    }
+    const scoped = await getSupervisorClassIds(sessionUser);
+
     const submissions = await prisma.submission.findMany({
+      where: scoped
+        ? { student: { classId: { in: scoped } } }
+        : undefined,
       include: {
         student: { include: { user: true } },
         assignment: true,

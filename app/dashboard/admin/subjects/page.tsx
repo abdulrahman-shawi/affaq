@@ -10,11 +10,15 @@ import SubjectForm from "@/components/forms/SubjectForm";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import StatCard from "@/components/shared/StatCard";
 import { useSubjects } from "@/hooks/useSubjects";
+import { useAuth } from "@/hooks/useAuth";
 import type { SubjectDTO } from "@/types";
 
 export default function AdminSubjectsPage() {
   const { subjects, loading, refetch } = useSubjects();
+  const { role } = useAuth();
   const { toast } = useToast();
+  // بنية المواد يديرها الأدمن فقط — المشرف يكتفي بالعرض
+  const canManage = role === "admin";
 
   const stats = useMemo(
     () => ({
@@ -71,17 +75,19 @@ export default function AdminSubjectsPage() {
         />
       </div>
 
-      <div className="flex justify-end">
-        <SubjectForm
-          onSuccess={refetch}
-          trigger={
-            <Button>
-              <Plus className="h-4 w-4" />
-              إضافة مادة
-            </Button>
-          }
-        />
-      </div>
+      {canManage && (
+        <div className="flex justify-end">
+          <SubjectForm
+            onSuccess={refetch}
+            trigger={
+              <Button>
+                <Plus className="h-4 w-4" />
+                إضافة مادة
+              </Button>
+            }
+          />
+        </div>
+      )}
 
       <DataTable
         columns={subjectColumns()}
@@ -95,30 +101,34 @@ export default function AdminSubjectsPage() {
             .join(" ")
         }
         searchPlaceholder="ابحث باسم المادة أو الصف..."
-        actions={(s) => (
-          <>
-            <SubjectForm
-              subject={s}
-              onSuccess={refetch}
-              trigger={
-                <Button size="icon" variant="outline" title="تعديل">
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              }
-            />
-            <ConfirmDialog
-              title="حذف المادة"
-              description={`هل أنت متأكد من حذف "${s.name}"؟ سيتم فك ارتباطها بالصفوف.`}
-              confirmLabel="حذف"
-              onConfirm={() => handleDelete(s)}
-              trigger={
-                <Button size="icon" variant="destructive" title="حذف">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              }
-            />
-          </>
-        )}
+        actions={
+          canManage
+            ? (s) => (
+                <>
+                  <SubjectForm
+                    subject={s}
+                    onSuccess={refetch}
+                    trigger={
+                      <Button size="icon" variant="outline" title="تعديل">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                  <ConfirmDialog
+                    title="حذف المادة"
+                    description={`هل أنت متأكد من حذف "${s.name}"؟ سيتم فك ارتباطها بالصفوف.`}
+                    confirmLabel="حذف"
+                    onConfirm={() => handleDelete(s)}
+                    trigger={
+                      <Button size="icon" variant="destructive" title="حذف">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                </>
+              )
+            : undefined
+        }
       />
     </div>
   );

@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { isAdminAreaRole } from "@/app/lib/roles";
 import { newWorkbook, addSheet, styleHeaderRow, xlsxResponse } from "@/app/lib/excel";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   const sessionUser = await getSessionUser();
-  if (!isAdminAreaRole(sessionUser?.role)) {
+  // التقارير والتحليلات للأدمن فقط — ممنوعة على المشرف
+  if (sessionUser?.role !== "admin") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
 

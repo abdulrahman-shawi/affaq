@@ -10,11 +10,15 @@ import ClassForm from "@/components/forms/ClassForm";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import StatCard from "@/components/shared/StatCard";
 import { useClasses } from "@/hooks/useClasses";
+import { useAuth } from "@/hooks/useAuth";
 import type { ClassLevelDTO } from "@/types";
 
 export default function AdminClassesPage() {
   const { classes, loading, refetch } = useClasses();
+  const { role } = useAuth();
   const { toast } = useToast();
+  // بنية الصفوف يديرها الأدمن فقط — المشرف يكتفي بالعرض
+  const canManage = role === "admin";
 
   const stats = useMemo(
     () => ({
@@ -72,17 +76,19 @@ export default function AdminClassesPage() {
         />
       </div>
 
-      <div className="flex justify-end">
-        <ClassForm
-          onSuccess={refetch}
-          trigger={
-            <Button>
-              <Plus className="h-4 w-4" />
-              إضافة صف
-            </Button>
-          }
-        />
-      </div>
+      {canManage && (
+        <div className="flex justify-end">
+          <ClassForm
+            onSuccess={refetch}
+            trigger={
+              <Button>
+                <Plus className="h-4 w-4" />
+                إضافة صف
+              </Button>
+            }
+          />
+        </div>
+      )}
 
       <DataTable
         columns={classColumns()}
@@ -96,30 +102,34 @@ export default function AdminClassesPage() {
             .join(" ")
         }
         searchPlaceholder="ابحث باسم الصف أو المادة..."
-        actions={(c) => (
-          <>
-            <ClassForm
-              classLevel={c}
-              onSuccess={refetch}
-              trigger={
-                <Button size="icon" variant="outline" title="تعديل">
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              }
-            />
-            <ConfirmDialog
-              title="حذف الصف"
-              description={`هل أنت متأكد من حذف "${c.name}"؟ سيتم فك ارتباطه بالمواد.`}
-              confirmLabel="حذف"
-              onConfirm={() => handleDelete(c)}
-              trigger={
-                <Button size="icon" variant="destructive" title="حذف">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              }
-            />
-          </>
-        )}
+        actions={
+          canManage
+            ? (c) => (
+                <>
+                  <ClassForm
+                    classLevel={c}
+                    onSuccess={refetch}
+                    trigger={
+                      <Button size="icon" variant="outline" title="تعديل">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                  <ConfirmDialog
+                    title="حذف الصف"
+                    description={`هل أنت متأكد من حذف "${c.name}"؟ سيتم فك ارتباطه بالمواد.`}
+                    confirmLabel="حذف"
+                    onConfirm={() => handleDelete(c)}
+                    trigger={
+                      <Button size="icon" variant="destructive" title="حذف">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                </>
+              )
+            : undefined
+        }
       />
     </div>
   );

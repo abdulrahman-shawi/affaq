@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 import { isPhoneTaken } from "@/app/lib/phone";
 
 export const dynamic = "force-dynamic";
@@ -16,12 +17,18 @@ export async function PATCH(
     if (!isAdminAreaRole(sessionUser?.role)) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
+    const scoped = await getSupervisorClassIds(sessionUser);
 
     const student = await prisma.student.findUnique({
       where: { id: params.id },
     });
     if (!student) {
       return NextResponse.json({ error: "الطالب غير موجود" }, { status: 404 });
+    }
+
+    // المشرف يدير طلاب صفوفه فقط
+    if (scoped && (!student.classId || !scoped.includes(student.classId))) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -54,6 +61,11 @@ export async function PATCH(
       if (!classExists) {
         return NextResponse.json({ error: "الصف غير موجود" }, { status: 400 });
       }
+    }
+
+    // المشرف لا يستطيع نقل الطالب إلى صف خارج نطاقه
+    if (scoped && classId && !scoped.includes(classId)) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
     if (email) {
@@ -116,12 +128,18 @@ export async function DELETE(
     if (!isAdminAreaRole(sessionUser?.role)) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
+    const scoped = await getSupervisorClassIds(sessionUser);
 
     const student = await prisma.student.findUnique({
       where: { id: params.id },
     });
     if (!student) {
       return NextResponse.json({ error: "الطالب غير موجود" }, { status: 404 });
+    }
+
+    // المشرف يحذف طلاب صفوفه فقط
+    if (scoped && (!student.classId || !scoped.includes(student.classId))) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
     await prisma.$transaction([

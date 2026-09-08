@@ -31,6 +31,9 @@ model User {
 
   sentMessages      Message[]
   messageRecipients MessageRecipient[]
+
+  // الصفوف التي يشرف عليها (للمستخدمين بدور supervisor فقط)
+  supervisedClasses ClassLevel[] @relation("SupervisorClasses")
 }
 
 model Parent {
@@ -196,6 +199,7 @@ model ClassLevel {
   subjects       Subject[]
   students       Student[]
   teachers       Teacher[]
+  supervisors    User[]           @relation("SupervisorClasses")
   messages       MessageClass[]
   timetableSlots TimetableSlot[]
   createdAt      DateTime        @default(now())

@@ -1,16 +1,26 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+    }
+    const scoped = await getSupervisorClassIds(sessionUser);
+
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get("studentId");
 
     const grades = await prisma.grade.findMany({
-      where: studentId ? { studentId } : undefined,
+      where: {
+        ...(studentId ? { studentId } : {}),
+        ...(scoped ? { student: { classId: { in: scoped } } } : {}),
+      },
       include: { student: { include: { user: true } } },
       orderBy: { date: "desc" },
     });
@@ -23,15 +33,30 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const sessionUser = await getSessionUser();
-    if (!sessionUser || !["admin", "teacher"].includes(sessionUser.role)) {
+    if (
+      !sessionUser ||
+      !["admin", "teacher", "supervisor"].includes(sessionUser.role)
+    ) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
+    const scoped = await getSupervisorClassIds(sessionUser);
 
     const body = await req.json();
     const { studentId, subject, type, score, maxScore, note } = body;
 
     if (!studentId || !subject || !type || score === undefined || !maxScore) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
+    }
+
+    // المشرف يرصد درجات طلاب صفوفه فقط
+    if (scoped) {
+      const student = await prisma.student.findUnique({
+        where: { id: studentId },
+        select: { classId: true },
+      });
+      if (!student?.classId || !scoped.includes(student.classId)) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
     }
 
     const grade = await prisma.grade.create({

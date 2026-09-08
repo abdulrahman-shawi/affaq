@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -53,11 +54,19 @@ export async function GET(req: Request) {
         { status: 400 }
       );
     }
+    const scoped = await getSupervisorClassIds(sessionUser);
 
     const slots = await prisma.timetableSlot.findMany({
       where: {
-        ...(classId ? { classId } : {}),
         ...(teacherId ? { teacherId } : {}),
+        // المشرف مقيّد بصفوفه: classId المطلوب خارج نطاقه = بلا نتائج
+        ...(scoped
+          ? classId
+            ? { classId: scoped.includes(classId) ? classId : { in: [] as string[] } }
+            : { classId: { in: scoped } }
+          : classId
+            ? { classId }
+            : {}),
       },
       include: { teacher: { include: { user: true } }, class: true },
       orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
@@ -73,10 +82,16 @@ export async function POST(req: Request) {
   if (!isAdminAreaRole(sessionUser?.role)) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
+  const scoped = await getSupervisorClassIds(sessionUser);
 
   try {
     const body = await req.json();
     const { classId, subject, dayOfWeek, startTime, endTime, teacherId } = body;
+
+    // المشرف يدير جدول صفوفه فقط
+    if (scoped && (!classId || !scoped.includes(classId))) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    }
     let zoomLink: string | null;
     try {
       zoomLink = normalizeZoomLink(body.zoomLink);

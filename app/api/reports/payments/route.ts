@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { isAdminAreaRole } from "@/app/lib/roles";
 import { formatDate } from "@/app/lib/utils";
 import { newWorkbook, addSheet, styleHeaderRow, xlsxResponse } from "@/app/lib/excel";
 
@@ -20,7 +19,7 @@ const PERIOD_LABELS: Record<string, string> = {
 
 export async function GET(req: Request) {
   const sessionUser = await getSessionUser();
-  if (!isAdminAreaRole(sessionUser?.role)) {
+  if (sessionUser?.role !== "admin") {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
   }
 

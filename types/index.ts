@@ -34,6 +34,8 @@ export interface SupervisorDTO {
   email: string | null;
   phone: string | null;
   createdAt: string;
+  /** الصفوف التي يشرف عليها */
+  classes: { id: string; name: string }[];
 }
 
 export interface SiteSettingsDTO {
@@ -288,6 +290,8 @@ export interface CreateSupervisorInput {
   phone?: string;
   /** كلمة المرور — اختيارية عند التعديل، الافتراضي عند الإنشاء 123456 */
   password?: string;
+  /** الصفوف التي يشرف عليها */
+  classIds?: string[];
 }
 
 export interface CreateStudentInput {

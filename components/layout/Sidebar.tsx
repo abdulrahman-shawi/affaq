@@ -52,8 +52,13 @@ const adminNav: NavItem[] = [
   { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
 ];
 
-// صفحات لا تظهر للمشرف — المدفوعات وإدارة المشرفين خاصة بالأدمن
-const SUPERVISOR_HIDDEN = ["/dashboard/admin/payments", "/dashboard/admin/supervisors"];
+// صفحات لا تظهر للمشرف — لوحة التحكم والتقارير والمدفوعات وإدارة المشرفين خاصة بالأدمن
+const SUPERVISOR_HIDDEN = [
+  "/dashboard/admin",
+  "/dashboard/admin/reports",
+  "/dashboard/admin/payments",
+  "/dashboard/admin/supervisors",
+];
 
 export const roleNav: Record<Role, NavItem[]> = {
   admin: adminNav,

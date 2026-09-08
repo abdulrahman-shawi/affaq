@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { CreateSupervisorInput, SupervisorDTO } from "@/types";
+import type { ClassLevelDTO, CreateSupervisorInput, SupervisorDTO } from "@/types";
 
 const initialForm: CreateSupervisorInput = {
   name: "",
@@ -35,6 +35,8 @@ export default function SupervisorForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<CreateSupervisorInput>(initialForm);
+  const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
+  const [classIds, setClassIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!open) return;
@@ -49,7 +51,18 @@ export default function SupervisorForm({
           }
         : initialForm
     );
+    setClassIds(supervisor?.classes?.map((c) => c.id) ?? []);
+    fetch("/api/classes")
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setClasses)
+      .catch(() => setClasses([]));
   }, [open, supervisor]);
+
+  function toggleClass(id: string) {
+    setClassIds((ids) =>
+      ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -67,6 +80,7 @@ export default function SupervisorForm({
             email: form.email || undefined,
             phone: form.phone || undefined,
             password: form.password || undefined,
+            classIds,
           }),
         }
       );
@@ -131,6 +145,30 @@ export default function SupervisorForm({
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>الصفوف التي يشرف عليها</Label>
+            {classes.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                لا توجد صفوف بعد — أضفها من صفحة الصفوف
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {classes.map((c) => (
+                  <label
+                    key={c.id}
+                    className="flex cursor-pointer items-center gap-2 rounded-md border p-2 text-sm hover:bg-accent"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={classIds.includes(c.id)}
+                      onChange={() => toggleClass(c.id)}
+                    />
+                    {c.name}
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>

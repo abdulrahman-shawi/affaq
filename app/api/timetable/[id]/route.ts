@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,18 @@ export async function PATCH(
     }
 
     const body = await req.json();
+
+    // المشرف يعدّل حصص صفوفه فقط، ولا ينقلها إلى صف خارج نطاقه
+    if (sessionUser!.role === "supervisor") {
+      const scoped = await getSupervisorClassIds(sessionUser);
+      if (
+        !scoped ||
+        !scoped.includes(existing.classId) ||
+        (body.classId !== undefined && !scoped.includes(body.classId))
+      ) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
+    }
 
     // المعلم يستطيع تعديل رابط زوم فقط، ولحصصه هو فقط
     if (!isAdmin) {
@@ -145,6 +158,14 @@ export async function DELETE(
         { error: "الحصة غير موجودة في الجدول" },
         { status: 404 }
       );
+    }
+
+    // المشرف يحذف حصص صفوفه فقط
+    if (sessionUser!.role === "supervisor") {
+      const scoped = await getSupervisorClassIds(sessionUser);
+      if (!scoped || !scoped.includes(existing.classId)) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
     }
 
     await prisma.timetableSlot.delete({ where: { id: params.id } });

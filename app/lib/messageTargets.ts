@@ -31,6 +31,7 @@ function dedupeUsers(users: TargetUser[]): TargetUser[] {
 /**
  * يحدد الجهات المسموح للمستخدم إرسال الرسائل إليها حسب دوره:
  * - admin: الجميع، أي صف، أي معلم/طالب/ولي أمر
+ * - supervisor: صفوفه وطلابها وأولياء أمورهم ومعلموها فقط
  * - teacher: صفوفه وطلاب صفوفه فقط
  * - student: صفه ومعلمو صفه فقط
  * - parent: الإدارة ومعلمو صفوف أبنائه فقط
@@ -79,6 +80,65 @@ export async function getAllowedTargets(
                 ? u.parent.children.map((c) => c.user.name).join("، ") || null
                 : null,
       })),
+    };
+  }
+
+  if (role === "supervisor") {
+    const supervisor = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        supervisedClasses: {
+          orderBy: { order: "asc" },
+          select: {
+            id: true,
+            name: true,
+            students: {
+              select: {
+                user: { select: { id: true, name: true } },
+                parent: {
+                  select: { user: { select: { id: true, name: true } } },
+                },
+              },
+            },
+            teachers: {
+              select: { user: { select: { id: true, name: true } } },
+            },
+          },
+        },
+      },
+    });
+    if (!supervisor) return EMPTY_TARGETS;
+
+    return {
+      canSendToAll: false,
+      classes: supervisor.supervisedClasses.map((c) => ({
+        id: c.id,
+        name: c.name,
+      })),
+      users: dedupeUsers(
+        supervisor.supervisedClasses.flatMap((c) => [
+          ...c.students.map((s) => ({
+            id: s.user.id,
+            name: s.user.name,
+            role: "student",
+            detail: c.name,
+          })),
+          ...c.students
+            .filter((s) => s.parent)
+            .map((s) => ({
+              id: s.parent!.user.id,
+              name: s.parent!.user.name,
+              role: "parent",
+              detail: `ولي أمر ${s.user.name}`,
+            })),
+          ...c.teachers.map((t) => ({
+            id: t.user.id,
+            name: t.user.name,
+            role: "teacher",
+            detail: c.name,
+          })),
+        ])
+      ),
     };
   }
 

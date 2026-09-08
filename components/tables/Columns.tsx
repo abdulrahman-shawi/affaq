@@ -242,6 +242,10 @@ export function supervisorColumns(): Column<SupervisorDTO>[] {
     { header: "الاسم", cell: (s) => s.name },
     { header: "البريد الإلكتروني", cell: (s) => s.email ?? "—" },
     { header: "رقم الهاتف", cell: (s) => s.phone ?? "—" },
+    {
+      header: "الصفوف التي يشرف عليها",
+      cell: (s) => s.classes?.map((c) => c.name).join("، ") || "—",
+    },
     { header: "تاريخ الإضافة", cell: (s) => formatDate(s.createdAt) },
   ];
 }

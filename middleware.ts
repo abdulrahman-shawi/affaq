@@ -5,7 +5,10 @@ import type { Role } from "@/types";
 const roles: Role[] = ["admin", "supervisor", "teacher", "parent", "student"];
 
 // صفحات خاصة بالأدمن وحده — لا يصل إليها المشرف
-const ADMIN_ONLY_PATHS = /^\/dashboard\/admin\/(payments|supervisors)(\/|$)/;
+const ADMIN_ONLY_PATHS = /^\/dashboard\/admin\/(payments|supervisors|reports)(\/|$)/;
+
+// صفحة المشرف الأولى — لوحة التحكم الرئيسية (تحليلات) محظورة عليه
+const SUPERVISOR_HOME = "/dashboard/admin/students";
 
 export default withAuth(
   function middleware(req) {
@@ -16,10 +19,14 @@ export default withAuth(
     );
 
     if (match && role) {
-      // المشرف يشارك الأدمن صفحاته عدا المدفوعات والمشرفين
+      // المشرف يشارك الأدمن صفحاته عدا لوحة التحكم والتقارير والمدفوعات والمشرفين
       if (role === "supervisor") {
-        if (match[1] !== "admin" || ADMIN_ONLY_PATHS.test(pathname)) {
-          return NextResponse.redirect(new URL("/dashboard/admin", req.url));
+        if (
+          match[1] !== "admin" ||
+          pathname === "/dashboard/admin" ||
+          ADMIN_ONLY_PATHS.test(pathname)
+        ) {
+          return NextResponse.redirect(new URL(SUPERVISOR_HOME, req.url));
         }
       } else if (roles.includes(role) && match[1] !== role) {
         // F-002 (RBAC): منع الوصول للوحة دور مختلف وإعادة التوجيه للوحة الدور الصحيح

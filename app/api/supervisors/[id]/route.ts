@@ -10,6 +10,25 @@ async function requireAdmin() {
   return sessionUser?.role === "admin" ? sessionUser : null;
 }
 
+const supervisorSelect = {
+  id: true,
+  name: true,
+  email: true,
+  phone: true,
+  createdAt: true,
+  supervisedClasses: {
+    select: { id: true, name: true },
+    orderBy: { order: "asc" as const },
+  },
+};
+
+function toDTO<T extends { supervisedClasses: { id: string; name: string }[] }>(
+  supervisor: T
+) {
+  const { supervisedClasses, ...rest } = supervisor;
+  return { ...rest, classes: supervisedClasses };
+}
+
 async function findSupervisor(id: string) {
   const supervisor = await prisma.user.findFirst({
     where: { id, role: "supervisor" },
@@ -32,7 +51,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, email, phone, password } = body;
+    const { name, email, phone, password, classIds } = body;
 
     if (!name) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -62,11 +81,18 @@ export async function PATCH(
         email: email || null,
         phone: phone || null,
         ...(password ? { password: await bcrypt.hash(password, 10) } : {}),
+        ...(Array.isArray(classIds)
+          ? {
+              supervisedClasses: {
+                set: classIds.map((id: string) => ({ id })),
+              },
+            }
+          : {}),
       },
-      select: { id: true, name: true, email: true, phone: true, createdAt: true },
+      select: supervisorSelect,
     });
 
-    return NextResponse.json(updated);
+    return NextResponse.json(toDTO(updated));
   } catch {
     return NextResponse.json({ error: "فشل في تعديل المشرف" }, { status: 500 });
   }

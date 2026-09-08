@@ -3,13 +3,23 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
+import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 import { isPhoneTaken } from "@/app/lib/phone";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+    }
+    const scoped = await getSupervisorClassIds(sessionUser);
+
     const teachers = await prisma.teacher.findMany({
+      where: scoped
+        ? { classes: { some: { id: { in: scoped } } } }
+        : undefined,
       include: { user: true, subjects: true, classes: true },
       orderBy: { user: { name: "asc" } },
     });
