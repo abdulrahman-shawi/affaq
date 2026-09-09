@@ -149,21 +149,25 @@ export default function TimetableGrid({
                       <p className="truncate opacity-75">
                         {slot.teacher?.user?.name}
                       </p>
-                      <p className="truncate opacity-75">
-                        {formatTime12(toMinutes(slot.startTime))} -{" "}
-                        {formatTime12(toMinutes(slot.endTime))}
-                      </p>
-                      {slot.zoomLink && (
-                        <a
-                          href={slot.zoomLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-0.5 inline-flex items-center gap-1 rounded bg-white/70 px-1.5 py-0.5 font-medium text-sky-700 underline decoration-sky-400 underline-offset-2 hover:bg-white"
-                        >
-                          <Video className="h-3 w-3" />
-                          انضم عبر زوم
-                        </a>
-                      )}
+                      <div className="flex items-center justify-between gap-1 opacity-75">
+                        <p className="truncate">
+                          {formatTime12(toMinutes(slot.startTime))} -{" "}
+                          {formatTime12(toMinutes(slot.endTime))}
+                        </p>
+                        {slot.zoomLink && (
+                          // بجانب الوقت مباشرة حتى لا يُقصّ في البطاقات القصيرة
+                          <a
+                            href={slot.zoomLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="انضم عبر زوم"
+                            className="inline-flex shrink-0 items-center gap-0.5 rounded bg-white/80 px-1.5 py-0.5 font-medium text-sky-700 underline decoration-sky-400 underline-offset-2 shadow-sm hover:bg-white"
+                          >
+                            <Video className="h-3 w-3" />
+                            زوم
+                          </a>
+                        )}
+                      </div>
                       {renderActions && (
                         <div className="absolute left-1 top-1 flex gap-0.5">
                           {renderActions(slot)}

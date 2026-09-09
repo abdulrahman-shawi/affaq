@@ -20,7 +20,11 @@ export async function GET(req: Request) {
     }
 
     const now = new Date();
-    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    // "الآن" بتوقيت الأكاديمية — أوقات الحصص محلية (دمشق) بينما الخادم قد يكون UTC
+    const tzNow = new Date(
+      now.toLocaleString("en-US", { timeZone: "Asia/Damascus" })
+    );
+    const nowMinutes = tzNow.getHours() * 60 + tzNow.getMinutes();
 
     // الحصص الفعلية: date يخزّن تاريخ ووقت بداية الحصة
     const sessionsResult = await prisma.session.updateMany({
@@ -33,7 +37,7 @@ export async function GET(req: Request) {
 
     // الحصص الأسبوعية المتكررة: حصص يوم اليوم التي بدأت منذ 30 دقيقة أو أكثر
     const slots = await prisma.timetableSlot.findMany({
-      where: { dayOfWeek: now.getDay(), zoomLink: { not: null } },
+      where: { dayOfWeek: tzNow.getDay(), zoomLink: { not: null } },
       select: { id: true, startTime: true },
     });
     const expiredSlotIds = slots
