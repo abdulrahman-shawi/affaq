@@ -86,6 +86,7 @@ model Teacher {
   sessions       Session[]
   timetableSlots TimetableSlot[]
   quizzes        Quiz[]
+  assignments    Assignment[]
 }
 
 model Payment {
@@ -126,13 +127,16 @@ model Attendance {
 }
 
 model Assignment {
-  id       String       @id @default(uuid())
-  title    String
-  subject  String
-  grade    Int
-  dueDate  DateTime
-  fileUrl  String?
-  fileName String?
+  id        String       @id @default(uuid())
+  title     String
+  subject   String
+  grade     Int
+  dueDate   DateTime
+  fileUrl   String?
+  fileName  String?
+  // المعلم الذي أنشأ الواجب — فارغ للواجبات القديمة أو ما أنشأه المدير
+  teacherId String?
+  teacher   Teacher?     @relation(fields: [teacherId], references: [id])
 
   submissions Submission[]
 }
@@ -275,7 +279,7 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
   title     String
   body      String
-  type      String   // "subscription", "assignment", "grade", "attendance", "message"
+  type      String   // "subscription", "assignment", "quiz", "grade", "attendance", "message"
   read      Boolean  @default(false)
   link      String?
   createdAt DateTime @default(now())

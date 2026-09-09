@@ -24,6 +24,9 @@ export function useNotifications() {
 
   useEffect(() => {
     refetch();
+    // تحديث دوري لتظهر الإشعارات الجديدة دون تحديث الصفحة
+    const interval = setInterval(refetch, 30000);
+    return () => clearInterval(interval);
   }, [refetch]);
 
   const markRead = useCallback(async (id: string) => {

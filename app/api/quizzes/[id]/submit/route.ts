@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { notifyUser } from "@/app/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,7 @@ export async function POST(
 
     const student = await prisma.student.findUnique({
       where: { id: studentId },
+      include: { user: true },
     });
     if (!student) {
       return NextResponse.json({ error: "الطالب غير موجود" }, { status: 404 });
@@ -33,7 +35,7 @@ export async function POST(
 
     const quiz = await prisma.quiz.findUnique({
       where: { id: params.id },
-      include: { questions: true },
+      include: { questions: true, teacher: true },
     });
     if (!quiz) {
       return NextResponse.json({ error: "الاختبار غير موجود" }, { status: 404 });
@@ -96,6 +98,18 @@ export async function POST(
             }),
           ]),
     ]);
+
+    // إشعار المعلم صاحب الاختبار بالتسليم
+    if (quiz.teacher.userId !== sessionUser.id) {
+      await notifyUser(quiz.teacher.userId, {
+        title: "تسليم امتحان",
+        body: `الطالب ${student.user.name} سلّم اختبار «${quiz.title}»${
+          hasEssay ? " — بانتظار التصحيح اليدوي" : ` — الدرجة ${score}/${maxScore}`
+        }`,
+        type: "quiz",
+        link: "/dashboard/teacher/quizzes",
+      });
+    }
 
     return NextResponse.json(
       { id: attempt.id, score, maxScore, graded: !hasEssay },

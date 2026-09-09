@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { notifyGradeStudentsAndParents } from "@/app/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
+    // نسجّل المعلم المنشئ ليصله إشعار عند تسليم الطلاب
+    let teacherId: string | null = null;
+    if (sessionUser.role === "teacher") {
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+        select: { id: true },
+      });
+      teacherId = teacher?.id ?? null;
+    }
+
     const assignment = await prisma.assignment.create({
       data: {
         title,
@@ -38,7 +49,17 @@ export async function POST(req: Request) {
         dueDate: new Date(dueDate),
         fileUrl: fileUrl || null,
         fileName: fileName || null,
+        teacherId,
       },
+    });
+
+    // إشعار طلاب الصف وأولياء أمورهم بالواجب الجديد
+    await notifyGradeStudentsAndParents(Number(grade), {
+      title: "واجب جديد",
+      body: `${subject}: ${title} — موعد التسليم ${new Date(dueDate).toLocaleDateString("ar")}`,
+      type: "assignment",
+      link: "/dashboard/student/assignments",
+      parentLink: "/dashboard/parent/children",
     });
 
     return NextResponse.json(assignment, { status: 201 });

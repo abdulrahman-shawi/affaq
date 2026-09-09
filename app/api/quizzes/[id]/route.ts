@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { notifyGradeStudentsAndParents } from "@/app/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -199,6 +200,17 @@ export async function PATCH(
         include: { questions: true },
       });
     });
+
+    // نشر مسودة لأول مرة: إشعار طلاب الصف وأولياء أمورهم
+    if (!existing.published && quiz.published) {
+      await notifyGradeStudentsAndParents(quiz.grade, {
+        title: "امتحان جديد",
+        body: `${quiz.subject}: ${quiz.title}`,
+        type: "quiz",
+        link: "/dashboard/student/quizzes",
+        parentLink: "/dashboard/parent/children",
+      });
+    }
 
     return NextResponse.json(quiz);
   } catch {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { notifyUser } from "@/app/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -50,8 +51,33 @@ export async function POST(req: Request) {
         fileUrl: fileUrl || null,
         text: text || null,
       },
-      include: { student: { include: { user: true } }, assignment: true },
+      include: {
+        student: { include: { user: true } },
+        assignment: { include: { teacher: true } },
+      },
     });
+
+    // إشعار المعلم صاحب الواجب بالتسليم
+    // الواجبات القديمة بلا معلم: نُشعِر معلمي صفوف نفس المرحلة
+    const teacherUserIds: string[] = [];
+    if (submission.assignment.teacher) {
+      teacherUserIds.push(submission.assignment.teacher.userId);
+    } else {
+      const teachers = await prisma.teacher.findMany({
+        where: { classes: { some: { order: submission.assignment.grade } } },
+        select: { userId: true },
+      });
+      teacherUserIds.push(...teachers.map((t) => t.userId));
+    }
+    for (const userId of teacherUserIds) {
+      if (userId === sessionUser.id) continue;
+      await notifyUser(userId, {
+        title: "تسليم واجب",
+        body: `الطالب ${submission.student.user.name} سلّم واجب «${submission.assignment.title}»`,
+        type: "assignment",
+        link: "/dashboard/teacher/submissions",
+      });
+    }
 
     return NextResponse.json(submission, { status: 201 });
   } catch {

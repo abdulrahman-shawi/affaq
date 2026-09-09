@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { notifyGradeStudentsAndParents } from "@/app/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -143,6 +144,18 @@ export async function POST(req: Request) {
       },
       include: { questions: true },
     });
+
+    // إشعار طلاب الصف وأولياء أمورهم — للاختبارات المنشورة فقط،
+    // المسودة يُشعَر عنها عند نشرها لاحقًا من PATCH
+    if (quiz.published) {
+      await notifyGradeStudentsAndParents(quiz.grade, {
+        title: "امتحان جديد",
+        body: `${quiz.subject}: ${quiz.title}`,
+        type: "quiz",
+        link: "/dashboard/student/quizzes",
+        parentLink: "/dashboard/parent/children",
+      });
+    }
 
     return NextResponse.json(quiz, { status: 201 });
   } catch {

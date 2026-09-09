@@ -42,6 +42,7 @@ export type AssignmentMinAggregateOutputType = {
   dueDate: Date | null
   fileUrl: string | null
   fileName: string | null
+  teacherId: string | null
 }
 
 export type AssignmentMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type AssignmentMaxAggregateOutputType = {
   dueDate: Date | null
   fileUrl: string | null
   fileName: string | null
+  teacherId: string | null
 }
 
 export type AssignmentCountAggregateOutputType = {
@@ -62,6 +64,7 @@ export type AssignmentCountAggregateOutputType = {
   dueDate: number
   fileUrl: number
   fileName: number
+  teacherId: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type AssignmentMinAggregateInputType = {
   dueDate?: true
   fileUrl?: true
   fileName?: true
+  teacherId?: true
 }
 
 export type AssignmentMaxAggregateInputType = {
@@ -92,6 +96,7 @@ export type AssignmentMaxAggregateInputType = {
   dueDate?: true
   fileUrl?: true
   fileName?: true
+  teacherId?: true
 }
 
 export type AssignmentCountAggregateInputType = {
@@ -102,6 +107,7 @@ export type AssignmentCountAggregateInputType = {
   dueDate?: true
   fileUrl?: true
   fileName?: true
+  teacherId?: true
   _all?: true
 }
 
@@ -199,6 +205,7 @@ export type AssignmentGroupByOutputType = {
   dueDate: Date
   fileUrl: string | null
   fileName: string | null
+  teacherId: string | null
   _count: AssignmentCountAggregateOutputType | null
   _avg: AssignmentAvgAggregateOutputType | null
   _sum: AssignmentSumAggregateOutputType | null
@@ -232,6 +239,8 @@ export type AssignmentWhereInput = {
   dueDate?: Prisma.DateTimeFilter<"Assignment"> | Date | string
   fileUrl?: Prisma.StringNullableFilter<"Assignment"> | string | null
   fileName?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  teacherId?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   submissions?: Prisma.SubmissionListRelationFilter
 }
 
@@ -243,6 +252,8 @@ export type AssignmentOrderByWithRelationInput = {
   dueDate?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   fileName?: Prisma.SortOrderInput | Prisma.SortOrder
+  teacherId?: Prisma.SortOrderInput | Prisma.SortOrder
+  teacher?: Prisma.TeacherOrderByWithRelationInput
   submissions?: Prisma.SubmissionOrderByRelationAggregateInput
 }
 
@@ -257,6 +268,8 @@ export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
   dueDate?: Prisma.DateTimeFilter<"Assignment"> | Date | string
   fileUrl?: Prisma.StringNullableFilter<"Assignment"> | string | null
   fileName?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  teacherId?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   submissions?: Prisma.SubmissionListRelationFilter
 }, "id">
 
@@ -268,6 +281,7 @@ export type AssignmentOrderByWithAggregationInput = {
   dueDate?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   fileName?: Prisma.SortOrderInput | Prisma.SortOrder
+  teacherId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AssignmentCountOrderByAggregateInput
   _avg?: Prisma.AssignmentAvgOrderByAggregateInput
   _max?: Prisma.AssignmentMaxOrderByAggregateInput
@@ -286,6 +300,7 @@ export type AssignmentScalarWhereWithAggregatesInput = {
   dueDate?: Prisma.DateTimeWithAggregatesFilter<"Assignment"> | Date | string
   fileUrl?: Prisma.StringNullableWithAggregatesFilter<"Assignment"> | string | null
   fileName?: Prisma.StringNullableWithAggregatesFilter<"Assignment"> | string | null
+  teacherId?: Prisma.StringNullableWithAggregatesFilter<"Assignment"> | string | null
 }
 
 export type AssignmentCreateInput = {
@@ -296,6 +311,7 @@ export type AssignmentCreateInput = {
   dueDate: Date | string
   fileUrl?: string | null
   fileName?: string | null
+  teacher?: Prisma.TeacherCreateNestedOneWithoutAssignmentsInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutAssignmentInput
 }
 
@@ -307,6 +323,7 @@ export type AssignmentUncheckedCreateInput = {
   dueDate: Date | string
   fileUrl?: string | null
   fileName?: string | null
+  teacherId?: string | null
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
 }
 
@@ -318,6 +335,7 @@ export type AssignmentUpdateInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teacher?: Prisma.TeacherUpdateOneWithoutAssignmentsNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutAssignmentNestedInput
 }
 
@@ -329,6 +347,7 @@ export type AssignmentUncheckedUpdateInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
 }
 
@@ -340,6 +359,7 @@ export type AssignmentCreateManyInput = {
   dueDate: Date | string
   fileUrl?: string | null
   fileName?: string | null
+  teacherId?: string | null
 }
 
 export type AssignmentUpdateManyMutationInput = {
@@ -360,6 +380,17 @@ export type AssignmentUncheckedUpdateManyInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AssignmentListRelationFilter = {
+  every?: Prisma.AssignmentWhereInput
+  some?: Prisma.AssignmentWhereInput
+  none?: Prisma.AssignmentWhereInput
+}
+
+export type AssignmentOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type AssignmentCountOrderByAggregateInput = {
@@ -370,6 +401,7 @@ export type AssignmentCountOrderByAggregateInput = {
   dueDate?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrder
 }
 
 export type AssignmentAvgOrderByAggregateInput = {
@@ -384,6 +416,7 @@ export type AssignmentMaxOrderByAggregateInput = {
   dueDate?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrder
 }
 
 export type AssignmentMinOrderByAggregateInput = {
@@ -394,6 +427,7 @@ export type AssignmentMinOrderByAggregateInput = {
   dueDate?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrder
 }
 
 export type AssignmentSumOrderByAggregateInput = {
@@ -403,6 +437,48 @@ export type AssignmentSumOrderByAggregateInput = {
 export type AssignmentScalarRelationFilter = {
   is?: Prisma.AssignmentWhereInput
   isNot?: Prisma.AssignmentWhereInput
+}
+
+export type AssignmentCreateNestedManyWithoutTeacherInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutTeacherInput, Prisma.AssignmentUncheckedCreateWithoutTeacherInput> | Prisma.AssignmentCreateWithoutTeacherInput[] | Prisma.AssignmentUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutTeacherInput | Prisma.AssignmentCreateOrConnectWithoutTeacherInput[]
+  createMany?: Prisma.AssignmentCreateManyTeacherInputEnvelope
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+}
+
+export type AssignmentUncheckedCreateNestedManyWithoutTeacherInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutTeacherInput, Prisma.AssignmentUncheckedCreateWithoutTeacherInput> | Prisma.AssignmentCreateWithoutTeacherInput[] | Prisma.AssignmentUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutTeacherInput | Prisma.AssignmentCreateOrConnectWithoutTeacherInput[]
+  createMany?: Prisma.AssignmentCreateManyTeacherInputEnvelope
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+}
+
+export type AssignmentUpdateManyWithoutTeacherNestedInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutTeacherInput, Prisma.AssignmentUncheckedCreateWithoutTeacherInput> | Prisma.AssignmentCreateWithoutTeacherInput[] | Prisma.AssignmentUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutTeacherInput | Prisma.AssignmentCreateOrConnectWithoutTeacherInput[]
+  upsert?: Prisma.AssignmentUpsertWithWhereUniqueWithoutTeacherInput | Prisma.AssignmentUpsertWithWhereUniqueWithoutTeacherInput[]
+  createMany?: Prisma.AssignmentCreateManyTeacherInputEnvelope
+  set?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  disconnect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  delete?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  update?: Prisma.AssignmentUpdateWithWhereUniqueWithoutTeacherInput | Prisma.AssignmentUpdateWithWhereUniqueWithoutTeacherInput[]
+  updateMany?: Prisma.AssignmentUpdateManyWithWhereWithoutTeacherInput | Prisma.AssignmentUpdateManyWithWhereWithoutTeacherInput[]
+  deleteMany?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
+}
+
+export type AssignmentUncheckedUpdateManyWithoutTeacherNestedInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutTeacherInput, Prisma.AssignmentUncheckedCreateWithoutTeacherInput> | Prisma.AssignmentCreateWithoutTeacherInput[] | Prisma.AssignmentUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutTeacherInput | Prisma.AssignmentCreateOrConnectWithoutTeacherInput[]
+  upsert?: Prisma.AssignmentUpsertWithWhereUniqueWithoutTeacherInput | Prisma.AssignmentUpsertWithWhereUniqueWithoutTeacherInput[]
+  createMany?: Prisma.AssignmentCreateManyTeacherInputEnvelope
+  set?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  disconnect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  delete?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  update?: Prisma.AssignmentUpdateWithWhereUniqueWithoutTeacherInput | Prisma.AssignmentUpdateWithWhereUniqueWithoutTeacherInput[]
+  updateMany?: Prisma.AssignmentUpdateManyWithWhereWithoutTeacherInput | Prisma.AssignmentUpdateManyWithWhereWithoutTeacherInput[]
+  deleteMany?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
 }
 
 export type AssignmentCreateNestedOneWithoutSubmissionsInput = {
@@ -419,6 +495,68 @@ export type AssignmentUpdateOneRequiredWithoutSubmissionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssignmentUpdateToOneWithWhereWithoutSubmissionsInput, Prisma.AssignmentUpdateWithoutSubmissionsInput>, Prisma.AssignmentUncheckedUpdateWithoutSubmissionsInput>
 }
 
+export type AssignmentCreateWithoutTeacherInput = {
+  id?: string
+  title: string
+  subject: string
+  grade: number
+  dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutAssignmentInput
+}
+
+export type AssignmentUncheckedCreateWithoutTeacherInput = {
+  id?: string
+  title: string
+  subject: string
+  grade: number
+  dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutAssignmentInput
+}
+
+export type AssignmentCreateOrConnectWithoutTeacherInput = {
+  where: Prisma.AssignmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssignmentCreateWithoutTeacherInput, Prisma.AssignmentUncheckedCreateWithoutTeacherInput>
+}
+
+export type AssignmentCreateManyTeacherInputEnvelope = {
+  data: Prisma.AssignmentCreateManyTeacherInput | Prisma.AssignmentCreateManyTeacherInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssignmentUpsertWithWhereUniqueWithoutTeacherInput = {
+  where: Prisma.AssignmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssignmentUpdateWithoutTeacherInput, Prisma.AssignmentUncheckedUpdateWithoutTeacherInput>
+  create: Prisma.XOR<Prisma.AssignmentCreateWithoutTeacherInput, Prisma.AssignmentUncheckedCreateWithoutTeacherInput>
+}
+
+export type AssignmentUpdateWithWhereUniqueWithoutTeacherInput = {
+  where: Prisma.AssignmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssignmentUpdateWithoutTeacherInput, Prisma.AssignmentUncheckedUpdateWithoutTeacherInput>
+}
+
+export type AssignmentUpdateManyWithWhereWithoutTeacherInput = {
+  where: Prisma.AssignmentScalarWhereInput
+  data: Prisma.XOR<Prisma.AssignmentUpdateManyMutationInput, Prisma.AssignmentUncheckedUpdateManyWithoutTeacherInput>
+}
+
+export type AssignmentScalarWhereInput = {
+  AND?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
+  OR?: Prisma.AssignmentScalarWhereInput[]
+  NOT?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
+  id?: Prisma.StringFilter<"Assignment"> | string
+  title?: Prisma.StringFilter<"Assignment"> | string
+  subject?: Prisma.StringFilter<"Assignment"> | string
+  grade?: Prisma.IntFilter<"Assignment"> | number
+  dueDate?: Prisma.DateTimeFilter<"Assignment"> | Date | string
+  fileUrl?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  fileName?: Prisma.StringNullableFilter<"Assignment"> | string | null
+  teacherId?: Prisma.StringNullableFilter<"Assignment"> | string | null
+}
+
 export type AssignmentCreateWithoutSubmissionsInput = {
   id?: string
   title: string
@@ -427,6 +565,7 @@ export type AssignmentCreateWithoutSubmissionsInput = {
   dueDate: Date | string
   fileUrl?: string | null
   fileName?: string | null
+  teacher?: Prisma.TeacherCreateNestedOneWithoutAssignmentsInput
 }
 
 export type AssignmentUncheckedCreateWithoutSubmissionsInput = {
@@ -437,6 +576,7 @@ export type AssignmentUncheckedCreateWithoutSubmissionsInput = {
   dueDate: Date | string
   fileUrl?: string | null
   fileName?: string | null
+  teacherId?: string | null
 }
 
 export type AssignmentCreateOrConnectWithoutSubmissionsInput = {
@@ -463,9 +603,53 @@ export type AssignmentUpdateWithoutSubmissionsInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teacher?: Prisma.TeacherUpdateOneWithoutAssignmentsNestedInput
 }
 
 export type AssignmentUncheckedUpdateWithoutSubmissionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  grade?: Prisma.IntFieldUpdateOperationsInput | number
+  dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AssignmentCreateManyTeacherInput = {
+  id?: string
+  title: string
+  subject: string
+  grade: number
+  dueDate: Date | string
+  fileUrl?: string | null
+  fileName?: string | null
+}
+
+export type AssignmentUpdateWithoutTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  grade?: Prisma.IntFieldUpdateOperationsInput | number
+  dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissions?: Prisma.SubmissionUpdateManyWithoutAssignmentNestedInput
+}
+
+export type AssignmentUncheckedUpdateWithoutTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  grade?: Prisma.IntFieldUpdateOperationsInput | number
+  dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutAssignmentNestedInput
+}
+
+export type AssignmentUncheckedUpdateManyWithoutTeacherInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
@@ -514,6 +698,8 @@ export type AssignmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   dueDate?: boolean
   fileUrl?: boolean
   fileName?: boolean
+  teacherId?: boolean
+  teacher?: boolean | Prisma.Assignment$teacherArgs<ExtArgs>
   submissions?: boolean | Prisma.Assignment$submissionsArgs<ExtArgs>
   _count?: boolean | Prisma.AssignmentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assignment"]>
@@ -526,6 +712,8 @@ export type AssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   dueDate?: boolean
   fileUrl?: boolean
   fileName?: boolean
+  teacherId?: boolean
+  teacher?: boolean | Prisma.Assignment$teacherArgs<ExtArgs>
 }, ExtArgs["result"]["assignment"]>
 
 export type AssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -536,6 +724,8 @@ export type AssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   dueDate?: boolean
   fileUrl?: boolean
   fileName?: boolean
+  teacherId?: boolean
+  teacher?: boolean | Prisma.Assignment$teacherArgs<ExtArgs>
 }, ExtArgs["result"]["assignment"]>
 
 export type AssignmentSelectScalar = {
@@ -546,19 +736,26 @@ export type AssignmentSelectScalar = {
   dueDate?: boolean
   fileUrl?: boolean
   fileName?: boolean
+  teacherId?: boolean
 }
 
-export type AssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subject" | "grade" | "dueDate" | "fileUrl" | "fileName", ExtArgs["result"]["assignment"]>
+export type AssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subject" | "grade" | "dueDate" | "fileUrl" | "fileName" | "teacherId", ExtArgs["result"]["assignment"]>
 export type AssignmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  teacher?: boolean | Prisma.Assignment$teacherArgs<ExtArgs>
   submissions?: boolean | Prisma.Assignment$submissionsArgs<ExtArgs>
   _count?: boolean | Prisma.AssignmentCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type AssignmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type AssignmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type AssignmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  teacher?: boolean | Prisma.Assignment$teacherArgs<ExtArgs>
+}
+export type AssignmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  teacher?: boolean | Prisma.Assignment$teacherArgs<ExtArgs>
+}
 
 export type $AssignmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Assignment"
   objects: {
+    teacher: Prisma.$TeacherPayload<ExtArgs> | null
     submissions: Prisma.$SubmissionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -569,6 +766,7 @@ export type $AssignmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     dueDate: Date
     fileUrl: string | null
     fileName: string | null
+    teacherId: string | null
   }, ExtArgs["result"]["assignment"]>
   composites: {}
 }
@@ -963,6 +1161,7 @@ readonly fields: AssignmentFieldRefs;
  */
 export interface Prisma__AssignmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  teacher<T extends Prisma.Assignment$teacherArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Assignment$teacherArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   submissions<T extends Prisma.Assignment$submissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Assignment$submissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1000,6 +1199,7 @@ export interface AssignmentFieldRefs {
   readonly dueDate: Prisma.FieldRef<"Assignment", 'DateTime'>
   readonly fileUrl: Prisma.FieldRef<"Assignment", 'String'>
   readonly fileName: Prisma.FieldRef<"Assignment", 'String'>
+  readonly teacherId: Prisma.FieldRef<"Assignment", 'String'>
 }
     
 
@@ -1254,6 +1454,10 @@ export type AssignmentCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    */
   data: Prisma.AssignmentCreateManyInput | Prisma.AssignmentCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1324,6 +1528,10 @@ export type AssignmentUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * Limit how many Assignments to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1390,6 +1598,25 @@ export type AssignmentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many Assignments to delete.
    */
   limit?: number
+}
+
+/**
+ * Assignment.teacher
+ */
+export type Assignment$teacherArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Teacher
+   */
+  select?: Prisma.TeacherSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Teacher
+   */
+  omit?: Prisma.TeacherOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeacherInclude<ExtArgs> | null
+  where?: Prisma.TeacherWhereInput
 }
 
 /**
