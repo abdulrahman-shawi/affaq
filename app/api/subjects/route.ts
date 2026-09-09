@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getSupervisorScope } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +11,16 @@ export async function GET() {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    const scope = await getSupervisorScope(sessionUser);
 
     const subjects = await prisma.subject.findMany({
-      where: scoped
-        ? { classes: { some: { id: { in: scoped } } } }
+      where: scope
+        ? {
+            OR: [
+              { classes: { some: { id: { in: scope.unrestrictedClassIds } } } },
+              { teachers: { some: { id: { in: scope.restrictedTeacherIds } } } },
+            ],
+          }
         : undefined,
       include: { classes: true },
       orderBy: { name: "asc" },

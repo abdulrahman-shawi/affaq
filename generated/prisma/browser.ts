@@ -93,6 +93,11 @@ export type ClassLevel = Prisma.ClassLevelModel
  */
 export type Subject = Prisma.SubjectModel
 /**
+ * Model SupervisorTeacher
+ * 
+ */
+export type SupervisorTeacher = Prisma.SupervisorTeacherModel
+/**
  * Model TimetableSlot
  * 
  */

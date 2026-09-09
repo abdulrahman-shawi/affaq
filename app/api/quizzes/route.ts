@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { notifyGradeStudentsAndParents } from "@/app/lib/notify";
+import { getSupervisorScope } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -12,9 +13,19 @@ export async function GET() {
   }
 
   try {
+    // المشرف يرى اختبارات صفوفه (منشورة ومسودات) ضمن نطاق معلماته
+    const supervisorScope = await getSupervisorScope(sessionUser);
+
     const quizzes = await prisma.quiz.findMany({
       // الطالب يرى الاختبارات المنشورة فقط — المسودات للمعلم والمدير
-      where: sessionUser.role === "student" ? { published: true } : {},
+      where: sessionUser.role === "student"
+        ? { published: true }
+        : supervisorScope
+          ? {
+              teacherId: { in: supervisorScope.visibleTeacherIds },
+              grade: { in: supervisorScope.classOrders },
+            }
+          : {},
       include: {
         teacher: { include: { user: true } },
         questions: true,

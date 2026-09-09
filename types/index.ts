@@ -36,6 +36,12 @@ export interface SupervisorDTO {
   createdAt: string;
   /** الصفوف التي يشرف عليها */
   classes: { id: string; name: string }[];
+  /** تعيينات معلمات محددات لكل صف — صف بلا تعيينات يشرف على كل معلماته */
+  teacherAssignments?: {
+    classId: string;
+    teacherId: string;
+    teacherName: string;
+  }[];
 }
 
 export interface SiteSettingsDTO {
@@ -292,6 +298,8 @@ export interface CreateSupervisorInput {
   password?: string;
   /** الصفوف التي يشرف عليها */
   classIds?: string[];
+  /** تعيينات معلمات محددات لكل صف — اختيارية */
+  teacherAssignments?: { classId: string; teacherId: string }[];
 }
 
 export interface CreateStudentInput {

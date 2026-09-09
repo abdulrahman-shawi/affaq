@@ -246,6 +246,27 @@ export function supervisorColumns(): Column<SupervisorDTO>[] {
       header: "الصفوف التي يشرف عليها",
       cell: (s) => s.classes?.map((c) => c.name).join("، ") || "—",
     },
+    {
+      header: "معلمات معيّنات",
+      cell: (s) => {
+        const assignments = s.teacherAssignments ?? [];
+        if (assignments.length === 0) return "—";
+        // تجميع أسماء المعلمات حسب الصف
+        const byClass = new Map<string, string[]>();
+        for (const a of assignments) {
+          const names = byClass.get(a.classId) ?? [];
+          names.push(a.teacherName);
+          byClass.set(a.classId, names);
+        }
+        return Array.from(byClass.entries())
+          .map(([classId, names]) => {
+            const className =
+              s.classes?.find((c) => c.id === classId)?.name ?? "—";
+            return `${className}: ${names.join("، ")}`;
+          })
+          .join(" | ");
+      },
+    },
     { header: "تاريخ الإضافة", cell: (s) => formatDate(s.createdAt) },
   ];
 }

@@ -66,6 +66,7 @@ export const ModelName = {
   MessageRecipient: 'MessageRecipient',
   ClassLevel: 'ClassLevel',
   Subject: 'Subject',
+  SupervisorTeacher: 'SupervisorTeacher',
   TimetableSlot: 'TimetableSlot',
   Quiz: 'Quiz',
   QuizQuestion: 'QuizQuestion',
@@ -273,6 +274,15 @@ export const SubjectScalarFieldEnum = {
 } as const
 
 export type SubjectScalarFieldEnum = (typeof SubjectScalarFieldEnum)[keyof typeof SubjectScalarFieldEnum]
+
+
+export const SupervisorTeacherScalarFieldEnum = {
+  supervisorId: 'supervisorId',
+  classId: 'classId',
+  teacherId: 'teacherId'
+} as const
+
+export type SupervisorTeacherScalarFieldEnum = (typeof SupervisorTeacherScalarFieldEnum)[keyof typeof SupervisorTeacherScalarFieldEnum]
 
 
 export const TimetableSlotScalarFieldEnum = {

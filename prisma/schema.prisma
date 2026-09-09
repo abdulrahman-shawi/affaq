@@ -34,6 +34,8 @@ model User {
 
   // الصفوف التي يشرف عليها (للمستخدمين بدور supervisor فقط)
   supervisedClasses ClassLevel[] @relation("SupervisorClasses")
+  // تعيينات معلمات محددات لكل صف تحت إشرافه
+  supervisedTeachers SupervisorTeacher[]
 }
 
 model Parent {
@@ -87,6 +89,7 @@ model Teacher {
   timetableSlots TimetableSlot[]
   quizzes        Quiz[]
   assignments    Assignment[]
+  supervisors    SupervisorTeacher[]
 }
 
 model Payment {
@@ -209,6 +212,7 @@ model ClassLevel {
   students       Student[]
   teachers       Teacher[]
   supervisors    User[]           @relation("SupervisorClasses")
+  supervisorTeachers SupervisorTeacher[]
   messages       MessageClass[]
   timetableSlots TimetableSlot[]
   createdAt      DateTime        @default(now())
@@ -220,6 +224,18 @@ model Subject {
   classes   ClassLevel[]
   teachers  Teacher[]
   createdAt DateTime     @default(now())
+}
+
+// تعيين معلمات محددات لمشرف ضمن صف بعينه — غياب السجلات = إشراف على كل معلمات الصف
+model SupervisorTeacher {
+  supervisorId String
+  supervisor   User       @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  classId      String
+  class        ClassLevel @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId    String
+  teacher      Teacher    @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@id([supervisorId, classId, teacherId])
 }
 
 model TimetableSlot {

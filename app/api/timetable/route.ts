@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
-import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getSupervisorClassIds, getSupervisorScope } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -54,16 +54,35 @@ export async function GET(req: Request) {
         { status: 400 }
       );
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    const scope = await getSupervisorScope(sessionUser);
 
     const slots = await prisma.timetableSlot.findMany({
       where: {
         ...(teacherId ? { teacherId } : {}),
         // المشرف مقيّد بصفوفه: classId المطلوب خارج نطاقه = بلا نتائج
-        ...(scoped
+        ...(scope
           ? classId
-            ? { classId: scoped.includes(classId) ? classId : { in: [] as string[] } }
-            : { classId: { in: scoped } }
+            ? scope.classIds.includes(classId)
+              ? {
+                  OR: [
+                    { classId: { in: scope.unrestrictedClassIds } },
+                    {
+                      classId: { in: scope.restrictedClassIds },
+                      teacherId: { in: scope.restrictedTeacherIds },
+                    },
+                  ],
+                  classId,
+                }
+              : { classId: { in: [] as string[] } }
+            : {
+                OR: [
+                  { classId: { in: scope.unrestrictedClassIds } },
+                  {
+                    classId: { in: scope.restrictedClassIds },
+                    teacherId: { in: scope.restrictedTeacherIds },
+                  },
+                ],
+              }
           : classId
             ? { classId }
             : {}),

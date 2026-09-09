@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getSupervisorClassIds, getSupervisorScope } from "@/app/lib/supervisorScope";
 import { getTeacherClassIds } from "@/app/lib/teacherScope";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,10 @@ export async function GET(req: Request) {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-    const scoped = await getScopedClassIds(sessionUser);
+    const supervisorScope = await getSupervisorScope(sessionUser);
+    const teacherScoped = supervisorScope
+      ? null
+      : await getTeacherClassIds(sessionUser);
 
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get("studentId");
@@ -28,7 +31,25 @@ export async function GET(req: Request) {
     const grades = await prisma.grade.findMany({
       where: {
         ...(studentId ? { studentId } : {}),
-        ...(scoped ? { student: { classId: { in: scoped } } } : {}),
+        ...(supervisorScope
+          ? {
+              OR: [
+                {
+                  student: {
+                    classId: { in: supervisorScope.unrestrictedClassIds },
+                  },
+                },
+                {
+                  student: {
+                    classId: { in: supervisorScope.restrictedClassIds },
+                  },
+                  subject: { in: supervisorScope.restrictedSubjectNames },
+                },
+              ],
+            }
+          : teacherScoped
+            ? { student: { classId: { in: teacherScoped } } }
+            : {}),
       },
       include: { student: { include: { user: true } } },
       orderBy: { date: "desc" },

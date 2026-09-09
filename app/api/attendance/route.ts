@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getSupervisorClassIds, getSupervisorScope } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    const scope = await getSupervisorScope(sessionUser);
 
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get("sessionId");
@@ -21,7 +21,14 @@ export async function GET(req: Request) {
       where: {
         ...(sessionId ? { sessionId } : {}),
         ...(studentId ? { studentId } : {}),
-        ...(scoped ? { student: { classId: { in: scoped } } } : {}),
+        ...(scope
+          ? {
+              session: {
+                teacherId: { in: scope.visibleTeacherIds },
+                grade: { in: scope.classOrders },
+              },
+            }
+          : {}),
       },
       include: {
         student: { include: { user: true } },

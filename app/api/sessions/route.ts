@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getSupervisorScope } from "@/app/lib/supervisorScope";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +11,14 @@ export async function GET() {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    const scope = await getSupervisorScope(sessionUser);
 
     const sessions = await prisma.session.findMany({
-      where: scoped
-        ? { teacher: { classes: { some: { id: { in: scoped } } } } }
+      where: scope
+        ? {
+            teacherId: { in: scope.visibleTeacherIds },
+            grade: { in: scope.classOrders },
+          }
         : // المعلم يرى حصصه هو فقط
           sessionUser.role === "teacher"
           ? { teacher: { userId: sessionUser.id } }

@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { ClassLevelDTO, CreateSupervisorInput, SupervisorDTO } from "@/types";
+import type { ClassLevelDTO, CreateSupervisorInput, SupervisorDTO, TeacherDTO } from "@/types";
 
 const initialForm: CreateSupervisorInput = {
   name: "",
@@ -37,6 +37,11 @@ export default function SupervisorForm({
   const [form, setForm] = useState<CreateSupervisorInput>(initialForm);
   const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
   const [classIds, setClassIds] = useState<string[]>([]);
+  const [teachers, setTeachers] = useState<TeacherDTO[]>([]);
+  // معرّف الصف → معرّفات المعلمات المعيّنات له
+  const [teacherAssignments, setTeacherAssignments] = useState<
+    Record<string, string[]>
+  >({});
 
   useEffect(() => {
     if (!open) return;
@@ -52,16 +57,45 @@ export default function SupervisorForm({
         : initialForm
     );
     setClassIds(supervisor?.classes?.map((c) => c.id) ?? []);
+    // تجميع التعيينات الحالية حسب الصف
+    const grouped: Record<string, string[]> = {};
+    for (const a of supervisor?.teacherAssignments ?? []) {
+      (grouped[a.classId] ??= []).push(a.teacherId);
+    }
+    setTeacherAssignments(grouped);
     fetch("/api/classes")
       .then((res) => (res.ok ? res.json() : []))
       .then(setClasses)
       .catch(() => setClasses([]));
+    fetch("/api/teachers")
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setTeachers)
+      .catch(() => setTeachers([]));
   }, [open, supervisor]);
 
   function toggleClass(id: string) {
     setClassIds((ids) =>
       ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]
     );
+    // إلغاء تحديد الصف يسقط تعييناته
+    setTeacherAssignments((map) => {
+      if (!(id in map)) return map;
+      const next = { ...map };
+      delete next[id];
+      return next;
+    });
+  }
+
+  function toggleTeacherAssignment(classId: string, teacherId: string) {
+    setTeacherAssignments((map) => {
+      const ids = map[classId] ?? [];
+      return {
+        ...map,
+        [classId]: ids.includes(teacherId)
+          ? ids.filter((i) => i !== teacherId)
+          : [...ids, teacherId],
+      };
+    });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -81,6 +115,9 @@ export default function SupervisorForm({
             phone: form.phone || undefined,
             password: form.password || undefined,
             classIds,
+            teacherAssignments: Object.entries(teacherAssignments).flatMap(
+              ([classId, ids]) => ids.map((teacherId) => ({ classId, teacherId }))
+            ),
           }),
         }
       );
@@ -100,7 +137,7 @@ export default function SupervisorForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? "تعديل المشرف" : "إضافة مشرف جديد"}</DialogTitle>
         </DialogHeader>
@@ -170,6 +207,51 @@ export default function SupervisorForm({
               </div>
             )}
           </div>
+          {classIds.length > 0 && (
+            <div className="space-y-2">
+              <Label>تعيين معلمات محددات (اختياري)</Label>
+              <p className="text-sm text-muted-foreground">
+                إن لم تختر معلمات لصف ما، يشرف المشرف على كل معلمات ذلك الصف
+              </p>
+              {classes
+                .filter((c) => classIds.includes(c.id))
+                .map((c) => {
+                  const classTeachers = teachers.filter((t) =>
+                    t.classes.some((tc) => tc.id === c.id)
+                  );
+                  return (
+                    <div key={c.id} className="space-y-2">
+                      <p className="text-sm font-medium">{c.name}</p>
+                      {classTeachers.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                          لا توجد معلمات لهذا الصف
+                        </p>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2">
+                          {classTeachers.map((t) => (
+                            <label
+                              key={t.id}
+                              className="flex cursor-pointer items-center gap-2 rounded-md border p-2 text-sm hover:bg-accent"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={(
+                                  teacherAssignments[c.id] ?? []
+                                ).includes(t.id)}
+                                onChange={() =>
+                                  toggleTeacherAssignment(c.id, t.id)
+                                }
+                              />
+                              {t.user?.name}
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? "جارٍ الحفظ..." : isEdit ? "حفظ التعديلات" : "إضافة المشرف"}

@@ -173,6 +173,7 @@ export type TeacherWhereInput = {
   timetableSlots?: Prisma.TimetableSlotListRelationFilter
   quizzes?: Prisma.QuizListRelationFilter
   assignments?: Prisma.AssignmentListRelationFilter
+  supervisors?: Prisma.SupervisorTeacherListRelationFilter
 }
 
 export type TeacherOrderByWithRelationInput = {
@@ -186,6 +187,7 @@ export type TeacherOrderByWithRelationInput = {
   timetableSlots?: Prisma.TimetableSlotOrderByRelationAggregateInput
   quizzes?: Prisma.QuizOrderByRelationAggregateInput
   assignments?: Prisma.AssignmentOrderByRelationAggregateInput
+  supervisors?: Prisma.SupervisorTeacherOrderByRelationAggregateInput
 }
 
 export type TeacherWhereUniqueInput = Prisma.AtLeast<{
@@ -202,6 +204,7 @@ export type TeacherWhereUniqueInput = Prisma.AtLeast<{
   timetableSlots?: Prisma.TimetableSlotListRelationFilter
   quizzes?: Prisma.QuizListRelationFilter
   assignments?: Prisma.AssignmentListRelationFilter
+  supervisors?: Prisma.SupervisorTeacherListRelationFilter
 }, "id" | "userId">
 
 export type TeacherOrderByWithAggregationInput = {
@@ -232,6 +235,7 @@ export type TeacherCreateInput = {
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateInput = {
@@ -244,6 +248,7 @@ export type TeacherUncheckedCreateInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUpdateInput = {
@@ -256,6 +261,7 @@ export type TeacherUpdateInput = {
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateInput = {
@@ -268,6 +274,7 @@ export type TeacherUncheckedUpdateInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateManyInput = {
@@ -463,6 +470,20 @@ export type TeacherUncheckedUpdateManyWithoutSubjectsNestedInput = {
   deleteMany?: Prisma.TeacherScalarWhereInput | Prisma.TeacherScalarWhereInput[]
 }
 
+export type TeacherCreateNestedOneWithoutSupervisorsInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutSupervisorsInput, Prisma.TeacherUncheckedCreateWithoutSupervisorsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutSupervisorsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+}
+
+export type TeacherUpdateOneRequiredWithoutSupervisorsNestedInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutSupervisorsInput, Prisma.TeacherUncheckedCreateWithoutSupervisorsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutSupervisorsInput
+  upsert?: Prisma.TeacherUpsertWithoutSupervisorsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutSupervisorsInput, Prisma.TeacherUpdateWithoutSupervisorsInput>, Prisma.TeacherUncheckedUpdateWithoutSupervisorsInput>
+}
+
 export type TeacherCreateNestedOneWithoutTimetableSlotsInput = {
   create?: Prisma.XOR<Prisma.TeacherCreateWithoutTimetableSlotsInput, Prisma.TeacherUncheckedCreateWithoutTimetableSlotsInput>
   connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutTimetableSlotsInput
@@ -500,6 +521,7 @@ export type TeacherCreateWithoutUserInput = {
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutUserInput = {
@@ -511,6 +533,7 @@ export type TeacherUncheckedCreateWithoutUserInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutUserInput = {
@@ -538,6 +561,7 @@ export type TeacherUpdateWithoutUserInput = {
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutUserInput = {
@@ -549,6 +573,7 @@ export type TeacherUncheckedUpdateWithoutUserInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutSessionsInput = {
@@ -560,6 +585,7 @@ export type TeacherCreateWithoutSessionsInput = {
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutSessionsInput = {
@@ -571,6 +597,7 @@ export type TeacherUncheckedCreateWithoutSessionsInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutSessionsInput = {
@@ -598,6 +625,7 @@ export type TeacherUpdateWithoutSessionsInput = {
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutSessionsInput = {
@@ -609,6 +637,7 @@ export type TeacherUncheckedUpdateWithoutSessionsInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutAssignmentsInput = {
@@ -620,6 +649,7 @@ export type TeacherCreateWithoutAssignmentsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutTeacherInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutAssignmentsInput = {
@@ -631,6 +661,7 @@ export type TeacherUncheckedCreateWithoutAssignmentsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutTeacherInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutAssignmentsInput = {
@@ -658,6 +689,7 @@ export type TeacherUpdateWithoutAssignmentsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutTeacherNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutAssignmentsInput = {
@@ -669,6 +701,7 @@ export type TeacherUncheckedUpdateWithoutAssignmentsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutTeacherNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutClassesInput = {
@@ -680,6 +713,7 @@ export type TeacherCreateWithoutClassesInput = {
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutClassesInput = {
@@ -691,6 +725,7 @@ export type TeacherUncheckedCreateWithoutClassesInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutClassesInput = {
@@ -732,6 +767,7 @@ export type TeacherCreateWithoutSubjectsInput = {
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutSubjectsInput = {
@@ -743,6 +779,7 @@ export type TeacherUncheckedCreateWithoutSubjectsInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutSubjectsInput = {
@@ -766,6 +803,70 @@ export type TeacherUpdateManyWithWhereWithoutSubjectsInput = {
   data: Prisma.XOR<Prisma.TeacherUpdateManyMutationInput, Prisma.TeacherUncheckedUpdateManyWithoutSubjectsInput>
 }
 
+export type TeacherCreateWithoutSupervisorsInput = {
+  id?: string
+  shift?: string | null
+  user: Prisma.UserCreateNestedOneWithoutTeacherInput
+  subjects?: Prisma.SubjectCreateNestedManyWithoutTeachersInput
+  classes?: Prisma.ClassLevelCreateNestedManyWithoutTeachersInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutTeacherInput
+  timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
+  quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherUncheckedCreateWithoutSupervisorsInput = {
+  id?: string
+  userId: string
+  shift?: string | null
+  subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutTeachersInput
+  classes?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutTeachersInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutTeacherInput
+  timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
+  quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherCreateOrConnectWithoutSupervisorsInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutSupervisorsInput, Prisma.TeacherUncheckedCreateWithoutSupervisorsInput>
+}
+
+export type TeacherUpsertWithoutSupervisorsInput = {
+  update: Prisma.XOR<Prisma.TeacherUpdateWithoutSupervisorsInput, Prisma.TeacherUncheckedUpdateWithoutSupervisorsInput>
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutSupervisorsInput, Prisma.TeacherUncheckedCreateWithoutSupervisorsInput>
+  where?: Prisma.TeacherWhereInput
+}
+
+export type TeacherUpdateToOneWithWhereWithoutSupervisorsInput = {
+  where?: Prisma.TeacherWhereInput
+  data: Prisma.XOR<Prisma.TeacherUpdateWithoutSupervisorsInput, Prisma.TeacherUncheckedUpdateWithoutSupervisorsInput>
+}
+
+export type TeacherUpdateWithoutSupervisorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutTeacherNestedInput
+  subjects?: Prisma.SubjectUpdateManyWithoutTeachersNestedInput
+  classes?: Prisma.ClassLevelUpdateManyWithoutTeachersNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutTeacherNestedInput
+  timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
+  quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherUncheckedUpdateWithoutSupervisorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subjects?: Prisma.SubjectUncheckedUpdateManyWithoutTeachersNestedInput
+  classes?: Prisma.ClassLevelUncheckedUpdateManyWithoutTeachersNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutTeacherNestedInput
+  timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+}
+
 export type TeacherCreateWithoutTimetableSlotsInput = {
   id?: string
   shift?: string | null
@@ -775,6 +876,7 @@ export type TeacherCreateWithoutTimetableSlotsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutTimetableSlotsInput = {
@@ -786,6 +888,7 @@ export type TeacherUncheckedCreateWithoutTimetableSlotsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutTeacherInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutTimetableSlotsInput = {
@@ -813,6 +916,7 @@ export type TeacherUpdateWithoutTimetableSlotsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutTimetableSlotsInput = {
@@ -824,6 +928,7 @@ export type TeacherUncheckedUpdateWithoutTimetableSlotsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutQuizzesInput = {
@@ -835,6 +940,7 @@ export type TeacherCreateWithoutQuizzesInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutTeacherInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutQuizzesInput = {
@@ -846,6 +952,7 @@ export type TeacherUncheckedCreateWithoutQuizzesInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutTeacherInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutTeacherInput
   assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTeacherInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutQuizzesInput = {
@@ -873,6 +980,7 @@ export type TeacherUpdateWithoutQuizzesInput = {
   sessions?: Prisma.SessionUpdateManyWithoutTeacherNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutQuizzesInput = {
@@ -884,6 +992,7 @@ export type TeacherUncheckedUpdateWithoutQuizzesInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutTeacherNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUpdateWithoutClassesInput = {
@@ -895,6 +1004,7 @@ export type TeacherUpdateWithoutClassesInput = {
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutClassesInput = {
@@ -906,6 +1016,7 @@ export type TeacherUncheckedUpdateWithoutClassesInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateManyWithoutClassesInput = {
@@ -923,6 +1034,7 @@ export type TeacherUpdateWithoutSubjectsInput = {
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutSubjectsInput = {
@@ -934,6 +1046,7 @@ export type TeacherUncheckedUpdateWithoutSubjectsInput = {
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutTeacherNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutTeacherNestedInput
   assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTeacherNestedInput
+  supervisors?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateManyWithoutSubjectsInput = {
@@ -954,6 +1067,7 @@ export type TeacherCountOutputType = {
   timetableSlots: number
   quizzes: number
   assignments: number
+  supervisors: number
 }
 
 export type TeacherCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -963,6 +1077,7 @@ export type TeacherCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   timetableSlots?: boolean | TeacherCountOutputTypeCountTimetableSlotsArgs
   quizzes?: boolean | TeacherCountOutputTypeCountQuizzesArgs
   assignments?: boolean | TeacherCountOutputTypeCountAssignmentsArgs
+  supervisors?: boolean | TeacherCountOutputTypeCountSupervisorsArgs
 }
 
 /**
@@ -1017,6 +1132,13 @@ export type TeacherCountOutputTypeCountAssignmentsArgs<ExtArgs extends runtime.T
   where?: Prisma.AssignmentWhereInput
 }
 
+/**
+ * TeacherCountOutputType without action
+ */
+export type TeacherCountOutputTypeCountSupervisorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupervisorTeacherWhereInput
+}
+
 
 export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1029,6 +1151,7 @@ export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   timetableSlots?: boolean | Prisma.Teacher$timetableSlotsArgs<ExtArgs>
   quizzes?: boolean | Prisma.Teacher$quizzesArgs<ExtArgs>
   assignments?: boolean | Prisma.Teacher$assignmentsArgs<ExtArgs>
+  supervisors?: boolean | Prisma.Teacher$supervisorsArgs<ExtArgs>
   _count?: boolean | Prisma.TeacherCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["teacher"]>
 
@@ -1061,6 +1184,7 @@ export type TeacherInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   timetableSlots?: boolean | Prisma.Teacher$timetableSlotsArgs<ExtArgs>
   quizzes?: boolean | Prisma.Teacher$quizzesArgs<ExtArgs>
   assignments?: boolean | Prisma.Teacher$assignmentsArgs<ExtArgs>
+  supervisors?: boolean | Prisma.Teacher$supervisorsArgs<ExtArgs>
   _count?: boolean | Prisma.TeacherCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TeacherIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1080,6 +1204,7 @@ export type $TeacherPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     timetableSlots: Prisma.$TimetableSlotPayload<ExtArgs>[]
     quizzes: Prisma.$QuizPayload<ExtArgs>[]
     assignments: Prisma.$AssignmentPayload<ExtArgs>[]
+    supervisors: Prisma.$SupervisorTeacherPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1486,6 +1611,7 @@ export interface Prisma__TeacherClient<T, Null = never, ExtArgs extends runtime.
   timetableSlots<T extends Prisma.Teacher$timetableSlotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$timetableSlotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimetableSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   quizzes<T extends Prisma.Teacher$quizzesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$quizzesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuizPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignments<T extends Prisma.Teacher$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supervisors<T extends Prisma.Teacher$supervisorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$supervisorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupervisorTeacherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2060,6 +2186,30 @@ export type Teacher$assignmentsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.AssignmentScalarFieldEnum | Prisma.AssignmentScalarFieldEnum[]
+}
+
+/**
+ * Teacher.supervisors
+ */
+export type Teacher$supervisorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupervisorTeacher
+   */
+  select?: Prisma.SupervisorTeacherSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupervisorTeacher
+   */
+  omit?: Prisma.SupervisorTeacherOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupervisorTeacherInclude<ExtArgs> | null
+  where?: Prisma.SupervisorTeacherWhereInput
+  orderBy?: Prisma.SupervisorTeacherOrderByWithRelationInput | Prisma.SupervisorTeacherOrderByWithRelationInput[]
+  cursor?: Prisma.SupervisorTeacherWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupervisorTeacherScalarFieldEnum | Prisma.SupervisorTeacherScalarFieldEnum[]
 }
 
 /**

@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
-import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getSupervisorScope } from "@/app/lib/supervisorScope";
 import { isPhoneTaken } from "@/app/lib/phone";
 
 export const dynamic = "force-dynamic";
@@ -14,11 +14,16 @@ export async function GET() {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    const scope = await getSupervisorScope(sessionUser);
 
     const teachers = await prisma.teacher.findMany({
-      where: scoped
-        ? { classes: { some: { id: { in: scoped } } } }
+      where: scope
+        ? {
+            OR: [
+              { classes: { some: { id: { in: scope.unrestrictedClassIds } } } },
+              { id: { in: scope.restrictedTeacherIds } },
+            ],
+          }
         : undefined,
       include: { user: true, subjects: true, classes: true },
       orderBy: { user: { name: "asc" } },

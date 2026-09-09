@@ -412,6 +412,7 @@ export const ModelName = {
   MessageRecipient: 'MessageRecipient',
   ClassLevel: 'ClassLevel',
   Subject: 'Subject',
+  SupervisorTeacher: 'SupervisorTeacher',
   TimetableSlot: 'TimetableSlot',
   Quiz: 'Quiz',
   QuizQuestion: 'QuizQuestion',
@@ -433,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "timetableSlot" | "quiz" | "quizQuestion" | "quizAttempt" | "notification" | "siteSettings"
+    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "supervisorTeacher" | "timetableSlot" | "quiz" | "quizQuestion" | "quizAttempt" | "notification" | "siteSettings"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1547,6 +1548,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupervisorTeacher: {
+      payload: Prisma.$SupervisorTeacherPayload<ExtArgs>
+      fields: Prisma.SupervisorTeacherFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupervisorTeacherFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupervisorTeacherFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>
+        }
+        findFirst: {
+          args: Prisma.SupervisorTeacherFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupervisorTeacherFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>
+        }
+        findMany: {
+          args: Prisma.SupervisorTeacherFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>[]
+        }
+        create: {
+          args: Prisma.SupervisorTeacherCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>
+        }
+        createMany: {
+          args: Prisma.SupervisorTeacherCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupervisorTeacherCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>[]
+        }
+        delete: {
+          args: Prisma.SupervisorTeacherDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>
+        }
+        update: {
+          args: Prisma.SupervisorTeacherUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupervisorTeacherDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupervisorTeacherUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupervisorTeacherUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupervisorTeacherUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupervisorTeacherPayload>
+        }
+        aggregate: {
+          args: Prisma.SupervisorTeacherAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupervisorTeacher>
+        }
+        groupBy: {
+          args: Prisma.SupervisorTeacherGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupervisorTeacherGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupervisorTeacherCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupervisorTeacherCountAggregateOutputType> | number
+        }
+      }
+    }
     TimetableSlot: {
       payload: Prisma.$TimetableSlotPayload<ExtArgs>
       fields: Prisma.TimetableSlotFieldRefs
@@ -2215,6 +2290,15 @@ export const SubjectScalarFieldEnum = {
 export type SubjectScalarFieldEnum = (typeof SubjectScalarFieldEnum)[keyof typeof SubjectScalarFieldEnum]
 
 
+export const SupervisorTeacherScalarFieldEnum = {
+  supervisorId: 'supervisorId',
+  classId: 'classId',
+  teacherId: 'teacherId'
+} as const
+
+export type SupervisorTeacherScalarFieldEnum = (typeof SupervisorTeacherScalarFieldEnum)[keyof typeof SupervisorTeacherScalarFieldEnum]
+
+
 export const TimetableSlotScalarFieldEnum = {
   id: 'id',
   classId: 'classId',
@@ -2584,6 +2668,7 @@ export type GlobalOmitConfig = {
   messageRecipient?: Prisma.MessageRecipientOmit
   classLevel?: Prisma.ClassLevelOmit
   subject?: Prisma.SubjectOmit
+  supervisorTeacher?: Prisma.SupervisorTeacherOmit
   timetableSlot?: Prisma.TimetableSlotOmit
   quiz?: Prisma.QuizOmit
   quizQuestion?: Prisma.QuizQuestionOmit
