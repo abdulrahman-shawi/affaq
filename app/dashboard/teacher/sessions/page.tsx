@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BookOpen, CalendarClock, CalendarDays, ClipboardCheck, ExternalLink, Pencil, Plus, Trash2, Video } from "lucide-react";
+import { BookOpen, CalendarClock, CalendarDays, ClipboardCheck, ExternalLink, Pencil, Trash2, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import DataTable, { type Column } from "@/components/tables/DataTable";
@@ -123,24 +123,16 @@ export default function TeacherSessionsPage() {
         />
       </div>
 
-      <div className="flex justify-end">
-        <SessionForm
-          onSuccess={refetch}
-          trigger={
-            <Button>
-              <Plus className="h-4 w-4" />
-              إنشاء حصة
-            </Button>
-          }
-        />
-      </div>
+      <p className="text-sm text-muted-foreground">
+        تُبدأ الحصص من صفحة الجدول الأسبوعي — هذه الصفحة سجل لحصصك: تسجيل الحضور، التعديل، والحذف.
+      </p>
 
       <DataTable
         columns={columns}
         data={sessions}
         loading={loading}
         emptyTitle="لا توجد حصص"
-        emptyMessage="ابدأ بإنشاء أول حصة"
+        emptyMessage="ابدأ حصة اليوم من صفحة الجدول الأسبوعي"
         actions={(s) => (
           <>
             <AttendanceDialog

@@ -1,22 +1,27 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CalendarCheck, CalendarDays, School, Video } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BookOpen, CalendarCheck, CalendarDays, ClipboardCheck, Play, School, Video } from "lucide-react";
 import TimetableGrid from "@/components/shared/TimetableGrid";
 import ZoomLinkForm from "@/components/forms/ZoomLinkForm";
+import AttendanceDialog from "@/components/forms/AttendanceDialog";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import StatCard from "@/components/shared/StatCard";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/useAuth";
 import { useTimetable } from "@/hooks/useTimetable";
-import type { TeacherDTO } from "@/types";
+import type { SessionDTO, TeacherDTO, TimetableSlotDTO } from "@/types";
 
 export default function TeacherTimetablePage() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [teacher, setTeacher] = useState<TeacherDTO | null>(null);
   const [resolving, setResolving] = useState(true);
   const [classFilter, setClassFilter] = useState("");
+  const [todaySessions, setTodaySessions] = useState<SessionDTO[]>([]);
+  const [starting, setStarting] = useState<string | null>(null);
   const { slots, loading, refetch } = useTimetable({
     teacherId: teacher?.id ?? "",
   });
@@ -34,6 +39,64 @@ export default function TeacherTimetablePage() {
       }
     })();
   }, [user]);
+
+  // حصص اليوم — /api/sessions مقيّدة بحصص المعلم الحالي
+  const refetchTodaySessions = useCallback(async () => {
+    if (!teacher) return;
+    try {
+      const res = await fetch("/api/sessions");
+      const all: SessionDTO[] = res.ok ? await res.json() : [];
+      const today = new Date().toDateString();
+      setTodaySessions(
+        all.filter((s) => new Date(s.date).toDateString() === today)
+      );
+    } catch {
+      setTodaySessions([]);
+    }
+  }, [teacher]);
+
+  useEffect(() => {
+    refetchTodaySessions();
+  }, [refetchTodaySessions]);
+
+  // بدء حصة اليوم من المرة: تُنشأ بالمادة والصف ورابط زوم تلقائيًا
+  async function startSession(slot: TimetableSlotDTO) {
+    if (!teacher || slot.class?.order === undefined) return;
+    setStarting(slot.id);
+    try {
+      const res = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teacherId: teacher.id,
+          grade: slot.class.order,
+          subject: slot.subject,
+          date: new Date().toISOString(),
+          zoomLink: slot.zoomLink || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? "فشل في بدء الحصة");
+      }
+      toast({
+        variant: "success",
+        title: "بدأت الحصة",
+        description: "يمكنك الآن تسجيل الحضور",
+      });
+      await refetchTodaySessions();
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "فشل بدء الحصة",
+        description: err instanceof Error ? err.message : "حدث خطأ غير متوقع",
+      });
+    } finally {
+      setStarting(null);
+    }
+  }
+
+  const todayDow = new Date().getDay();
 
   // الفلترة بالصف — فارغة تعني كل صفوف المعلم
   const filteredSlots = useMemo(
@@ -110,22 +173,63 @@ export default function TeacherTimetablePage() {
       </div>
       <TimetableGrid
         slots={filteredSlots}
-        renderActions={(slot) => (
-          <ZoomLinkForm
-            slot={slot}
-            onSuccess={refetch}
-            trigger={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                title="رابط زوم"
-              >
-                <Video className="h-3.5 w-3.5 text-sky-700" />
-              </Button>
-            }
-          />
-        )}
+        renderActions={(slot) => {
+          // حصة اليوم المطابقة للمرة (نفس المادة والصف) إن وُجدت
+          const todaySession =
+            slot.dayOfWeek === todayDow
+              ? todaySessions.find(
+                  (s) =>
+                    s.subject === slot.subject &&
+                    s.grade === slot.class?.order
+                )
+              : undefined;
+          return (
+            <>
+              {slot.dayOfWeek === todayDow &&
+                (todaySession ? (
+                  <AttendanceDialog
+                    session={todaySession}
+                    onSuccess={refetchTodaySessions}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        title="تسجيل الحضور"
+                      >
+                        <ClipboardCheck className="h-3.5 w-3.5 text-emerald-700" />
+                      </Button>
+                    }
+                  />
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    title="بدء الحصة"
+                    disabled={starting === slot.id}
+                    onClick={() => startSession(slot)}
+                  >
+                    <Play className="h-3.5 w-3.5 text-emerald-700" />
+                  </Button>
+                ))}
+              <ZoomLinkForm
+                slot={slot}
+                onSuccess={refetch}
+                trigger={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    title="رابط زوم"
+                  >
+                    <Video className="h-3.5 w-3.5 text-sky-700" />
+                  </Button>
+                }
+              />
+            </>
+          );
+        }}
       />
     </div>
   );

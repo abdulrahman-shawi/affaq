@@ -16,7 +16,10 @@ export async function GET() {
     const sessions = await prisma.session.findMany({
       where: scoped
         ? { teacher: { classes: { some: { id: { in: scoped } } } } }
-        : undefined,
+        : // المعلم يرى حصصه هو فقط
+          sessionUser.role === "teacher"
+          ? { teacher: { userId: sessionUser.id } }
+          : undefined,
       include: { teacher: { include: { user: true } } },
       orderBy: { date: "desc" },
     });
@@ -40,9 +43,41 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
+    // المعلم ينشئ حصصاً باسمه فقط — لا يمكنه انتحال معلم آخر
+    let effectiveTeacherId = teacherId;
+    if (sessionUser.role === "teacher") {
+      const me = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+        select: { id: true },
+      });
+      if (!me) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
+      effectiveTeacherId = me.id;
+    }
+
+    // بدء الحصة من الجدول idempotent: نفس المعلم والمادة والصف في نفس اليوم
+    // تعيد الحصة الموجودة بدل إنشاء نسخة مكررة
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    const existing = await prisma.session.findFirst({
+      where: {
+        teacherId: effectiveTeacherId,
+        grade: Number(grade),
+        subject,
+        date: { gte: dayStart, lt: dayEnd },
+      },
+      include: { teacher: { include: { user: true } } },
+    });
+    if (existing) {
+      return NextResponse.json(existing);
+    }
+
     const session = await prisma.session.create({
       data: {
-        teacherId,
+        teacherId: effectiveTeacherId,
         grade: Number(grade),
         subject,
         date: new Date(date),

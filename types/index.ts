@@ -142,7 +142,7 @@ export interface AttendanceDTO {
 export interface TimetableSlotDTO {
   id: string;
   classId: string;
-  class?: { id: string; name: string };
+  class?: { id: string; name: string; order?: number };
   teacherId: string;
   teacher?: { id: string; user?: { name: string } };
   subject: string;
