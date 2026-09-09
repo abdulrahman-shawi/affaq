@@ -77,6 +77,7 @@ export default function GradeForm({
             body: JSON.stringify({
               id: submissionId,
               grade: form.score,
+              maxScore: form.maxScore,
               feedback: form.note || undefined,
             }),
           })
@@ -232,19 +233,17 @@ export default function GradeForm({
                 onChange={(e) => setForm({ ...form, score: Number(e.target.value) })}
               />
             </div>
-            {!submissionId && (
-              <div className="space-y-2">
-                <Label htmlFor="grade-max">الدرجة العظمى</Label>
-                <Input
-                  id="grade-max"
-                  type="number"
-                  min={1}
-                  required
-                  value={form.maxScore}
-                  onChange={(e) => setForm({ ...form, maxScore: Number(e.target.value) })}
-                />
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="grade-max">الدرجة العظمى</Label>
+              <Input
+                id="grade-max"
+                type="number"
+                min={1}
+                required
+                value={form.maxScore}
+                onChange={(e) => setForm({ ...form, maxScore: Number(e.target.value) })}
+              />
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="grade-note">{submissionId ? "ملاحظات التقييم" : "ملاحظة"}</Label>

@@ -152,6 +152,8 @@ model Submission {
   grade        Float?
   feedback     String?
   submittedAt  DateTime   @default(now())
+
+  gradeRecord Grade?
 }
 
 model Grade {
@@ -164,6 +166,9 @@ model Grade {
   maxScore  Float
   date      DateTime @default(now())
   note      String?
+  // ربط اختياري بتسليم واجب — يمنع تكرار الدرجة عند إعادة التقييم (upsert)
+  submissionId String?     @unique
+  submission   Submission? @relation(fields: [submissionId], references: [id])
 }
 
 model Message {

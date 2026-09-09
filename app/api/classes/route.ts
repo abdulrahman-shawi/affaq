@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getTeacherClassIds } from "@/app/lib/teacherScope";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,10 @@ export async function GET() {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    // المشرف يُحصر بصفوف الإشراف، والمعلم بصفوفه
+    const scoped =
+      (await getSupervisorClassIds(sessionUser)) ??
+      (await getTeacherClassIds(sessionUser));
 
     const classes = await prisma.classLevel.findMany({
       where: scoped ? { id: { in: scoped } } : undefined,

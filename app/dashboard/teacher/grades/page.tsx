@@ -1,11 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ClipboardList, Percent, Plus, Trophy, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ClipboardList, Percent, Trophy, Users } from "lucide-react";
 import DataTable from "@/components/tables/DataTable";
 import { gradeColumns } from "@/components/tables/Columns";
-import GradeForm from "@/components/forms/GradeForm";
 import StatCard from "@/components/shared/StatCard";
 import type { GradeDTO } from "@/types";
 
@@ -79,24 +77,12 @@ export default function TeacherGradesPage() {
         />
       </div>
 
-      <div className="flex justify-end">
-        <GradeForm
-          onSuccess={refetch}
-          trigger={
-            <Button>
-              <Plus className="h-4 w-4" />
-              رصد درجة
-            </Button>
-          }
-        />
-      </div>
-
       <DataTable
         columns={gradeColumns()}
         data={grades}
         loading={loading}
         emptyTitle="لا توجد درجات"
-        emptyMessage="ابدأ برصد أول درجة"
+        emptyMessage="تظهر هنا الدرجات تلقائيًا بعد تصحيح الاختبارات"
       />
     </div>
   );

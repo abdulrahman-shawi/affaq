@@ -93,17 +93,50 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { id, grade, feedback } = body;
+    const { id, grade, feedback, maxScore } = body;
 
     if (!id || grade === undefined) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    const submission = await prisma.submission.update({
+    const existing = await prisma.submission.findUnique({
       where: { id },
-      data: { grade: Number(grade), feedback: feedback || null },
-      include: { student: { include: { user: true } }, assignment: true },
+      include: { assignment: true },
     });
+    if (!existing) {
+      return NextResponse.json({ error: "التسليم غير موجود" }, { status: 404 });
+    }
+
+    const score = Number(grade);
+    const max = Number(maxScore) > 0 ? Number(maxScore) : 100;
+    if (!Number.isFinite(score) || score < 0 || score > max) {
+      return NextResponse.json(
+        { error: "الدرجة يجب أن تكون بين 0 والدرجة العظمى" },
+        { status: 400 }
+      );
+    }
+
+    const [submission] = await prisma.$transaction([
+      prisma.submission.update({
+        where: { id },
+        data: { grade: score, feedback: feedback || null },
+        include: { student: { include: { user: true } }, assignment: true },
+      }),
+      // تقييم الواجب يظهر في صفحة الدرجات — upsert يحدّث السجل عند إعادة التقييم بدل تكراره
+      prisma.grade.upsert({
+        where: { submissionId: id },
+        create: {
+          studentId: existing.studentId,
+          subject: existing.assignment.subject,
+          type: "homework",
+          score,
+          maxScore: max,
+          note: existing.assignment.title,
+          submissionId: id,
+        },
+        update: { score, maxScore: max },
+      }),
+    ]);
 
     return NextResponse.json(submission);
   } catch {

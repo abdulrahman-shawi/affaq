@@ -16,6 +16,7 @@ export default function TeacherTimetablePage() {
   const { user } = useAuth();
   const [teacher, setTeacher] = useState<TeacherDTO | null>(null);
   const [resolving, setResolving] = useState(true);
+  const [classFilter, setClassFilter] = useState("");
   const { slots, loading, refetch } = useTimetable({
     teacherId: teacher?.id ?? "",
   });
@@ -34,14 +35,21 @@ export default function TeacherTimetablePage() {
     })();
   }, [user]);
 
+  // الفلترة بالصف — فارغة تعني كل صفوف المعلم
+  const filteredSlots = useMemo(
+    () =>
+      classFilter ? slots.filter((s) => s.classId === classFilter) : slots,
+    [slots, classFilter]
+  );
+
   const stats = useMemo(
     () => ({
-      total: slots.length,
-      classes: teacher?.classes.length ?? 0,
-      subjects: new Set(slots.map((s) => s.subject)).size,
-      days: new Set(slots.map((s) => s.dayOfWeek)).size,
+      total: filteredSlots.length,
+      classes: new Set(filteredSlots.map((s) => s.classId)).size,
+      subjects: new Set(filteredSlots.map((s) => s.subject)).size,
+      days: new Set(filteredSlots.map((s) => s.dayOfWeek)).size,
     }),
-    [slots, teacher]
+    [filteredSlots]
   );
 
   if (resolving || (teacher && loading)) {
@@ -86,9 +94,22 @@ export default function TeacherTimetablePage() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-lg font-semibold">جدولي الأسبوعي</h1>
+        <select
+          aria-label="فلترة بالصف"
+          className="flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          value={classFilter}
+          onChange={(e) => setClassFilter(e.target.value)}
+        >
+          <option value="">كل الصفوف</option>
+          {teacher.classes.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
       <TimetableGrid
-        slots={slots}
+        slots={filteredSlots}
         renderActions={(slot) => (
           <ZoomLinkForm
             slot={slot}

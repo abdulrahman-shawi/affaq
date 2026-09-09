@@ -2,8 +2,17 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
+import { getTeacherClassIds } from "@/app/lib/teacherScope";
 
 export const dynamic = "force-dynamic";
+
+// المشرف يُحصر بصفوف الإشراف، والمعلم بصفوفه — وغيرهما بلا تقييد
+async function getScopedClassIds(sessionUser: { id: string; role: string }) {
+  return (
+    (await getSupervisorClassIds(sessionUser)) ??
+    (await getTeacherClassIds(sessionUser))
+  );
+}
 
 export async function GET(req: Request) {
   try {
@@ -11,7 +20,7 @@ export async function GET(req: Request) {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    const scoped = await getScopedClassIds(sessionUser);
 
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get("studentId");
@@ -33,13 +42,11 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const sessionUser = await getSessionUser();
-    if (
-      !sessionUser ||
-      !["admin", "teacher", "supervisor"].includes(sessionUser.role)
-    ) {
+    // الرصد اليدوي أُزيل عن المعلم — درجاته تُنشأ تلقائيًا من تصحيح الاختبارات
+    if (!sessionUser || !["admin", "supervisor"].includes(sessionUser.role)) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
-    const scoped = await getSupervisorClassIds(sessionUser);
+    const scoped = await getScopedClassIds(sessionUser);
 
     const body = await req.json();
     const { studentId, subject, type, score, maxScore, note } = body;
@@ -48,7 +55,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    // المشرف يرصد درجات طلاب صفوفه فقط
+    // المشرف والمعلم يرصدان درجات طلاب صفوفهم فقط
     if (scoped) {
       const student = await prisma.student.findUnique({
         where: { id: studentId },
