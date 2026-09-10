@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import CopyProtection from "@/components/CopyProtection";
 import { getSiteSettings } from "@/app/lib/settings";
 
 const geistSans = localFont({
@@ -41,6 +42,7 @@ export default function RootLayout({
         className={`${cairo.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
+        <CopyProtection />
       </body>
     </html>
   );
