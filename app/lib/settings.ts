@@ -6,6 +6,7 @@ export const defaultSiteSettings: SiteSettingsDTO = {
   siteName: "آفاق أكاديمي",
   academyName: "آفاق أكاديمي",
   logoUrl: null,
+  faviconUrl: null,
 };
 
 // قراءة إعدادات الموقع من جهة الخادم (تُستخدم في layout وصفحة الهبوط)
@@ -18,6 +19,7 @@ export const getSiteSettings = cache(async (): Promise<SiteSettingsDTO> => {
       siteName: row.siteName,
       academyName: row.academyName,
       logoUrl: row.logoUrl,
+      faviconUrl: row.faviconUrl,
     };
   } catch {
     return defaultSiteSettings;

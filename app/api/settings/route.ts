@@ -24,7 +24,7 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { siteName, academyName, logoUrl } = body;
+    const { siteName, academyName, logoUrl, faviconUrl } = body;
 
     if (!siteName?.trim() || !academyName?.trim()) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
@@ -37,11 +37,13 @@ export async function PUT(req: Request) {
         siteName: siteName.trim(),
         academyName: academyName.trim(),
         logoUrl: logoUrl || null,
+        faviconUrl: faviconUrl || null,
       },
       update: {
         siteName: siteName.trim(),
         academyName: academyName.trim(),
         logoUrl: logoUrl || null,
+        faviconUrl: faviconUrl || null,
       },
     });
 

@@ -29,6 +29,7 @@ export type SiteSettingsMinAggregateOutputType = {
   siteName: string | null
   academyName: string | null
   logoUrl: string | null
+  faviconUrl: string | null
   updatedAt: Date | null
 }
 
@@ -37,6 +38,7 @@ export type SiteSettingsMaxAggregateOutputType = {
   siteName: string | null
   academyName: string | null
   logoUrl: string | null
+  faviconUrl: string | null
   updatedAt: Date | null
 }
 
@@ -45,6 +47,7 @@ export type SiteSettingsCountAggregateOutputType = {
   siteName: number
   academyName: number
   logoUrl: number
+  faviconUrl: number
   updatedAt: number
   _all: number
 }
@@ -55,6 +58,7 @@ export type SiteSettingsMinAggregateInputType = {
   siteName?: true
   academyName?: true
   logoUrl?: true
+  faviconUrl?: true
   updatedAt?: true
 }
 
@@ -63,6 +67,7 @@ export type SiteSettingsMaxAggregateInputType = {
   siteName?: true
   academyName?: true
   logoUrl?: true
+  faviconUrl?: true
   updatedAt?: true
 }
 
@@ -71,6 +76,7 @@ export type SiteSettingsCountAggregateInputType = {
   siteName?: true
   academyName?: true
   logoUrl?: true
+  faviconUrl?: true
   updatedAt?: true
   _all?: true
 }
@@ -152,6 +158,7 @@ export type SiteSettingsGroupByOutputType = {
   siteName: string
   academyName: string
   logoUrl: string | null
+  faviconUrl: string | null
   updatedAt: Date
   _count: SiteSettingsCountAggregateOutputType | null
   _min: SiteSettingsMinAggregateOutputType | null
@@ -181,6 +188,7 @@ export type SiteSettingsWhereInput = {
   siteName?: Prisma.StringFilter<"SiteSettings"> | string
   academyName?: Prisma.StringFilter<"SiteSettings"> | string
   logoUrl?: Prisma.StringNullableFilter<"SiteSettings"> | string | null
+  faviconUrl?: Prisma.StringNullableFilter<"SiteSettings"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"SiteSettings"> | Date | string
 }
 
@@ -189,6 +197,7 @@ export type SiteSettingsOrderByWithRelationInput = {
   siteName?: Prisma.SortOrder
   academyName?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -200,6 +209,7 @@ export type SiteSettingsWhereUniqueInput = Prisma.AtLeast<{
   siteName?: Prisma.StringFilter<"SiteSettings"> | string
   academyName?: Prisma.StringFilter<"SiteSettings"> | string
   logoUrl?: Prisma.StringNullableFilter<"SiteSettings"> | string | null
+  faviconUrl?: Prisma.StringNullableFilter<"SiteSettings"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"SiteSettings"> | Date | string
 }, "id">
 
@@ -208,6 +218,7 @@ export type SiteSettingsOrderByWithAggregationInput = {
   siteName?: Prisma.SortOrder
   academyName?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SiteSettingsCountOrderByAggregateInput
   _max?: Prisma.SiteSettingsMaxOrderByAggregateInput
@@ -222,6 +233,7 @@ export type SiteSettingsScalarWhereWithAggregatesInput = {
   siteName?: Prisma.StringWithAggregatesFilter<"SiteSettings"> | string
   academyName?: Prisma.StringWithAggregatesFilter<"SiteSettings"> | string
   logoUrl?: Prisma.StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+  faviconUrl?: Prisma.StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"SiteSettings"> | Date | string
 }
 
@@ -230,6 +242,7 @@ export type SiteSettingsCreateInput = {
   siteName?: string
   academyName?: string
   logoUrl?: string | null
+  faviconUrl?: string | null
   updatedAt?: Date | string
 }
 
@@ -238,6 +251,7 @@ export type SiteSettingsUncheckedCreateInput = {
   siteName?: string
   academyName?: string
   logoUrl?: string | null
+  faviconUrl?: string | null
   updatedAt?: Date | string
 }
 
@@ -246,6 +260,7 @@ export type SiteSettingsUpdateInput = {
   siteName?: Prisma.StringFieldUpdateOperationsInput | string
   academyName?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -254,6 +269,7 @@ export type SiteSettingsUncheckedUpdateInput = {
   siteName?: Prisma.StringFieldUpdateOperationsInput | string
   academyName?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -262,6 +278,7 @@ export type SiteSettingsCreateManyInput = {
   siteName?: string
   academyName?: string
   logoUrl?: string | null
+  faviconUrl?: string | null
   updatedAt?: Date | string
 }
 
@@ -270,6 +287,7 @@ export type SiteSettingsUpdateManyMutationInput = {
   siteName?: Prisma.StringFieldUpdateOperationsInput | string
   academyName?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -278,6 +296,7 @@ export type SiteSettingsUncheckedUpdateManyInput = {
   siteName?: Prisma.StringFieldUpdateOperationsInput | string
   academyName?: Prisma.StringFieldUpdateOperationsInput | string
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -286,6 +305,7 @@ export type SiteSettingsCountOrderByAggregateInput = {
   siteName?: Prisma.SortOrder
   academyName?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -294,6 +314,7 @@ export type SiteSettingsMaxOrderByAggregateInput = {
   siteName?: Prisma.SortOrder
   academyName?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -302,6 +323,7 @@ export type SiteSettingsMinOrderByAggregateInput = {
   siteName?: Prisma.SortOrder
   academyName?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -312,6 +334,7 @@ export type SiteSettingsSelect<ExtArgs extends runtime.Types.Extensions.Internal
   siteName?: boolean
   academyName?: boolean
   logoUrl?: boolean
+  faviconUrl?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["siteSettings"]>
 
@@ -320,6 +343,7 @@ export type SiteSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   siteName?: boolean
   academyName?: boolean
   logoUrl?: boolean
+  faviconUrl?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["siteSettings"]>
 
@@ -328,6 +352,7 @@ export type SiteSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   siteName?: boolean
   academyName?: boolean
   logoUrl?: boolean
+  faviconUrl?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["siteSettings"]>
 
@@ -336,10 +361,11 @@ export type SiteSettingsSelectScalar = {
   siteName?: boolean
   academyName?: boolean
   logoUrl?: boolean
+  faviconUrl?: boolean
   updatedAt?: boolean
 }
 
-export type SiteSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "siteName" | "academyName" | "logoUrl" | "updatedAt", ExtArgs["result"]["siteSettings"]>
+export type SiteSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "siteName" | "academyName" | "logoUrl" | "faviconUrl" | "updatedAt", ExtArgs["result"]["siteSettings"]>
 
 export type $SiteSettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "SiteSettings"
@@ -349,6 +375,7 @@ export type $SiteSettingsPayload<ExtArgs extends runtime.Types.Extensions.Intern
     siteName: string
     academyName: string
     logoUrl: string | null
+    faviconUrl: string | null
     updatedAt: Date
   }, ExtArgs["result"]["siteSettings"]>
   composites: {}
@@ -777,6 +804,7 @@ export interface SiteSettingsFieldRefs {
   readonly siteName: Prisma.FieldRef<"SiteSettings", 'String'>
   readonly academyName: Prisma.FieldRef<"SiteSettings", 'String'>
   readonly logoUrl: Prisma.FieldRef<"SiteSettings", 'String'>
+  readonly faviconUrl: Prisma.FieldRef<"SiteSettings", 'String'>
   readonly updatedAt: Prisma.FieldRef<"SiteSettings", 'DateTime'>
 }
     

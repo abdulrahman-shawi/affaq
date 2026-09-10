@@ -25,6 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: settings.siteName,
     description: "منصة تعليمية متكاملة لإدارة الطلاب والمعلمين والحصص والدرجات",
+    // الأيقونة من إعدادات الموقع، والافتراضية public/favicon.ico عند عدم رفع واحدة
+    icons: { icon: settings.faviconUrl ?? "/favicon.ico" },
   };
 }
 

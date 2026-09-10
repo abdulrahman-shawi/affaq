@@ -2374,6 +2374,7 @@ export const SiteSettingsScalarFieldEnum = {
   siteName: 'siteName',
   academyName: 'academyName',
   logoUrl: 'logoUrl',
+  faviconUrl: 'faviconUrl',
   updatedAt: 'updatedAt'
 } as const
 

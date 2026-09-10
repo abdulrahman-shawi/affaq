@@ -312,5 +312,6 @@ model SiteSettings {
   siteName    String   @default("آفاق أكاديمي") // اسم الموقع (عنوان المتصفح)
   academyName String   @default("آفاق أكاديمي") // اسم الأكاديمية الظاهر في الواجهة
   logoUrl     String?  // رابط اللوغو المرفوع
+  faviconUrl  String?  // رابط أيقونة الموقع (تظهر بجانب الاسم في تبويب المتصفح)
   updatedAt   DateTime @updatedAt
 }

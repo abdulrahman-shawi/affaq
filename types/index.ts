@@ -48,6 +48,7 @@ export interface SiteSettingsDTO {
   siteName: string;
   academyName: string;
   logoUrl: string | null;
+  faviconUrl: string | null;
 }
 
 export interface ParentDTO {

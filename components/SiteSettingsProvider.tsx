@@ -14,6 +14,7 @@ const defaultSettings: SiteSettingsDTO = {
   siteName: "آفاق أكاديمي",
   academyName: "آفاق أكاديمي",
   logoUrl: null,
+  faviconUrl: null,
 };
 
 const SiteSettingsContext = createContext<SiteSettingsDTO & {
@@ -40,6 +41,7 @@ export default function SiteSettingsProvider({
             siteName: data.siteName ?? defaultSettings.siteName,
             academyName: data.academyName ?? defaultSettings.academyName,
             logoUrl: data.logoUrl ?? null,
+            faviconUrl: data.faviconUrl ?? null,
           });
         }
       })

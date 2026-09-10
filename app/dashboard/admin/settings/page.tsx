@@ -24,16 +24,22 @@ export default function AdminSettingsPage() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
+  const [faviconFile, setFaviconFile] = useState<File | null>(null);
+  const [faviconPreview, setFaviconPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const faviconInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setSiteName(settings.siteName);
     setAcademyName(settings.academyName);
     setLogoUrl(settings.logoUrl);
     setPreview(settings.logoUrl);
-  }, [settings.siteName, settings.academyName, settings.logoUrl]);
+    setFaviconUrl(settings.faviconUrl);
+    setFaviconPreview(settings.faviconUrl);
+  }, [settings.siteName, settings.academyName, settings.logoUrl, settings.faviconUrl]);
 
   function handlePickLogo(file: File | undefined) {
     if (!file) return;
@@ -48,12 +54,25 @@ export default function AdminSettingsPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
+  function handlePickFavicon(file: File | undefined) {
+    if (!file) return;
+    setFaviconFile(file);
+    setFaviconPreview(URL.createObjectURL(file));
+  }
+
+  function handleRemoveFavicon() {
+    setFaviconFile(null);
+    setFaviconUrl(null);
+    setFaviconPreview(null);
+    if (faviconInputRef.current) faviconInputRef.current.value = "";
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setError(null);
     try {
-      // رفع اللوغو الجديد (إن وُجد) مباشرة إلى Vercel Blob
+      // رفع الصور الجديدة (إن وُجدت) مباشرة إلى Vercel Blob
       let finalLogoUrl = logoUrl;
       if (logoFile) {
         const blob = await upload(logoFile.name, logoFile, {
@@ -61,6 +80,14 @@ export default function AdminSettingsPage() {
           handleUploadUrl: "/api/upload",
         });
         finalLogoUrl = blob.url;
+      }
+      let finalFaviconUrl = faviconUrl;
+      if (faviconFile) {
+        const blob = await upload(faviconFile.name, faviconFile, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        finalFaviconUrl = blob.url;
       }
 
       const res = await fetch("/api/settings", {
@@ -70,6 +97,7 @@ export default function AdminSettingsPage() {
           siteName,
           academyName,
           logoUrl: finalLogoUrl,
+          faviconUrl: finalFaviconUrl,
         }),
       });
       if (!res.ok) {
@@ -77,6 +105,7 @@ export default function AdminSettingsPage() {
         throw new Error(body?.error ?? "فشل في حفظ الإعدادات");
       }
       setLogoFile(null);
+      setFaviconFile(null);
       settings.refresh();
       toast({ variant: "success", title: "تم حفظ الإعدادات بنجاح" });
     } catch (err) {
@@ -92,7 +121,7 @@ export default function AdminSettingsPage() {
         <CardHeader>
           <CardTitle>إعدادات الموقع</CardTitle>
           <CardDescription>
-            التحكم في اسم الموقع واسم الأكاديمية واللوغو الظاهر في الواجهة
+            التحكم في اسم الموقع واسم الأكاديمية واللوغو وأيقونة تبويب المتصفح
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -167,6 +196,57 @@ export default function AdminSettingsPage() {
               </div>
               <p className="text-xs text-muted-foreground">
                 عند عدم رفع لوغو تظهر الأيقونة الافتراضية
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>أيقونة الموقع (تبويب المتصفح)</Label>
+              <div className="flex items-center gap-4">
+                <div className="flex h-20 w-20 items-center justify-center rounded-lg border bg-muted/40">
+                  {faviconPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={faviconPreview}
+                      alt="أيقونة الموقع"
+                      className="h-10 w-10 rounded object-contain"
+                    />
+                  ) : (
+                    <GraduationCap className="h-10 w-10 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <input
+                    ref={faviconInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handlePickFavicon(e.target.files?.[0])}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => faviconInputRef.current?.click()}
+                  >
+                    <Upload className="h-4 w-4" />
+                    {faviconPreview ? "تغيير الأيقونة" : "رفع أيقونة"}
+                  </Button>
+                  {faviconPreview && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive"
+                      onClick={handleRemoveFavicon}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      إزالة الأيقونة
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                يُفضّل صورة مربعة صغيرة (مثل 32×32 أو 64×64) — عند عدم رفع أيقونة تُستخدم الافتراضية
               </p>
             </div>
 
