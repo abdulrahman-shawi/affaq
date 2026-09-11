@@ -87,7 +87,7 @@ export async function GET() {
       where,
       include: messageInclude,
       orderBy: { createdAt: "desc" },
-      take: 200,
+      take: sessionUser.role === "admin" ? 1000 : 200,
     });
     return NextResponse.json(messages.map(toDTO));
   } catch {

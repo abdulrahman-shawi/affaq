@@ -32,10 +32,40 @@ function dedupeUsers(users: TargetUser[]): TargetUser[] {
  * يحدد الجهات المسموح للمستخدم إرسال الرسائل إليها حسب دوره:
  * - admin: الجميع، أي صف، أي معلم/طالب/ولي أمر
  * - supervisor: صفوفه وطلابها وأولياء أمورهم ومعلموها فقط
- * - teacher: صفوفه وطلاب صفوفه فقط
+ * - teacher: صفوفه وطلاب صفوفه وأولياء أمورهم فقط
  * - student: صفه ومعلمو صفه فقط
  * - parent: الإدارة ومعلمو صفوف أبنائه فقط
+ * إضافةً لذلك (لغير الإدمن): أي مستخدم تربطه به محادثة فردية قائمة
+ * يصبح هدفاً مسموحاً حتى ينجح الرد داخل المحادثات.
  */
+async function withDirectContacts(
+  base: MessageTargets,
+  userId: string
+): Promise<MessageTargets> {
+  const directMessages = await prisma.message.findMany({
+    where: {
+      toAll: false,
+      classes: { none: {} },
+      OR: [{ senderId: userId }, { recipients: { some: { userId } } }],
+    },
+    select: {
+      sender: { select: { id: true, name: true, role: true } },
+      recipients: {
+        select: { user: { select: { id: true, name: true, role: true } } },
+      },
+    },
+  });
+  const contacts: TargetUser[] = directMessages.flatMap((m) => [
+    { ...m.sender, detail: null },
+    ...m.recipients.map((r) => ({ ...r.user, detail: null })),
+  ]);
+  return {
+    ...base,
+    users: dedupeUsers([...base.users, ...contacts]).filter(
+      (u) => u.id !== userId
+    ),
+  };
+}
 export async function getAllowedTargets(
   userId: string,
   role: string
@@ -109,37 +139,40 @@ export async function getAllowedTargets(
     });
     if (!supervisor) return EMPTY_TARGETS;
 
-    return {
-      canSendToAll: false,
-      classes: supervisor.supervisedClasses.map((c) => ({
-        id: c.id,
-        name: c.name,
-      })),
-      users: dedupeUsers(
-        supervisor.supervisedClasses.flatMap((c) => [
-          ...c.students.map((s) => ({
-            id: s.user.id,
-            name: s.user.name,
-            role: "student",
-            detail: c.name,
-          })),
-          ...c.students
-            .filter((s) => s.parent)
-            .map((s) => ({
-              id: s.parent!.user.id,
-              name: s.parent!.user.name,
-              role: "parent",
-              detail: `ولي أمر ${s.user.name}`,
+    return withDirectContacts(
+      {
+        canSendToAll: false,
+        classes: supervisor.supervisedClasses.map((c) => ({
+          id: c.id,
+          name: c.name,
+        })),
+        users: dedupeUsers(
+          supervisor.supervisedClasses.flatMap((c) => [
+            ...c.students.map((s) => ({
+              id: s.user.id,
+              name: s.user.name,
+              role: "student",
+              detail: c.name,
             })),
-          ...c.teachers.map((t) => ({
-            id: t.user.id,
-            name: t.user.name,
-            role: "teacher",
-            detail: c.name,
-          })),
-        ])
-      ),
-    };
+            ...c.students
+              .filter((s) => s.parent)
+              .map((s) => ({
+                id: s.parent!.user.id,
+                name: s.parent!.user.name,
+                role: "parent",
+                detail: `ولي أمر ${s.user.name}`,
+              })),
+            ...c.teachers.map((t) => ({
+              id: t.user.id,
+              name: t.user.name,
+              role: "teacher",
+              detail: c.name,
+            })),
+          ])
+        ),
+      },
+      userId
+    );
   }
 
   if (role === "teacher") {
@@ -152,7 +185,12 @@ export async function getAllowedTargets(
             id: true,
             name: true,
             students: {
-              select: { user: { select: { id: true, name: true } } },
+              select: {
+                user: { select: { id: true, name: true } },
+                parent: {
+                  select: { user: { select: { id: true, name: true } } },
+                },
+              },
             },
           },
         },
@@ -160,20 +198,31 @@ export async function getAllowedTargets(
     });
     if (!teacher) return EMPTY_TARGETS;
 
-    return {
-      canSendToAll: false,
-      classes: teacher.classes.map((c) => ({ id: c.id, name: c.name })),
-      users: dedupeUsers(
-        teacher.classes.flatMap((c) =>
-          c.students.map((s) => ({
-            id: s.user.id,
-            name: s.user.name,
-            role: "student",
-            detail: c.name,
-          }))
-        )
-      ),
-    };
+    return withDirectContacts(
+      {
+        canSendToAll: false,
+        classes: teacher.classes.map((c) => ({ id: c.id, name: c.name })),
+        users: dedupeUsers(
+          teacher.classes.flatMap((c) => [
+            ...c.students.map((s) => ({
+              id: s.user.id,
+              name: s.user.name,
+              role: "student",
+              detail: c.name,
+            })),
+            ...c.students
+              .filter((s) => s.parent)
+              .map((s) => ({
+                id: s.parent!.user.id,
+                name: s.parent!.user.name,
+                role: "parent",
+                detail: `ولي أمر ${s.user.name} (${c.name})`,
+              })),
+          ])
+        ),
+      },
+      userId
+    );
   }
 
   if (role === "student") {
@@ -191,18 +240,21 @@ export async function getAllowedTargets(
     });
     if (!student?.class) return EMPTY_TARGETS;
 
-    return {
-      canSendToAll: false,
-      classes: [{ id: student.class.id, name: student.class.name }],
-      users: dedupeUsers(
-        student.class.teachers.map((t) => ({
-          id: t.user.id,
-          name: t.user.name,
-          role: "teacher",
-          detail: null,
-        }))
-      ),
-    };
+    return withDirectContacts(
+      {
+        canSendToAll: false,
+        classes: [{ id: student.class.id, name: student.class.name }],
+        users: dedupeUsers(
+          student.class.teachers.map((t) => ({
+            id: t.user.id,
+            name: t.user.name,
+            role: "teacher",
+            detail: null,
+          }))
+        ),
+      },
+      userId
+    );
   }
 
   if (role === "parent") {
@@ -242,19 +294,22 @@ export async function getAllowedTargets(
           })) ?? []
       ) ?? [];
 
-    return {
-      canSendToAll: false,
-      classes: [],
-      users: dedupeUsers([
-        ...admins.map((a) => ({
-          id: a.id,
-          name: a.name,
-          role: "admin",
-          detail: null,
-        })),
-        ...teachers,
-      ]),
-    };
+    return withDirectContacts(
+      {
+        canSendToAll: false,
+        classes: [],
+        users: dedupeUsers([
+          ...admins.map((a) => ({
+            id: a.id,
+            name: a.name,
+            role: "admin",
+            detail: null,
+          })),
+          ...teachers,
+        ]),
+      },
+      userId
+    );
   }
 
   return EMPTY_TARGETS;

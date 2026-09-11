@@ -1,7 +1,7 @@
 "use client";
 
-import MessagesPanel from "@/components/shared/MessagesPanel";
+import MessagesMonitor from "@/components/shared/MessagesMonitor";
 
 export default function ParentMessagesPage() {
-  return <MessagesPanel />;
+  return <MessagesMonitor />;
 }

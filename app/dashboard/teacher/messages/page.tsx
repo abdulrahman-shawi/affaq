@@ -1,7 +1,7 @@
 "use client";
 
-import MessagesPanel from "@/components/shared/MessagesPanel";
+import MessagesMonitor from "@/components/shared/MessagesMonitor";
 
 export default function TeacherMessagesPage() {
-  return <MessagesPanel />;
+  return <MessagesMonitor />;
 }
