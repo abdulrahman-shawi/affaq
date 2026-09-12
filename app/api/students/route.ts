@@ -126,7 +126,10 @@ export async function POST(req: Request) {
 
     // ربط ولي أمر موجود بنفس الرقم أو اسم الأب، أو إنشاء حساب جديد له تلقائيًا
     let parentId: string | null = null;
-    const parentName = (fatherName || motherName || "").trim() || null;
+    const parentName =
+      [fatherName, motherName]
+        .find((v): v is string => typeof v === "string" && v.trim() !== "")
+        ?.trim() ?? null;
     if (parentName || guardianPhoneList.length) {
       const byPhone = guardianPhoneList.length
         ? await prisma.parent.findFirst({
@@ -140,7 +143,7 @@ export async function POST(req: Request) {
         : null;
       const existing =
         byPhone ??
-        (fatherName?.trim()
+        (typeof fatherName === "string" && fatherName.trim()
           ? await prisma.parent.findFirst({
               where: { user: { name: fatherName.trim() } },
             })
@@ -149,9 +152,10 @@ export async function POST(req: Request) {
       if (existing) {
         parentId = existing.id;
       } else if (parentName) {
-        // الرقم الأساسي يُسند فقط إذا لم يكن مستخدمًا لمستخدم آخر
+        // الرقم الأساسي يُسند فقط إذا لم يكن مستخدمًا لمستخدم آخر أو للطالب نفسه
         const primaryPhone = guardianPhoneList[0] ?? null;
-        const primaryFree = primaryPhone && !(await isPhoneTaken(primaryPhone));
+        const primaryFree =
+          primaryPhone && primaryPhone !== phone && !(await isPhoneTaken(primaryPhone));
         const parent = await prisma.parent.create({
           data: {
             phones: primaryFree ? guardianPhoneList.slice(1) : guardianPhoneList,
@@ -191,36 +195,66 @@ export async function POST(req: Request) {
             }
           : null;
 
-    const student = await prisma.student.create({
-      data: {
-        class: classId ? { connect: { id: classId } } : undefined,
-        parent: parentId ? { connect: { id: parentId } } : undefined,
-        subEndDate: subEndDate ? new Date(subEndDate) : null,
-        monthlyFee: fee,
-        address: address || null,
-        birthDate: birthDate ? new Date(birthDate) : null,
-        regGoal: regGoal || null,
-        fatherName: fatherName || null,
-        motherName: motherName || null,
-        guardianPhones: guardianPhoneList,
-        shift: shift === "morning" || shift === "evening" ? shift : null,
-        currency: ["SYP", "USD", "SAR", "AED"].includes(currency) ? currency : null,
-        user: {
-          create: {
-            name,
-            email: email || null,
-            phone: phone || null,
-            password: hashed,
-            role: "student",
-          },
+    const studentData = {
+      class: classId ? { connect: { id: classId } } : undefined,
+      parent: parentId ? { connect: { id: parentId } } : undefined,
+      subEndDate: subEndDate ? new Date(subEndDate) : null,
+      monthlyFee: fee,
+      address: address || null,
+      birthDate: birthDate ? new Date(birthDate) : null,
+      regGoal: regGoal || null,
+      fatherName: fatherName || null,
+      motherName: motherName || null,
+      guardianPhones: guardianPhoneList,
+      shift: shift === "morning" || shift === "evening" ? shift : null,
+      currency: ["SYP", "USD", "SAR", "AED"].includes(currency) ? currency : null,
+      user: {
+        create: {
+          name,
+          email: email || null,
+          phone: phone || null,
+          password: hashed,
+          role: "student",
         },
-        payments: payment ? { create: payment } : undefined,
       },
-      include: { user: true, parent: { include: { user: true } }, class: true },
-    });
+      payments: payment ? { create: payment } : undefined,
+    };
+    const studentInclude = {
+      user: true,
+      parent: { include: { user: true } },
+      class: true,
+    } as const;
+
+    let student;
+    try {
+      student = await prisma.student.create({
+        data: studentData,
+        include: studentInclude,
+      });
+    } catch (e) {
+      // إدخالات خارجية (مثل الاستيراد عبر الذكاء الاصطناعي) قد تجعل sequence
+      // studentNumber متأخرًا عن أكبر رقم موجود — نعيد ضبطه ونحاول مرة أخرى
+      const meta = (e as { meta?: { target?: unknown; driverAdapterError?: { cause?: { originalMessage?: string } } } })?.meta;
+      const target = meta?.target;
+      const cause = meta?.driverAdapterError?.cause?.originalMessage ?? "";
+      const isNumberConflict =
+        (e as { code?: string })?.code === "P2002" &&
+        ((Array.isArray(target) && target.includes("studentNumber")) ||
+          target === "studentNumber" ||
+          cause.includes("studentNumber"));
+      if (!isNumberConflict) throw e;
+      await prisma.$executeRawUnsafe(
+        `SELECT setval('"Student_studentNumber_seq"', (SELECT COALESCE(MAX("studentNumber"), 0) FROM "Student"))`
+      );
+      student = await prisma.student.create({
+        data: studentData,
+        include: studentInclude,
+      });
+    }
 
     return NextResponse.json(student, { status: 201 });
-  } catch {
+  } catch (e) {
+    console.error("POST /api/students failed:", e);
     return NextResponse.json({ error: "فشل في إضافة الطالب" }, { status: 500 });
   }
 }
