@@ -260,6 +260,8 @@ model Quiz {
   grade           Int
   durationMinutes Int?           // مهلة الاختبار بالدقائق — فارغة = بلا مؤقت
   published       Boolean        @default(true) // مسودة = لا تظهر للطلاب
+  attachmentUrl   String?        // مرفق اختياري (صورة أو ملف) مخزَّن في Vercel Blob
+  attachmentName  String?
   teacherId       String
   teacher         Teacher        @relation(fields: [teacherId], references: [id])
   createdAt       DateTime       @default(now())

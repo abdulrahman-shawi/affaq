@@ -189,6 +189,8 @@ export interface QuizDTO {
   grade: number;
   durationMinutes?: number | null; // مهلة الاختبار — فارغة = بلا مؤقت
   published?: boolean; // مسودة = لا تظهر للطلاب
+  attachmentUrl?: string | null; // مرفق اختياري (صورة أو ملف) مخزَّن في Vercel Blob
+  attachmentName?: string | null;
   teacherId: string;
   teacher?: TeacherDTO;
   createdAt: string;
@@ -426,6 +428,8 @@ export interface CreateQuizInput {
   grade: number;
   durationMinutes?: number | null;
   published?: boolean;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
   questions: CreateQuizQuestionInput[];
 }
 

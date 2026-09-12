@@ -22,6 +22,7 @@ export async function POST(req: Request) {
           allowedContentTypes: [
             "image/*",
             "video/*",
+            "audio/*",
             "application/pdf",
             "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

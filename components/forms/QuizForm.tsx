@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { upload } from "@vercel/blob/client";
+import { Paperclip, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -74,6 +75,12 @@ export default function QuizForm({
   const [questions, setQuestions] = useState<CreateQuizQuestionInput[]>([
     emptyQuestion(),
   ]);
+  // المرفق الحالي: url للمرفق الموجود مسبقًا، file للملف الجديد المختار
+  const [attachment, setAttachment] = useState<{
+    url: string | null;
+    name: string;
+    file?: File;
+  } | null>(null);
 
   // عند فتح النموذج: نجلب ملف المعلم وقوائم المواد والصفوف (نفس نمط AssignmentForm)
   // وفي وضع التعديل نعبّئ الحقول من الاختبار الحالي
@@ -106,6 +113,11 @@ export default function QuizForm({
             points: q.points,
           }))
         : [emptyQuestion()]
+    );
+    setAttachment(
+      quiz?.attachmentUrl
+        ? { url: quiz.attachmentUrl, name: quiz.attachmentName ?? "مرفق" }
+        : null
     );
     (async () => {
       try {
@@ -207,12 +219,28 @@ export default function QuizForm({
     setSubmitting(true);
     setError(null);
     try {
+      // المرفق: ملف جديد يُرفع إلى Vercel Blob، والموجود يُبقى كما هو، والمحذوف يُمسح
+      let attachmentUrl: string | null = null;
+      let attachmentName: string | null = null;
+      if (attachment?.file) {
+        const blob = await upload(attachment.file.name, attachment.file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        attachmentUrl = blob.url;
+        attachmentName = attachment.name;
+      } else if (attachment?.url) {
+        attachmentUrl = attachment.url;
+        attachmentName = attachment.name;
+      }
       const payload = {
         title: form.title,
         subject: form.subject,
         grade: Number(form.classOrder),
         durationMinutes: form.duration ? Number(form.duration) : null,
         published: form.publishNow,
+        attachmentUrl,
+        attachmentName,
         questions,
       };
       const res = await fetch(
@@ -313,6 +341,44 @@ export default function QuizForm({
               value={form.duration}
               onChange={(e) => setForm({ ...form, duration: e.target.value })}
             />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="quiz-attachment">مرفق (صورة أو ملف — اختياري)</Label>
+            {attachment ? (
+              <div className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
+                <Paperclip className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="flex-1 truncate" dir="ltr">
+                  {attachment.name}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title="إزالة المرفق"
+                  onClick={() => setAttachment(null)}
+                >
+                  <X className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Input
+                  id="quiz-attachment"
+                  type="file"
+                  dir="ltr"
+                  accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
+                  onChange={(e) => {
+                    const picked = e.target.files?.[0];
+                    if (picked)
+                      setAttachment({ url: null, name: picked.name, file: picked });
+                  }}
+                />
+                <p className="text-xs text-muted-foreground">
+                  صور، PDF، Word، Excel، صوت، أو فيديو
+                </p>
+              </>
+            )}
           </div>
           <label className="flex cursor-pointer items-center gap-2 text-sm">
             <input

@@ -43,6 +43,8 @@ export type QuizMinAggregateOutputType = {
   grade: number | null
   durationMinutes: number | null
   published: boolean | null
+  attachmentUrl: string | null
+  attachmentName: string | null
   teacherId: string | null
   createdAt: Date | null
 }
@@ -54,6 +56,8 @@ export type QuizMaxAggregateOutputType = {
   grade: number | null
   durationMinutes: number | null
   published: boolean | null
+  attachmentUrl: string | null
+  attachmentName: string | null
   teacherId: string | null
   createdAt: Date | null
 }
@@ -65,6 +69,8 @@ export type QuizCountAggregateOutputType = {
   grade: number
   durationMinutes: number
   published: number
+  attachmentUrl: number
+  attachmentName: number
   teacherId: number
   createdAt: number
   _all: number
@@ -88,6 +94,8 @@ export type QuizMinAggregateInputType = {
   grade?: true
   durationMinutes?: true
   published?: true
+  attachmentUrl?: true
+  attachmentName?: true
   teacherId?: true
   createdAt?: true
 }
@@ -99,6 +107,8 @@ export type QuizMaxAggregateInputType = {
   grade?: true
   durationMinutes?: true
   published?: true
+  attachmentUrl?: true
+  attachmentName?: true
   teacherId?: true
   createdAt?: true
 }
@@ -110,6 +120,8 @@ export type QuizCountAggregateInputType = {
   grade?: true
   durationMinutes?: true
   published?: true
+  attachmentUrl?: true
+  attachmentName?: true
   teacherId?: true
   createdAt?: true
   _all?: true
@@ -208,6 +220,8 @@ export type QuizGroupByOutputType = {
   grade: number
   durationMinutes: number | null
   published: boolean
+  attachmentUrl: string | null
+  attachmentName: string | null
   teacherId: string
   createdAt: Date
   _count: QuizCountAggregateOutputType | null
@@ -242,6 +256,8 @@ export type QuizWhereInput = {
   grade?: Prisma.IntFilter<"Quiz"> | number
   durationMinutes?: Prisma.IntNullableFilter<"Quiz"> | number | null
   published?: Prisma.BoolFilter<"Quiz"> | boolean
+  attachmentUrl?: Prisma.StringNullableFilter<"Quiz"> | string | null
+  attachmentName?: Prisma.StringNullableFilter<"Quiz"> | string | null
   teacherId?: Prisma.StringFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeFilter<"Quiz"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
@@ -256,6 +272,8 @@ export type QuizOrderByWithRelationInput = {
   grade?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   published?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachmentName?: Prisma.SortOrderInput | Prisma.SortOrder
   teacherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   teacher?: Prisma.TeacherOrderByWithRelationInput
@@ -273,6 +291,8 @@ export type QuizWhereUniqueInput = Prisma.AtLeast<{
   grade?: Prisma.IntFilter<"Quiz"> | number
   durationMinutes?: Prisma.IntNullableFilter<"Quiz"> | number | null
   published?: Prisma.BoolFilter<"Quiz"> | boolean
+  attachmentUrl?: Prisma.StringNullableFilter<"Quiz"> | string | null
+  attachmentName?: Prisma.StringNullableFilter<"Quiz"> | string | null
   teacherId?: Prisma.StringFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeFilter<"Quiz"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
@@ -287,6 +307,8 @@ export type QuizOrderByWithAggregationInput = {
   grade?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   published?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachmentName?: Prisma.SortOrderInput | Prisma.SortOrder
   teacherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.QuizCountOrderByAggregateInput
@@ -306,6 +328,8 @@ export type QuizScalarWhereWithAggregatesInput = {
   grade?: Prisma.IntWithAggregatesFilter<"Quiz"> | number
   durationMinutes?: Prisma.IntNullableWithAggregatesFilter<"Quiz"> | number | null
   published?: Prisma.BoolWithAggregatesFilter<"Quiz"> | boolean
+  attachmentUrl?: Prisma.StringNullableWithAggregatesFilter<"Quiz"> | string | null
+  attachmentName?: Prisma.StringNullableWithAggregatesFilter<"Quiz"> | string | null
   teacherId?: Prisma.StringWithAggregatesFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Quiz"> | Date | string
 }
@@ -317,6 +341,8 @@ export type QuizCreateInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   createdAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutQuizzesInput
   questions?: Prisma.QuizQuestionCreateNestedManyWithoutQuizInput
@@ -330,6 +356,8 @@ export type QuizUncheckedCreateInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   teacherId: string
   createdAt?: Date | string
   questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutQuizInput
@@ -343,6 +371,8 @@ export type QuizUpdateInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutQuizzesNestedInput
   questions?: Prisma.QuizQuestionUpdateManyWithoutQuizNestedInput
@@ -356,6 +386,8 @@ export type QuizUncheckedUpdateInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacherId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuizQuestionUncheckedUpdateManyWithoutQuizNestedInput
@@ -369,6 +401,8 @@ export type QuizCreateManyInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   teacherId: string
   createdAt?: Date | string
 }
@@ -380,6 +414,8 @@ export type QuizUpdateManyMutationInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -390,6 +426,8 @@ export type QuizUncheckedUpdateManyInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacherId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -411,6 +449,8 @@ export type QuizCountOrderByAggregateInput = {
   grade?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrder
+  attachmentName?: Prisma.SortOrder
   teacherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -427,6 +467,8 @@ export type QuizMaxOrderByAggregateInput = {
   grade?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrder
+  attachmentName?: Prisma.SortOrder
   teacherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -438,6 +480,8 @@ export type QuizMinOrderByAggregateInput = {
   grade?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrder
+  attachmentName?: Prisma.SortOrder
   teacherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -529,6 +573,8 @@ export type QuizCreateWithoutTeacherInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   createdAt?: Date | string
   questions?: Prisma.QuizQuestionCreateNestedManyWithoutQuizInput
   attempts?: Prisma.QuizAttemptCreateNestedManyWithoutQuizInput
@@ -541,6 +587,8 @@ export type QuizUncheckedCreateWithoutTeacherInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   createdAt?: Date | string
   questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutQuizInput
   attempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutQuizInput
@@ -582,6 +630,8 @@ export type QuizScalarWhereInput = {
   grade?: Prisma.IntFilter<"Quiz"> | number
   durationMinutes?: Prisma.IntNullableFilter<"Quiz"> | number | null
   published?: Prisma.BoolFilter<"Quiz"> | boolean
+  attachmentUrl?: Prisma.StringNullableFilter<"Quiz"> | string | null
+  attachmentName?: Prisma.StringNullableFilter<"Quiz"> | string | null
   teacherId?: Prisma.StringFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeFilter<"Quiz"> | Date | string
 }
@@ -593,6 +643,8 @@ export type QuizCreateWithoutQuestionsInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   createdAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutQuizzesInput
   attempts?: Prisma.QuizAttemptCreateNestedManyWithoutQuizInput
@@ -605,6 +657,8 @@ export type QuizUncheckedCreateWithoutQuestionsInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   teacherId: string
   createdAt?: Date | string
   attempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutQuizInput
@@ -633,6 +687,8 @@ export type QuizUpdateWithoutQuestionsInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutQuizzesNestedInput
   attempts?: Prisma.QuizAttemptUpdateManyWithoutQuizNestedInput
@@ -645,6 +701,8 @@ export type QuizUncheckedUpdateWithoutQuestionsInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacherId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutQuizNestedInput
@@ -657,6 +715,8 @@ export type QuizCreateWithoutAttemptsInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   createdAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutQuizzesInput
   questions?: Prisma.QuizQuestionCreateNestedManyWithoutQuizInput
@@ -669,6 +729,8 @@ export type QuizUncheckedCreateWithoutAttemptsInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   teacherId: string
   createdAt?: Date | string
   questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutQuizInput
@@ -697,6 +759,8 @@ export type QuizUpdateWithoutAttemptsInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutQuizzesNestedInput
   questions?: Prisma.QuizQuestionUpdateManyWithoutQuizNestedInput
@@ -709,6 +773,8 @@ export type QuizUncheckedUpdateWithoutAttemptsInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacherId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuizQuestionUncheckedUpdateManyWithoutQuizNestedInput
@@ -721,6 +787,8 @@ export type QuizCreateManyTeacherInput = {
   grade: number
   durationMinutes?: number | null
   published?: boolean
+  attachmentUrl?: string | null
+  attachmentName?: string | null
   createdAt?: Date | string
 }
 
@@ -731,6 +799,8 @@ export type QuizUpdateWithoutTeacherInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuizQuestionUpdateManyWithoutQuizNestedInput
   attempts?: Prisma.QuizAttemptUpdateManyWithoutQuizNestedInput
@@ -743,6 +813,8 @@ export type QuizUncheckedUpdateWithoutTeacherInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuizQuestionUncheckedUpdateManyWithoutQuizNestedInput
   attempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutQuizNestedInput
@@ -755,6 +827,8 @@ export type QuizUncheckedUpdateManyWithoutTeacherInput = {
   grade?: Prisma.IntFieldUpdateOperationsInput | number
   durationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -805,6 +879,8 @@ export type QuizSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   grade?: boolean
   durationMinutes?: boolean
   published?: boolean
+  attachmentUrl?: boolean
+  attachmentName?: boolean
   teacherId?: boolean
   createdAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
@@ -820,6 +896,8 @@ export type QuizSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   grade?: boolean
   durationMinutes?: boolean
   published?: boolean
+  attachmentUrl?: boolean
+  attachmentName?: boolean
   teacherId?: boolean
   createdAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
@@ -832,6 +910,8 @@ export type QuizSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   grade?: boolean
   durationMinutes?: boolean
   published?: boolean
+  attachmentUrl?: boolean
+  attachmentName?: boolean
   teacherId?: boolean
   createdAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
@@ -844,11 +924,13 @@ export type QuizSelectScalar = {
   grade?: boolean
   durationMinutes?: boolean
   published?: boolean
+  attachmentUrl?: boolean
+  attachmentName?: boolean
   teacherId?: boolean
   createdAt?: boolean
 }
 
-export type QuizOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subject" | "grade" | "durationMinutes" | "published" | "teacherId" | "createdAt", ExtArgs["result"]["quiz"]>
+export type QuizOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subject" | "grade" | "durationMinutes" | "published" | "attachmentUrl" | "attachmentName" | "teacherId" | "createdAt", ExtArgs["result"]["quiz"]>
 export type QuizInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   questions?: boolean | Prisma.Quiz$questionsArgs<ExtArgs>
@@ -876,6 +958,8 @@ export type $QuizPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     grade: number
     durationMinutes: number | null
     published: boolean
+    attachmentUrl: string | null
+    attachmentName: string | null
     teacherId: string
     createdAt: Date
   }, ExtArgs["result"]["quiz"]>
@@ -1310,6 +1394,8 @@ export interface QuizFieldRefs {
   readonly grade: Prisma.FieldRef<"Quiz", 'Int'>
   readonly durationMinutes: Prisma.FieldRef<"Quiz", 'Int'>
   readonly published: Prisma.FieldRef<"Quiz", 'Boolean'>
+  readonly attachmentUrl: Prisma.FieldRef<"Quiz", 'String'>
+  readonly attachmentName: Prisma.FieldRef<"Quiz", 'String'>
   readonly teacherId: Prisma.FieldRef<"Quiz", 'String'>
   readonly createdAt: Prisma.FieldRef<"Quiz", 'DateTime'>
 }

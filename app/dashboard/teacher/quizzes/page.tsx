@@ -12,6 +12,7 @@ import {
   Percent,
   CheckCircle2,
   Search,
+  Paperclip,
 } from "lucide-react";
 import DataTable, { type Column } from "@/components/tables/DataTable";
 import { Badge } from "@/components/ui/badge";
@@ -160,6 +161,23 @@ export default function TeacherQuizzesPage() {
       cell: (q) =>
         q.durationMinutes ? (
           <Badge variant="outline">{q.durationMinutes} دقيقة</Badge>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
+    },
+    {
+      header: "المرفق",
+      cell: (q) =>
+        q.attachmentUrl ? (
+          <a
+            href={q.attachmentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline"
+          >
+            <Paperclip className="h-4 w-4" />
+            {q.attachmentName ?? "عرض المرفق"}
+          </a>
         ) : (
           <span className="text-muted-foreground">—</span>
         ),

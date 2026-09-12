@@ -67,7 +67,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, subject, grade, teacherId, questions, durationMinutes, published } = body;
+    const { title, subject, grade, teacherId, questions, durationMinutes, published, attachmentUrl, attachmentName } = body;
 
     if (
       !title?.trim() ||
@@ -129,6 +129,8 @@ export async function POST(req: Request) {
         grade: Number(grade),
         durationMinutes: durationMinutes ? Number(durationMinutes) : null,
         published: published !== false,
+        attachmentUrl: attachmentUrl || null,
+        attachmentName: attachmentUrl ? attachmentName || null : null,
         teacherId,
         questions: {
           create: questions.map(

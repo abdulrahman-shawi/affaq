@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import AudioRecorder from "@/components/forms/AudioRecorder";
 import { useAuth } from "@/hooks/useAuth";
 import type { ClassLevelDTO, SubjectDTO, TeacherDTO } from "@/types";
 
@@ -45,6 +46,8 @@ export default function AssignmentForm({
   const [subjects, setSubjects] = useState<SubjectOption[]>([]);
   const [classes, setClasses] = useState<ClassOption[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const [recorderKey, setRecorderKey] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState(emptyForm);
 
   // عند فتح النموذج: نجلب المواد والصفوف من قاعدة البيانات
@@ -208,12 +211,33 @@ export default function AssignmentForm({
               id="assignment-file"
               type="file"
               dir="ltr"
-              accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              ref={fileInputRef}
+              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
+              onChange={(e) => {
+                const picked = e.target.files?.[0] ?? null;
+                setFile(picked);
+                // اختيار ملف يلغي أي تسجيل سابق — نعيد تركيب المسجّل لتفريغه
+                if (picked) setRecorderKey((k) => k + 1);
+              }}
             />
             <p className="text-xs text-muted-foreground">
-              صور، PDF، Word، Excel، أو فيديو
+              صور، PDF، Word، Excel، صوت، أو فيديو
             </p>
+            {file && (
+              <p className="text-xs text-muted-foreground" dir="ltr">
+                {file.name}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">أو سجّل مقطعاً صوتياً:</p>
+            <AudioRecorder
+              key={recorderKey}
+              onRecorded={(recorded) => {
+                setFile(recorded);
+                // التسجيل يلغي أي ملف مختار من حقل الرفع
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
+              onClear={() => setFile(null)}
+            />
           </div>
           {subjects.length === 0 && classes.length === 0 && (
             <p className="text-sm text-muted-foreground">

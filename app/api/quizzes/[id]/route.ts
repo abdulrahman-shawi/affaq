@@ -81,7 +81,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { title, subject, grade, questions, durationMinutes, published } = body;
+    const { title, subject, grade, questions, durationMinutes, published, attachmentUrl, attachmentName } = body;
 
     // تحديث جزئي: نبني الحقول المقدَّمة فقط (مثل تبديل النشر وحده)
     const data: Record<string, unknown> = {};
@@ -119,6 +119,11 @@ export async function PATCH(
     }
     if (published !== undefined) {
       data.published = Boolean(published);
+    }
+    // المرفق قابل للإزالة: null يعني مسح المرفق الحالي
+    if (attachmentUrl !== undefined) {
+      data.attachmentUrl = attachmentUrl || null;
+      data.attachmentName = attachmentUrl ? attachmentName || null : null;
     }
 
     const hasQuestions = questions !== undefined;

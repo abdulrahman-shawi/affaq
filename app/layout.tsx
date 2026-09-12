@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Cairo } from "next/font/google";
 import "./globals.css";
@@ -28,8 +28,13 @@ export async function generateMetadata(): Promise<Metadata> {
     description: "منصة تعليمية متكاملة لإدارة الطلاب والمعلمين والحصص والدرجات",
     // الأيقونة من إعدادات الموقع، والافتراضية public/favicon.ico عند عدم رفع واحدة
     icons: { icon: settings.faviconUrl ?? "/favicon.ico" },
+    manifest: "/manifest.json",
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
+};
 
 export default function RootLayout({
   children,

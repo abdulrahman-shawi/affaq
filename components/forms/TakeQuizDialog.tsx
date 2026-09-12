@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Timer } from "lucide-react";
+import { Paperclip, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,6 +32,47 @@ function formatTime(seconds: number) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+// عرض مرفق الاختبار: صورة مضمّنة، مشغّل صوت، أو رابط فتح للملفات الأخرى
+function QuizAttachment({ url, name }: { url: string; name?: string | null }) {
+  const lower = (name ?? url).toLowerCase();
+  if (/\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/.test(lower)) {
+    return (
+      <div className="space-y-1 rounded-md border p-3">
+        <p className="text-xs font-medium text-muted-foreground">
+          مرفق الاختبار
+        </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt={name ?? "مرفق الاختبار"}
+          className="max-h-64 w-full rounded-md object-contain"
+        />
+      </div>
+    );
+  }
+  if (/\.(webm|ogg|mp3|wav|m4a|aac|opus)(\?|$)/.test(lower)) {
+    return (
+      <div className="space-y-1 rounded-md border p-3">
+        <p className="text-xs font-medium text-muted-foreground">
+          المقطع الصوتي للاختبار
+        </p>
+        <audio controls src={url} className="w-full" dir="ltr" />
+      </div>
+    );
+  }
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-sm text-blue-600 hover:underline"
+    >
+      <Paperclip className="h-4 w-4" />
+      {name ?? "فتح مرفق الاختبار"}
+    </a>
+  );
 }
 
 export default function TakeQuizDialog({
@@ -166,6 +207,12 @@ export default function TakeQuizDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          {quiz.attachmentUrl && (
+            <QuizAttachment
+              url={quiz.attachmentUrl}
+              name={quiz.attachmentName}
+            />
+          )}
           {items.length > 0 && (
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">

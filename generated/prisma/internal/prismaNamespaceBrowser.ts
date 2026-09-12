@@ -306,6 +306,8 @@ export const QuizScalarFieldEnum = {
   grade: 'grade',
   durationMinutes: 'durationMinutes',
   published: 'published',
+  attachmentUrl: 'attachmentUrl',
+  attachmentName: 'attachmentName',
   teacherId: 'teacherId',
   createdAt: 'createdAt'
 } as const

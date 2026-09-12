@@ -33,6 +33,15 @@ const shiftLabels: Record<string, string> = {
   evening: "مسائي",
 };
 
+export function studentBasicColumns(): Column<StudentDTO>[] {
+  return [
+    { header: "الاسم", cell: (s) => s.user?.name ?? "—" },
+    { header: "الصف", cell: (s) => s.class?.name ?? "—" },
+    { header: "اسم الأب", cell: (s) => s.fatherName ?? "—" },
+    { header: "اسم الأم", cell: (s) => s.motherName ?? "—" },
+  ];
+}
+
 export function studentColumns(): Column<StudentDTO>[] {
   return [
     { header: "رقم الطالب", cell: (s) => s.studentNumber ?? "—" },
