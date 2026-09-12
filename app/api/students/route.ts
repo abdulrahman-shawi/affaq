@@ -124,6 +124,51 @@ export async function POST(req: Request) {
       ? guardianPhones.filter((p): p is string => typeof p === "string" && p.trim() !== "")
       : [];
 
+    // ربط ولي أمر موجود بنفس الرقم أو اسم الأب، أو إنشاء حساب جديد له تلقائيًا
+    let parentId: string | null = null;
+    const parentName = (fatherName || motherName || "").trim() || null;
+    if (parentName || guardianPhoneList.length) {
+      const byPhone = guardianPhoneList.length
+        ? await prisma.parent.findFirst({
+            where: {
+              OR: [
+                { user: { phone: { in: guardianPhoneList } } },
+                { phones: { hasSome: guardianPhoneList } },
+              ],
+            },
+          })
+        : null;
+      const existing =
+        byPhone ??
+        (fatherName?.trim()
+          ? await prisma.parent.findFirst({
+              where: { user: { name: fatherName.trim() } },
+            })
+          : null);
+
+      if (existing) {
+        parentId = existing.id;
+      } else if (parentName) {
+        // الرقم الأساسي يُسند فقط إذا لم يكن مستخدمًا لمستخدم آخر
+        const primaryPhone = guardianPhoneList[0] ?? null;
+        const primaryFree = primaryPhone && !(await isPhoneTaken(primaryPhone));
+        const parent = await prisma.parent.create({
+          data: {
+            phones: primaryFree ? guardianPhoneList.slice(1) : guardianPhoneList,
+            user: {
+              create: {
+                name: parentName,
+                phone: primaryFree ? primaryPhone : null,
+                password: hashed,
+                role: "parent",
+              },
+            },
+          },
+        });
+        parentId = parent.id;
+      }
+    }
+
     // عند الدفع (كلي أو جزئي) تُنشأ دفعة أولى في جدول المدفوعات
     const payment =
       paymentStatus === "paid"
@@ -149,6 +194,7 @@ export async function POST(req: Request) {
     const student = await prisma.student.create({
       data: {
         class: classId ? { connect: { id: classId } } : undefined,
+        parent: parentId ? { connect: { id: parentId } } : undefined,
         subEndDate: subEndDate ? new Date(subEndDate) : null,
         monthlyFee: fee,
         address: address || null,
