@@ -151,3 +151,13 @@ export type Notification = Prisma.NotificationModel
  * 
  */
 export type SiteSettings = Prisma.SiteSettingsModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model ChatReaction
+ * 
+ */
+export type ChatReaction = Prisma.ChatReactionModel

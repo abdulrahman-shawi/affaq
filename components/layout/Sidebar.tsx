@@ -11,6 +11,7 @@ import {
   CalendarDays,
   ClipboardList,
   MessagesSquare,
+  MessageCircle,
   ChartBar,
   BookOpen,
   FileText,
@@ -47,6 +48,7 @@ const adminNav: NavItem[] = [
   { href: "/dashboard/admin/attendance", label: "الحضور", icon: CalendarCheck },
   { href: "/dashboard/admin/grades", label: "الدرجات", icon: ClipboardList },
   { href: "/dashboard/admin/messages", label: "الرسائل", icon: MessagesSquare },
+  { href: "/dashboard/admin/chat", label: "المحادثات", icon: MessageCircle },
   { href: "/dashboard/admin/reports", label: "التقارير", icon: ChartBar },
   { href: "/dashboard/admin/settings", label: "الإعدادات", icon: Settings },
   { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
@@ -73,6 +75,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/teacher/submissions", label: "التسليمات", icon: Inbox },
     { href: "/dashboard/teacher/grades", label: "الدرجات", icon: ClipboardList },
     { href: "/dashboard/teacher/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/teacher/chat", label: "المحادثات", icon: MessageCircle },
     { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
   ],
   parent: [
@@ -93,6 +96,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/student/recordings", label: "التسجيلات", icon: Video },
     { href: "/dashboard/student/grades", label: "درجاتي", icon: ClipboardList },
     { href: "/dashboard/student/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/student/chat", label: "المحادثات", icon: MessageCircle },
     { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
   ],
 };

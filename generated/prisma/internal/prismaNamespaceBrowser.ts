@@ -72,7 +72,9 @@ export const ModelName = {
   QuizQuestion: 'QuizQuestion',
   QuizAttempt: 'QuizAttempt',
   Notification: 'Notification',
-  SiteSettings: 'SiteSettings'
+  SiteSettings: 'SiteSettings',
+  ChatMessage: 'ChatMessage',
+  ChatReaction: 'ChatReaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -367,6 +369,28 @@ export const SiteSettingsScalarFieldEnum = {
 } as const
 
 export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[keyof typeof SiteSettingsScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  classId: 'classId',
+  senderId: 'senderId',
+  content: 'content',
+  imageUrl: 'imageUrl',
+  replyToId: 'replyToId',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const ChatReactionScalarFieldEnum = {
+  messageId: 'messageId',
+  userId: 'userId',
+  emoji: 'emoji'
+} as const
+
+export type ChatReactionScalarFieldEnum = (typeof ChatReactionScalarFieldEnum)[keyof typeof ChatReactionScalarFieldEnum]
 
 
 export const SortOrder = {

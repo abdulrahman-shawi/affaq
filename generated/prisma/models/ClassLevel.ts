@@ -222,6 +222,7 @@ export type ClassLevelWhereInput = {
   supervisors?: Prisma.UserListRelationFilter
   supervisorTeachers?: Prisma.SupervisorTeacherListRelationFilter
   messages?: Prisma.MessageClassListRelationFilter
+  chatMessages?: Prisma.ChatMessageListRelationFilter
   timetableSlots?: Prisma.TimetableSlotListRelationFilter
 }
 
@@ -237,6 +238,7 @@ export type ClassLevelOrderByWithRelationInput = {
   supervisors?: Prisma.UserOrderByRelationAggregateInput
   supervisorTeachers?: Prisma.SupervisorTeacherOrderByRelationAggregateInput
   messages?: Prisma.MessageClassOrderByRelationAggregateInput
+  chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
   timetableSlots?: Prisma.TimetableSlotOrderByRelationAggregateInput
 }
 
@@ -255,6 +257,7 @@ export type ClassLevelWhereUniqueInput = Prisma.AtLeast<{
   supervisors?: Prisma.UserListRelationFilter
   supervisorTeachers?: Prisma.SupervisorTeacherListRelationFilter
   messages?: Prisma.MessageClassListRelationFilter
+  chatMessages?: Prisma.ChatMessageListRelationFilter
   timetableSlots?: Prisma.TimetableSlotListRelationFilter
 }, "id" | "name">
 
@@ -294,6 +297,7 @@ export type ClassLevelCreateInput = {
   supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
 }
 
@@ -309,6 +313,7 @@ export type ClassLevelUncheckedCreateInput = {
   supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
 }
 
@@ -324,6 +329,7 @@ export type ClassLevelUpdateInput = {
   supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
 }
 
@@ -339,6 +345,7 @@ export type ClassLevelUncheckedUpdateInput = {
   supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
@@ -590,6 +597,20 @@ export type ClassLevelUpdateOneRequiredWithoutTimetableSlotsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ClassLevelUpdateToOneWithWhereWithoutTimetableSlotsInput, Prisma.ClassLevelUpdateWithoutTimetableSlotsInput>, Prisma.ClassLevelUncheckedUpdateWithoutTimetableSlotsInput>
 }
 
+export type ClassLevelCreateNestedOneWithoutChatMessagesInput = {
+  create?: Prisma.XOR<Prisma.ClassLevelCreateWithoutChatMessagesInput, Prisma.ClassLevelUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.ClassLevelCreateOrConnectWithoutChatMessagesInput
+  connect?: Prisma.ClassLevelWhereUniqueInput
+}
+
+export type ClassLevelUpdateOneRequiredWithoutChatMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ClassLevelCreateWithoutChatMessagesInput, Prisma.ClassLevelUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.ClassLevelCreateOrConnectWithoutChatMessagesInput
+  upsert?: Prisma.ClassLevelUpsertWithoutChatMessagesInput
+  connect?: Prisma.ClassLevelWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClassLevelUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.ClassLevelUpdateWithoutChatMessagesInput>, Prisma.ClassLevelUncheckedUpdateWithoutChatMessagesInput>
+}
+
 export type ClassLevelCreateWithoutSupervisorsInput = {
   id?: string
   name: string
@@ -601,6 +622,7 @@ export type ClassLevelCreateWithoutSupervisorsInput = {
   teachers?: Prisma.TeacherCreateNestedManyWithoutClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
 }
 
@@ -615,6 +637,7 @@ export type ClassLevelUncheckedCreateWithoutSupervisorsInput = {
   teachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
 }
 
@@ -661,6 +684,7 @@ export type ClassLevelCreateWithoutStudentsInput = {
   supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
 }
 
@@ -675,6 +699,7 @@ export type ClassLevelUncheckedCreateWithoutStudentsInput = {
   supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
 }
 
@@ -705,6 +730,7 @@ export type ClassLevelUpdateWithoutStudentsInput = {
   supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
 }
 
@@ -719,6 +745,7 @@ export type ClassLevelUncheckedUpdateWithoutStudentsInput = {
   supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
@@ -733,6 +760,7 @@ export type ClassLevelCreateWithoutTeachersInput = {
   supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
 }
 
@@ -747,6 +775,7 @@ export type ClassLevelUncheckedCreateWithoutTeachersInput = {
   supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
 }
 
@@ -782,6 +811,7 @@ export type ClassLevelCreateWithoutMessagesInput = {
   teachers?: Prisma.TeacherCreateNestedManyWithoutClassesInput
   supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
 }
 
@@ -796,6 +826,7 @@ export type ClassLevelUncheckedCreateWithoutMessagesInput = {
   teachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutClassesInput
   supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
 }
 
@@ -826,6 +857,7 @@ export type ClassLevelUpdateWithoutMessagesInput = {
   teachers?: Prisma.TeacherUpdateManyWithoutClassesNestedInput
   supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
 }
 
@@ -840,6 +872,7 @@ export type ClassLevelUncheckedUpdateWithoutMessagesInput = {
   teachers?: Prisma.TeacherUncheckedUpdateManyWithoutClassesNestedInput
   supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
@@ -854,6 +887,7 @@ export type ClassLevelCreateWithoutSubjectsInput = {
   supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
 }
 
@@ -868,6 +902,7 @@ export type ClassLevelUncheckedCreateWithoutSubjectsInput = {
   supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
 }
 
@@ -903,6 +938,7 @@ export type ClassLevelCreateWithoutSupervisorTeachersInput = {
   teachers?: Prisma.TeacherCreateNestedManyWithoutClassesInput
   supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
   messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
 }
 
@@ -917,6 +953,7 @@ export type ClassLevelUncheckedCreateWithoutSupervisorTeachersInput = {
   teachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutClassesInput
   supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
   messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
   timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
 }
 
@@ -947,6 +984,7 @@ export type ClassLevelUpdateWithoutSupervisorTeachersInput = {
   teachers?: Prisma.TeacherUpdateManyWithoutClassesNestedInput
   supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
   messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
 }
 
@@ -961,6 +999,7 @@ export type ClassLevelUncheckedUpdateWithoutSupervisorTeachersInput = {
   teachers?: Prisma.TeacherUncheckedUpdateManyWithoutClassesNestedInput
   supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
   messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
@@ -976,6 +1015,7 @@ export type ClassLevelCreateWithoutTimetableSlotsInput = {
   supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutClassInput
 }
 
 export type ClassLevelUncheckedCreateWithoutTimetableSlotsInput = {
@@ -990,6 +1030,7 @@ export type ClassLevelUncheckedCreateWithoutTimetableSlotsInput = {
   supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
   messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutClassInput
 }
 
 export type ClassLevelCreateOrConnectWithoutTimetableSlotsInput = {
@@ -1020,6 +1061,7 @@ export type ClassLevelUpdateWithoutTimetableSlotsInput = {
   supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
 }
 
 export type ClassLevelUncheckedUpdateWithoutTimetableSlotsInput = {
@@ -1034,6 +1076,83 @@ export type ClassLevelUncheckedUpdateWithoutTimetableSlotsInput = {
   supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
+}
+
+export type ClassLevelCreateWithoutChatMessagesInput = {
+  id?: string
+  name: string
+  order?: number
+  shift?: string | null
+  createdAt?: Date | string
+  subjects?: Prisma.SubjectCreateNestedManyWithoutClassesInput
+  students?: Prisma.StudentCreateNestedManyWithoutClassInput
+  teachers?: Prisma.TeacherCreateNestedManyWithoutClassesInput
+  supervisors?: Prisma.UserCreateNestedManyWithoutSupervisedClassesInput
+  supervisorTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutClassInput
+  messages?: Prisma.MessageClassCreateNestedManyWithoutClassInput
+  timetableSlots?: Prisma.TimetableSlotCreateNestedManyWithoutClassInput
+}
+
+export type ClassLevelUncheckedCreateWithoutChatMessagesInput = {
+  id?: string
+  name: string
+  order?: number
+  shift?: string | null
+  createdAt?: Date | string
+  subjects?: Prisma.SubjectUncheckedCreateNestedManyWithoutClassesInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
+  teachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutClassesInput
+  supervisors?: Prisma.UserUncheckedCreateNestedManyWithoutSupervisedClassesInput
+  supervisorTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutClassInput
+  messages?: Prisma.MessageClassUncheckedCreateNestedManyWithoutClassInput
+  timetableSlots?: Prisma.TimetableSlotUncheckedCreateNestedManyWithoutClassInput
+}
+
+export type ClassLevelCreateOrConnectWithoutChatMessagesInput = {
+  where: Prisma.ClassLevelWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClassLevelCreateWithoutChatMessagesInput, Prisma.ClassLevelUncheckedCreateWithoutChatMessagesInput>
+}
+
+export type ClassLevelUpsertWithoutChatMessagesInput = {
+  update: Prisma.XOR<Prisma.ClassLevelUpdateWithoutChatMessagesInput, Prisma.ClassLevelUncheckedUpdateWithoutChatMessagesInput>
+  create: Prisma.XOR<Prisma.ClassLevelCreateWithoutChatMessagesInput, Prisma.ClassLevelUncheckedCreateWithoutChatMessagesInput>
+  where?: Prisma.ClassLevelWhereInput
+}
+
+export type ClassLevelUpdateToOneWithWhereWithoutChatMessagesInput = {
+  where?: Prisma.ClassLevelWhereInput
+  data: Prisma.XOR<Prisma.ClassLevelUpdateWithoutChatMessagesInput, Prisma.ClassLevelUncheckedUpdateWithoutChatMessagesInput>
+}
+
+export type ClassLevelUpdateWithoutChatMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subjects?: Prisma.SubjectUpdateManyWithoutClassesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutClassNestedInput
+  teachers?: Prisma.TeacherUpdateManyWithoutClassesNestedInput
+  supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
+  supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
+  messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
+}
+
+export type ClassLevelUncheckedUpdateWithoutChatMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  shift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subjects?: Prisma.SubjectUncheckedUpdateManyWithoutClassesNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
+  teachers?: Prisma.TeacherUncheckedUpdateManyWithoutClassesNestedInput
+  supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
+  supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
+  messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
 export type ClassLevelUpdateWithoutSupervisorsInput = {
@@ -1047,6 +1166,7 @@ export type ClassLevelUpdateWithoutSupervisorsInput = {
   teachers?: Prisma.TeacherUpdateManyWithoutClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
 }
 
@@ -1061,6 +1181,7 @@ export type ClassLevelUncheckedUpdateWithoutSupervisorsInput = {
   teachers?: Prisma.TeacherUncheckedUpdateManyWithoutClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
@@ -1083,6 +1204,7 @@ export type ClassLevelUpdateWithoutTeachersInput = {
   supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
 }
 
@@ -1097,6 +1219,7 @@ export type ClassLevelUncheckedUpdateWithoutTeachersInput = {
   supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
@@ -1119,6 +1242,7 @@ export type ClassLevelUpdateWithoutSubjectsInput = {
   supervisors?: Prisma.UserUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUpdateManyWithoutClassNestedInput
 }
 
@@ -1133,6 +1257,7 @@ export type ClassLevelUncheckedUpdateWithoutSubjectsInput = {
   supervisors?: Prisma.UserUncheckedUpdateManyWithoutSupervisedClassesNestedInput
   supervisorTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutClassNestedInput
   messages?: Prisma.MessageClassUncheckedUpdateManyWithoutClassNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutClassNestedInput
   timetableSlots?: Prisma.TimetableSlotUncheckedUpdateManyWithoutClassNestedInput
 }
 
@@ -1156,6 +1281,7 @@ export type ClassLevelCountOutputType = {
   supervisors: number
   supervisorTeachers: number
   messages: number
+  chatMessages: number
   timetableSlots: number
 }
 
@@ -1166,6 +1292,7 @@ export type ClassLevelCountOutputTypeSelect<ExtArgs extends runtime.Types.Extens
   supervisors?: boolean | ClassLevelCountOutputTypeCountSupervisorsArgs
   supervisorTeachers?: boolean | ClassLevelCountOutputTypeCountSupervisorTeachersArgs
   messages?: boolean | ClassLevelCountOutputTypeCountMessagesArgs
+  chatMessages?: boolean | ClassLevelCountOutputTypeCountChatMessagesArgs
   timetableSlots?: boolean | ClassLevelCountOutputTypeCountTimetableSlotsArgs
 }
 
@@ -1224,6 +1351,13 @@ export type ClassLevelCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.T
 /**
  * ClassLevelCountOutputType without action
  */
+export type ClassLevelCountOutputTypeCountChatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatMessageWhereInput
+}
+
+/**
+ * ClassLevelCountOutputType without action
+ */
 export type ClassLevelCountOutputTypeCountTimetableSlotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TimetableSlotWhereInput
 }
@@ -1241,6 +1375,7 @@ export type ClassLevelSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   supervisors?: boolean | Prisma.ClassLevel$supervisorsArgs<ExtArgs>
   supervisorTeachers?: boolean | Prisma.ClassLevel$supervisorTeachersArgs<ExtArgs>
   messages?: boolean | Prisma.ClassLevel$messagesArgs<ExtArgs>
+  chatMessages?: boolean | Prisma.ClassLevel$chatMessagesArgs<ExtArgs>
   timetableSlots?: boolean | Prisma.ClassLevel$timetableSlotsArgs<ExtArgs>
   _count?: boolean | Prisma.ClassLevelCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["classLevel"]>
@@ -1277,6 +1412,7 @@ export type ClassLevelInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   supervisors?: boolean | Prisma.ClassLevel$supervisorsArgs<ExtArgs>
   supervisorTeachers?: boolean | Prisma.ClassLevel$supervisorTeachersArgs<ExtArgs>
   messages?: boolean | Prisma.ClassLevel$messagesArgs<ExtArgs>
+  chatMessages?: boolean | Prisma.ClassLevel$chatMessagesArgs<ExtArgs>
   timetableSlots?: boolean | Prisma.ClassLevel$timetableSlotsArgs<ExtArgs>
   _count?: boolean | Prisma.ClassLevelCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1292,6 +1428,7 @@ export type $ClassLevelPayload<ExtArgs extends runtime.Types.Extensions.Internal
     supervisors: Prisma.$UserPayload<ExtArgs>[]
     supervisorTeachers: Prisma.$SupervisorTeacherPayload<ExtArgs>[]
     messages: Prisma.$MessageClassPayload<ExtArgs>[]
+    chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
     timetableSlots: Prisma.$TimetableSlotPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1700,6 +1837,7 @@ export interface Prisma__ClassLevelClient<T, Null = never, ExtArgs extends runti
   supervisors<T extends Prisma.ClassLevel$supervisorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClassLevel$supervisorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supervisorTeachers<T extends Prisma.ClassLevel$supervisorTeachersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClassLevel$supervisorTeachersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupervisorTeacherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.ClassLevel$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClassLevel$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageClassPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chatMessages<T extends Prisma.ClassLevel$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClassLevel$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   timetableSlots<T extends Prisma.ClassLevel$timetableSlotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClassLevel$timetableSlotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimetableSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2269,6 +2407,30 @@ export type ClassLevel$messagesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.MessageClassScalarFieldEnum | Prisma.MessageClassScalarFieldEnum[]
+}
+
+/**
+ * ClassLevel.chatMessages
+ */
+export type ClassLevel$chatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatMessage
+   */
+  select?: Prisma.ChatMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatMessage
+   */
+  omit?: Prisma.ChatMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatMessageInclude<ExtArgs> | null
+  where?: Prisma.ChatMessageWhereInput
+  orderBy?: Prisma.ChatMessageOrderByWithRelationInput | Prisma.ChatMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ChatMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
 }
 
 /**
