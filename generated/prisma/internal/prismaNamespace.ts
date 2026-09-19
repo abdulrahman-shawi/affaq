@@ -420,7 +420,8 @@ export const ModelName = {
   Notification: 'Notification',
   SiteSettings: 'SiteSettings',
   ChatMessage: 'ChatMessage',
-  ChatReaction: 'ChatReaction'
+  ChatReaction: 'ChatReaction',
+  ShowcasePost: 'ShowcasePost'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -436,7 +437,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "supervisorTeacher" | "timetableSlot" | "quiz" | "quizQuestion" | "quizAttempt" | "notification" | "siteSettings" | "chatMessage" | "chatReaction"
+    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "supervisorTeacher" | "timetableSlot" | "quiz" | "quizQuestion" | "quizAttempt" | "notification" | "siteSettings" | "chatMessage" | "chatReaction" | "showcasePost"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2216,6 +2217,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ShowcasePost: {
+      payload: Prisma.$ShowcasePostPayload<ExtArgs>
+      fields: Prisma.ShowcasePostFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShowcasePostFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShowcasePostFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>
+        }
+        findFirst: {
+          args: Prisma.ShowcasePostFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShowcasePostFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>
+        }
+        findMany: {
+          args: Prisma.ShowcasePostFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>[]
+        }
+        create: {
+          args: Prisma.ShowcasePostCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>
+        }
+        createMany: {
+          args: Prisma.ShowcasePostCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShowcasePostCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>[]
+        }
+        delete: {
+          args: Prisma.ShowcasePostDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>
+        }
+        update: {
+          args: Prisma.ShowcasePostUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShowcasePostDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShowcasePostUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShowcasePostUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShowcasePostUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShowcasePostPayload>
+        }
+        aggregate: {
+          args: Prisma.ShowcasePostAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShowcasePost>
+        }
+        groupBy: {
+          args: Prisma.ShowcasePostGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShowcasePostGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShowcasePostCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShowcasePostCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2555,6 +2630,19 @@ export const ChatReactionScalarFieldEnum = {
 export type ChatReactionScalarFieldEnum = (typeof ChatReactionScalarFieldEnum)[keyof typeof ChatReactionScalarFieldEnum]
 
 
+export const ShowcasePostScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  mediaUrl: 'mediaUrl',
+  mediaType: 'mediaType',
+  caption: 'caption',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type ShowcasePostScalarFieldEnum = (typeof ShowcasePostScalarFieldEnum)[keyof typeof ShowcasePostScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2852,6 +2940,7 @@ export type GlobalOmitConfig = {
   siteSettings?: Prisma.SiteSettingsOmit
   chatMessage?: Prisma.ChatMessageOmit
   chatReaction?: Prisma.ChatReactionOmit
+  showcasePost?: Prisma.ShowcasePostOmit
 }
 
 /* Types for Logging */

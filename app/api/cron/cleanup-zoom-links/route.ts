@@ -4,11 +4,13 @@ import { prisma } from "@/app/lib/prisma";
 export const dynamic = "force-dynamic";
 
 /**
- * Cron endpoint: يحذف روابط زوم بعد مرور 30 دقيقة على بداية الحصة.
+ * Cron endpoint: يحذف روابط زوم بعد مرور ساعتين على بداية الحصة.
  * يشمل الحصص الأسبوعية (TimetableSlot) والحصص الفعلية (Session).
  * شغّله كل 10–15 دقيقة. Protect with CRON_SECRET:
  *   Authorization: Bearer <CRON_SECRET>
  */
+const ZOOM_LINK_TTL_MINUTES = 2 * 60;
+
 export async function GET(req: Request) {
   try {
     const secret = process.env.CRON_SECRET;
@@ -30,12 +32,12 @@ export async function GET(req: Request) {
     const sessionsResult = await prisma.session.updateMany({
       where: {
         zoomLink: { not: null },
-        date: { lte: new Date(now.getTime() - 30 * 60 * 1000) },
+        date: { lte: new Date(now.getTime() - ZOOM_LINK_TTL_MINUTES * 60 * 1000) },
       },
       data: { zoomLink: null },
     });
 
-    // الحصص الأسبوعية المتكررة: حصص يوم اليوم التي بدأت منذ 30 دقيقة أو أكثر
+    // الحصص الأسبوعية المتكررة: حصص يوم اليوم التي بدأت منذ ساعتين أو أكثر
     const slots = await prisma.timetableSlot.findMany({
       where: { dayOfWeek: tzNow.getDay(), zoomLink: { not: null } },
       select: { id: true, startTime: true },
@@ -43,7 +45,7 @@ export async function GET(req: Request) {
     const expiredSlotIds = slots
       .filter((s) => {
         const [h, m] = s.startTime.split(":").map(Number);
-        return h * 60 + m + 30 <= nowMinutes;
+        return h * 60 + m + ZOOM_LINK_TTL_MINUTES <= nowMinutes;
       })
       .map((s) => s.id);
 

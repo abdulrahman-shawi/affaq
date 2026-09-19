@@ -137,3 +137,8 @@ export type ChatMessage = Prisma.ChatMessageModel
  * 
  */
 export type ChatReaction = Prisma.ChatReactionModel
+/**
+ * Model ShowcasePost
+ * 
+ */
+export type ShowcasePost = Prisma.ShowcasePostModel

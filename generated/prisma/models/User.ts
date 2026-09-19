@@ -214,6 +214,7 @@ export type UserWhereInput = {
   messageRecipients?: Prisma.MessageRecipientListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
   chatReactions?: Prisma.ChatReactionListRelationFilter
+  showcasePosts?: Prisma.ShowcasePostListRelationFilter
   supervisedClasses?: Prisma.ClassLevelListRelationFilter
   supervisedTeachers?: Prisma.SupervisorTeacherListRelationFilter
 }
@@ -235,6 +236,7 @@ export type UserOrderByWithRelationInput = {
   messageRecipients?: Prisma.MessageRecipientOrderByRelationAggregateInput
   chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
   chatReactions?: Prisma.ChatReactionOrderByRelationAggregateInput
+  showcasePosts?: Prisma.ShowcasePostOrderByRelationAggregateInput
   supervisedClasses?: Prisma.ClassLevelOrderByRelationAggregateInput
   supervisedTeachers?: Prisma.SupervisorTeacherOrderByRelationAggregateInput
 }
@@ -259,6 +261,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   messageRecipients?: Prisma.MessageRecipientListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
   chatReactions?: Prisma.ChatReactionListRelationFilter
+  showcasePosts?: Prisma.ShowcasePostListRelationFilter
   supervisedClasses?: Prisma.ClassLevelListRelationFilter
   supervisedTeachers?: Prisma.SupervisorTeacherListRelationFilter
 }, "id" | "email" | "phone">
@@ -308,6 +311,7 @@ export type UserCreateInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -329,6 +333,7 @@ export type UserUncheckedCreateInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -350,6 +355,7 @@ export type UserUpdateInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -371,6 +377,7 @@ export type UserUncheckedUpdateInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -632,6 +639,20 @@ export type UserUpdateOneRequiredWithoutChatReactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatReactionsInput, Prisma.UserUpdateWithoutChatReactionsInput>, Prisma.UserUncheckedUpdateWithoutChatReactionsInput>
 }
 
+export type UserCreateNestedOneWithoutShowcasePostsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutShowcasePostsInput, Prisma.UserUncheckedCreateWithoutShowcasePostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutShowcasePostsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutShowcasePostsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutShowcasePostsInput, Prisma.UserUncheckedCreateWithoutShowcasePostsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutShowcasePostsInput
+  upsert?: Prisma.UserUpsertWithoutShowcasePostsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutShowcasePostsInput, Prisma.UserUpdateWithoutShowcasePostsInput>, Prisma.UserUncheckedUpdateWithoutShowcasePostsInput>
+}
+
 export type UserCreateWithoutParentInput = {
   id?: string
   email?: string | null
@@ -648,6 +669,7 @@ export type UserCreateWithoutParentInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -668,6 +690,7 @@ export type UserUncheckedCreateWithoutParentInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -704,6 +727,7 @@ export type UserUpdateWithoutParentInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -724,6 +748,7 @@ export type UserUncheckedUpdateWithoutParentInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -744,6 +769,7 @@ export type UserCreateWithoutStudentInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -764,6 +790,7 @@ export type UserUncheckedCreateWithoutStudentInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -800,6 +827,7 @@ export type UserUpdateWithoutStudentInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -820,6 +848,7 @@ export type UserUncheckedUpdateWithoutStudentInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -840,6 +869,7 @@ export type UserCreateWithoutTeacherInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -860,6 +890,7 @@ export type UserUncheckedCreateWithoutTeacherInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -896,6 +927,7 @@ export type UserUpdateWithoutTeacherInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -916,6 +948,7 @@ export type UserUncheckedUpdateWithoutTeacherInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -936,6 +969,7 @@ export type UserCreateWithoutSentMessagesInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -956,6 +990,7 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -992,6 +1027,7 @@ export type UserUpdateWithoutSentMessagesInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -1012,6 +1048,7 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -1032,6 +1069,7 @@ export type UserCreateWithoutMessageRecipientsInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -1052,6 +1090,7 @@ export type UserUncheckedCreateWithoutMessageRecipientsInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -1088,6 +1127,7 @@ export type UserUpdateWithoutMessageRecipientsInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -1108,6 +1148,7 @@ export type UserUncheckedUpdateWithoutMessageRecipientsInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -1129,6 +1170,7 @@ export type UserCreateWithoutSupervisedClassesInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
 
@@ -1149,6 +1191,7 @@ export type UserUncheckedCreateWithoutSupervisedClassesInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
 
@@ -1204,6 +1247,7 @@ export type UserCreateWithoutSupervisedTeachersInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
 }
 
@@ -1224,6 +1268,7 @@ export type UserUncheckedCreateWithoutSupervisedTeachersInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
 }
 
@@ -1260,6 +1305,7 @@ export type UserUpdateWithoutSupervisedTeachersInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
 }
 
@@ -1280,6 +1326,7 @@ export type UserUncheckedUpdateWithoutSupervisedTeachersInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
 }
 
@@ -1299,6 +1346,7 @@ export type UserCreateWithoutNotificationsInput = {
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -1319,6 +1367,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -1355,6 +1404,7 @@ export type UserUpdateWithoutNotificationsInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -1375,6 +1425,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -1395,6 +1446,7 @@ export type UserCreateWithoutChatMessagesInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -1415,6 +1467,7 @@ export type UserUncheckedCreateWithoutChatMessagesInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -1451,6 +1504,7 @@ export type UserUpdateWithoutChatMessagesInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -1471,6 +1525,7 @@ export type UserUncheckedUpdateWithoutChatMessagesInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -1491,6 +1546,7 @@ export type UserCreateWithoutChatReactionsInput = {
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  showcasePosts?: Prisma.ShowcasePostCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
 }
@@ -1511,6 +1567,7 @@ export type UserUncheckedCreateWithoutChatReactionsInput = {
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedCreateNestedManyWithoutCreatedByInput
   supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
 }
@@ -1547,6 +1604,7 @@ export type UserUpdateWithoutChatReactionsInput = {
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
@@ -1567,6 +1625,107 @@ export type UserUncheckedUpdateWithoutChatReactionsInput = {
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
+  supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
+  supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
+}
+
+export type UserCreateWithoutShowcasePostsInput = {
+  id?: string
+  email?: string | null
+  password: string
+  name: string
+  role: string
+  phone?: string | null
+  image?: string | null
+  createdAt?: Date | string
+  teacher?: Prisma.TeacherCreateNestedOneWithoutUserInput
+  parent?: Prisma.ParentCreateNestedOneWithoutUserInput
+  student?: Prisma.StudentCreateNestedOneWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  chatReactions?: Prisma.ChatReactionCreateNestedManyWithoutUserInput
+  supervisedClasses?: Prisma.ClassLevelCreateNestedManyWithoutSupervisorsInput
+  supervisedTeachers?: Prisma.SupervisorTeacherCreateNestedManyWithoutSupervisorInput
+}
+
+export type UserUncheckedCreateWithoutShowcasePostsInput = {
+  id?: string
+  email?: string | null
+  password: string
+  name: string
+  role: string
+  phone?: string | null
+  image?: string | null
+  createdAt?: Date | string
+  teacher?: Prisma.TeacherUncheckedCreateNestedOneWithoutUserInput
+  parent?: Prisma.ParentUncheckedCreateNestedOneWithoutUserInput
+  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatReactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutUserInput
+  supervisedClasses?: Prisma.ClassLevelUncheckedCreateNestedManyWithoutSupervisorsInput
+  supervisedTeachers?: Prisma.SupervisorTeacherUncheckedCreateNestedManyWithoutSupervisorInput
+}
+
+export type UserCreateOrConnectWithoutShowcasePostsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutShowcasePostsInput, Prisma.UserUncheckedCreateWithoutShowcasePostsInput>
+}
+
+export type UserUpsertWithoutShowcasePostsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutShowcasePostsInput, Prisma.UserUncheckedUpdateWithoutShowcasePostsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutShowcasePostsInput, Prisma.UserUncheckedCreateWithoutShowcasePostsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutShowcasePostsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutShowcasePostsInput, Prisma.UserUncheckedUpdateWithoutShowcasePostsInput>
+}
+
+export type UserUpdateWithoutShowcasePostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUpdateOneWithoutUserNestedInput
+  parent?: Prisma.ParentUpdateOneWithoutUserNestedInput
+  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  supervisedClasses?: Prisma.ClassLevelUpdateManyWithoutSupervisorsNestedInput
+  supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutShowcasePostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUncheckedUpdateOneWithoutUserNestedInput
+  parent?: Prisma.ParentUncheckedUpdateOneWithoutUserNestedInput
+  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
   supervisedClasses?: Prisma.ClassLevelUncheckedUpdateManyWithoutSupervisorsNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
@@ -1588,6 +1747,7 @@ export type UserUpdateWithoutSupervisedClassesInput = {
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUpdateManyWithoutCreatedByNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUpdateManyWithoutSupervisorNestedInput
 }
 
@@ -1608,6 +1768,7 @@ export type UserUncheckedUpdateWithoutSupervisedClassesInput = {
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatReactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutUserNestedInput
+  showcasePosts?: Prisma.ShowcasePostUncheckedUpdateManyWithoutCreatedByNestedInput
   supervisedTeachers?: Prisma.SupervisorTeacherUncheckedUpdateManyWithoutSupervisorNestedInput
 }
 
@@ -1633,6 +1794,7 @@ export type UserCountOutputType = {
   messageRecipients: number
   chatMessages: number
   chatReactions: number
+  showcasePosts: number
   supervisedClasses: number
   supervisedTeachers: number
 }
@@ -1643,6 +1805,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   messageRecipients?: boolean | UserCountOutputTypeCountMessageRecipientsArgs
   chatMessages?: boolean | UserCountOutputTypeCountChatMessagesArgs
   chatReactions?: boolean | UserCountOutputTypeCountChatReactionsArgs
+  showcasePosts?: boolean | UserCountOutputTypeCountShowcasePostsArgs
   supervisedClasses?: boolean | UserCountOutputTypeCountSupervisedClassesArgs
   supervisedTeachers?: boolean | UserCountOutputTypeCountSupervisedTeachersArgs
 }
@@ -1695,6 +1858,13 @@ export type UserCountOutputTypeCountChatReactionsArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountShowcasePostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShowcasePostWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountSupervisedClassesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ClassLevelWhereInput
 }
@@ -1724,6 +1894,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   messageRecipients?: boolean | Prisma.User$messageRecipientsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
   chatReactions?: boolean | Prisma.User$chatReactionsArgs<ExtArgs>
+  showcasePosts?: boolean | Prisma.User$showcasePostsArgs<ExtArgs>
   supervisedClasses?: boolean | Prisma.User$supervisedClassesArgs<ExtArgs>
   supervisedTeachers?: boolean | Prisma.User$supervisedTeachersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1772,6 +1943,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   messageRecipients?: boolean | Prisma.User$messageRecipientsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
   chatReactions?: boolean | Prisma.User$chatReactionsArgs<ExtArgs>
+  showcasePosts?: boolean | Prisma.User$showcasePostsArgs<ExtArgs>
   supervisedClasses?: boolean | Prisma.User$supervisedClassesArgs<ExtArgs>
   supervisedTeachers?: boolean | Prisma.User$supervisedTeachersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1790,6 +1962,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     messageRecipients: Prisma.$MessageRecipientPayload<ExtArgs>[]
     chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
     chatReactions: Prisma.$ChatReactionPayload<ExtArgs>[]
+    showcasePosts: Prisma.$ShowcasePostPayload<ExtArgs>[]
     supervisedClasses: Prisma.$ClassLevelPayload<ExtArgs>[]
     supervisedTeachers: Prisma.$SupervisorTeacherPayload<ExtArgs>[]
   }
@@ -2204,6 +2377,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   messageRecipients<T extends Prisma.User$messageRecipientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messageRecipientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatMessages<T extends Prisma.User$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatReactions<T extends Prisma.User$chatReactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatReactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  showcasePosts<T extends Prisma.User$showcasePostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$showcasePostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShowcasePostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supervisedClasses<T extends Prisma.User$supervisedClassesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supervisedClassesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ClassLevelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supervisedTeachers<T extends Prisma.User$supervisedTeachersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supervisedTeachersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupervisorTeacherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2810,6 +2984,30 @@ export type User$chatReactionsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ChatReactionScalarFieldEnum | Prisma.ChatReactionScalarFieldEnum[]
+}
+
+/**
+ * User.showcasePosts
+ */
+export type User$showcasePostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShowcasePost
+   */
+  select?: Prisma.ShowcasePostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShowcasePost
+   */
+  omit?: Prisma.ShowcasePostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShowcasePostInclude<ExtArgs> | null
+  where?: Prisma.ShowcasePostWhereInput
+  orderBy?: Prisma.ShowcasePostOrderByWithRelationInput | Prisma.ShowcasePostOrderByWithRelationInput[]
+  cursor?: Prisma.ShowcasePostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShowcasePostScalarFieldEnum | Prisma.ShowcasePostScalarFieldEnum[]
 }
 
 /**

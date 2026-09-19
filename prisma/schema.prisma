@@ -34,6 +34,7 @@ model User {
 
   chatMessages  ChatMessage[]
   chatReactions ChatReaction[]
+  showcasePosts ShowcasePost[]
 
   // الصفوف التي يشرف عليها (للمستخدمين بدور supervisor فقط)
   supervisedClasses ClassLevel[] @relation("SupervisorClasses")
@@ -78,6 +79,7 @@ model Student {
   submissions  Submission[]
   grades       Grade[]
   quizAttempts QuizAttempt[]
+  showcasePosts ShowcasePost[]
 }
 
 model Teacher {
@@ -349,4 +351,19 @@ model ChatReaction {
   emoji     String
 
   @@id([messageId, userId, emoji])
+}
+
+// منشور تميّز — صورة أو فيديو لطالب متميز يظهر لجميع الأدوار
+model ShowcasePost {
+  id          String   @id @default(uuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  mediaUrl    String   // رابط الصورة أو الفيديو (Vercel Blob)
+  mediaType   String   // "image" | "video"
+  caption     String?
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
 }

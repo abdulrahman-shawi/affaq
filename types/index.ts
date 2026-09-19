@@ -454,3 +454,25 @@ export interface CreateSubjectInput {
   name: string;
   classIds?: string[];
 }
+
+// ===== صفحة نجوم الأكاديمية (عرض الطلاب المتميزين) =====
+
+export interface ShowcasePostDTO {
+  id: string;
+  mediaUrl: string;
+  mediaType: "image" | "video";
+  caption: string | null;
+  createdAt: string;
+  studentId: string;
+  studentName: string;
+  className: string | null;
+  createdById: string;
+  createdByName: string;
+}
+
+export interface CreateShowcasePostInput {
+  studentId: string;
+  mediaUrl: string;
+  mediaType: "image" | "video";
+  caption?: string;
+}

@@ -74,7 +74,8 @@ export const ModelName = {
   Notification: 'Notification',
   SiteSettings: 'SiteSettings',
   ChatMessage: 'ChatMessage',
-  ChatReaction: 'ChatReaction'
+  ChatReaction: 'ChatReaction',
+  ShowcasePost: 'ShowcasePost'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -391,6 +392,19 @@ export const ChatReactionScalarFieldEnum = {
 } as const
 
 export type ChatReactionScalarFieldEnum = (typeof ChatReactionScalarFieldEnum)[keyof typeof ChatReactionScalarFieldEnum]
+
+
+export const ShowcasePostScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  mediaUrl: 'mediaUrl',
+  mediaType: 'mediaType',
+  caption: 'caption',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type ShowcasePostScalarFieldEnum = (typeof ShowcasePostScalarFieldEnum)[keyof typeof ShowcasePostScalarFieldEnum]
 
 
 export const SortOrder = {
