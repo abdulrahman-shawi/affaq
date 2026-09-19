@@ -33,6 +33,10 @@ function isAudioUrl(url: string) {
   return /\.(mp3|wav|m4a|aac|ogg|oga|webm)(\?.*)?$/i.test(url);
 }
 
+function isVideoUrl(url: string) {
+  return /\.(mp4|mov|webm|avi|mkv|3gp)(\?.*)?$/i.test(url);
+}
+
 function QuoteBlock({
   senderName,
   text,
@@ -57,7 +61,12 @@ function QuoteBlock({
           {senderName}
         </div>
         <div className="line-clamp-2 text-xs text-muted-foreground">
-          {text || (isAudioUrl(imageUrl ?? "") ? "رسالة صوتية" : "صورة")}
+          {text ||
+            (isAudioUrl(imageUrl ?? "")
+              ? "رسالة صوتية"
+              : isVideoUrl(imageUrl ?? "")
+                ? "فيديو"
+                : "صورة")}
         </div>
       </div>
     </div>
@@ -297,6 +306,12 @@ export default function MessageBubble({
             )}
             {message.imageUrl && isAudioUrl(message.imageUrl) ? (
               <VoiceMessage src={message.imageUrl} />
+            ) : message.imageUrl && isVideoUrl(message.imageUrl) ? (
+              <video
+                src={message.imageUrl}
+                controls
+                className="mb-1.5 block w-full max-w-[260px] rounded-lg"
+              />
             ) : message.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img

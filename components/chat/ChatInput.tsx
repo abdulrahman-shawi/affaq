@@ -119,7 +119,7 @@ export default function ChatInput({
         <input
           ref={fileRef}
           type="file"
-          accept="image/*,audio/*"
+          accept="image/*,audio/*,video/*"
           className="hidden"
           onChange={onFile}
         />

@@ -238,7 +238,11 @@ export default function ChatPage() {
                             c.lastMessage.imageUrl ?? ""
                           )
                             ? "رسالة صوتية"
-                            : "مرفق")}
+                            : /\.(mp4|mov|webm|avi|mkv|3gp)(\?.*)?$/i.test(
+                                c.lastMessage.imageUrl ?? ""
+                              )
+                              ? "فيديو"
+                              : "مرفق")}
                       </span>
                     </div>
                   ) : (
