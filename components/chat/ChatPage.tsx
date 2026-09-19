@@ -232,8 +232,13 @@ export default function ChatPage() {
                         <ImageIcon className="h-3.5 w-3.5 flex-none" />
                       )}
                       <span className="truncate">
-                        {c.lastMessage.senderName}:{" "}
-                        {c.lastMessage.content || "صورة"}
+                        {c.lastMessage.senderName}: {" "}
+                        {c.lastMessage.content ||
+                          (/\.(mp3|wav|m4a|aac|ogg|oga|webm)(\?.*)?$/i.test(
+                            c.lastMessage.imageUrl ?? ""
+                          )
+                            ? "رسالة صوتية"
+                            : "مرفق")}
                       </span>
                     </div>
                   ) : (

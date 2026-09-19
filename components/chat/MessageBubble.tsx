@@ -29,6 +29,10 @@ function formatTime(iso: string) {
   }).format(new Date(iso));
 }
 
+function isAudioUrl(url: string) {
+  return /\.(mp3|wav|m4a|aac|ogg|oga|webm)(\?.*)?$/i.test(url);
+}
+
 function QuoteBlock({
   senderName,
   text,
@@ -40,7 +44,7 @@ function QuoteBlock({
 }) {
   return (
     <div className="mb-1.5 flex items-center gap-2 rounded-md border-s-[3px] border-emerald-500 bg-black/5 px-2 py-1">
-      {imageUrl && (
+      {imageUrl && !isAudioUrl(imageUrl) && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={imageUrl}
@@ -53,7 +57,7 @@ function QuoteBlock({
           {senderName}
         </div>
         <div className="line-clamp-2 text-xs text-muted-foreground">
-          {text || "صورة"}
+          {text || (isAudioUrl(imageUrl ?? "") ? "رسالة صوتية" : "صورة")}
         </div>
       </div>
     </div>
@@ -213,7 +217,16 @@ export default function MessageBubble({
                 imageUrl={message.replyTo.imageUrl}
               />
             )}
-            {message.imageUrl && (
+            {message.imageUrl && isAudioUrl(message.imageUrl) ? (
+              <div className="mb-1.5 w-full max-w-[260px]">
+                <audio
+                  controls
+                  src={message.imageUrl}
+                  className="w-full"
+                  dir="ltr"
+                />
+              </div>
+            ) : message.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={message.imageUrl}
@@ -221,7 +234,7 @@ export default function MessageBubble({
                 onClick={() => onImageClick(message.imageUrl!)}
                 className="mb-1.5 block w-full max-w-[260px] cursor-pointer rounded-lg"
               />
-            )}
+            ) : null}
             {message.content}
             <div className="mt-1 text-end text-[11px] text-muted-foreground">
               {formatTime(message.createdAt)}

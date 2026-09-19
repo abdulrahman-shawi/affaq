@@ -81,12 +81,15 @@ export async function POST(
       typeof body.content === "string" ? body.content.trim() : "";
     const imageUrl =
       typeof body.imageUrl === "string" && body.imageUrl ? body.imageUrl : null;
+    const audioUrl =
+      typeof body.audioUrl === "string" && body.audioUrl ? body.audioUrl : null;
+    const attachmentUrl = imageUrl ?? audioUrl;
     const replyToId =
       typeof body.replyToId === "string" && body.replyToId
         ? body.replyToId
         : null;
 
-    if (!content && !imageUrl) {
+    if (!content && !attachmentUrl) {
       return NextResponse.json(
         { error: "الرسالة فارغة" },
         { status: 400 }
@@ -116,7 +119,7 @@ export async function POST(
         classId: params.classId,
         senderId: sessionUser.id,
         content: content || null,
-        imageUrl,
+        imageUrl: attachmentUrl,
         replyToId,
       },
       include: chatMessageInclude,

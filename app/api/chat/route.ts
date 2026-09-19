@@ -5,6 +5,10 @@ import { getChatClassIds } from "@/app/lib/chatAccess";
 
 export const dynamic = "force-dynamic";
 
+function isAudioUrl(url: string | null) {
+  return !!url && /\.(mp3|wav|m4a|aac|ogg|oga|webm)(\?.*)?$/i.test(url);
+}
+
 // قائمة محادثات الصفوف المتاحة للمستخدم مع آخر رسالة في كل منها
 export async function GET() {
   try {

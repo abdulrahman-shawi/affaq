@@ -2,8 +2,9 @@
 
 import { useRef, useState } from "react";
 import { upload } from "@vercel/blob/client";
-import { ImagePlus, Loader2, Send, X } from "lucide-react";
+import { ImagePlus, Loader2, Mic, Send, X } from "lucide-react";
 import { useToast } from "@/components/ui/toaster";
+import AudioRecorder from "@/components/forms/AudioRecorder";
 import type { ChatMessageDTO } from "@/hooks/useChat";
 
 export default function ChatInput({
@@ -50,10 +51,8 @@ export default function ChatInput({
     doSend({ content: t, replyToId: replyTo?.id });
   };
 
-  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file || sending) return;
+  const uploadAttachment = async (file: File) => {
+    if (sending) return;
     setSending(true);
     try {
       const blob = await upload(file.name, file, {
@@ -69,10 +68,20 @@ export default function ChatInput({
       setText("");
       onCancelReply();
     } catch {
-      toast({ title: "فشل في رفع الصورة", variant: "destructive" });
+      toast({
+        title: "فشل في رفع المرفق الصوتي أو الصورة",
+        variant: "destructive",
+      });
     } finally {
       setSending(false);
     }
+  };
+
+  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    await uploadAttachment(file);
   };
 
   return (
@@ -92,7 +101,7 @@ export default function ChatInput({
               {replyTo.sender.name}
             </div>
             <div className="truncate text-xs text-muted-foreground">
-              {replyTo.content || "صورة"}
+              {replyTo.content || "مرفق"}
             </div>
           </div>
           <button
@@ -110,7 +119,7 @@ export default function ChatInput({
         <input
           ref={fileRef}
           type="file"
-          accept="image/*"
+          accept="image/*,audio/*"
           className="hidden"
           onChange={onFile}
         />
@@ -119,10 +128,18 @@ export default function ChatInput({
           onClick={() => fileRef.current?.click()}
           disabled={sending}
           className="flex-none text-muted-foreground transition-colors hover:text-emerald-600 disabled:opacity-50"
-          aria-label="إرفاق صورة"
+          aria-label="إرفاق صورة أو ملف صوتي"
         >
           <ImagePlus className="h-6 w-6" />
         </button>
+
+        <div className="flex-none">
+          <AudioRecorder
+            onRecorded={uploadAttachment}
+            onClear={() => undefined}
+          />
+        </div>
+
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
