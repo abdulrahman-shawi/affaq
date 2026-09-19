@@ -135,6 +135,7 @@ export default function ChatInput({
 
         <div className="flex-none">
           <AudioRecorder
+            compact
             onRecorded={uploadAttachment}
             onClear={() => undefined}
           />

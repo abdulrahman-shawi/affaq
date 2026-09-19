@@ -14,9 +14,11 @@ function formatElapsed(seconds: number) {
 export default function AudioRecorder({
   onRecorded,
   onClear,
+  compact = false,
 }: {
   onRecorded: (file: File) => void;
   onClear?: () => void;
+  compact?: boolean;
 }) {
   const [recording, setRecording] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -101,11 +103,22 @@ export default function AudioRecorder({
   }
 
   return (
-    <div className="space-y-2 rounded-md border p-3">
+    <div className={compact ? "w-auto" : "space-y-2 rounded-md border p-3"}>
       {error && <p className="text-sm text-destructive">{error}</p>}
       {audioUrl ? (
-        <div className="flex items-center gap-2">
-          <audio controls src={audioUrl} className="h-9 flex-1" dir="ltr" />
+        <div
+          className={
+            compact
+              ? "flex items-center gap-2 rounded-full border bg-muted px-2 py-1"
+              : "flex items-center gap-2"
+          }
+        >
+          <audio
+            controls
+            src={audioUrl}
+            className={compact ? "h-8 w-36" : "h-9 flex-1"}
+            dir="ltr"
+          />
           <Button
             type="button"
             variant="ghost"
@@ -117,31 +130,37 @@ export default function AudioRecorder({
           </Button>
         </div>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className={compact ? "flex items-center gap-1" : "flex items-center gap-2"}>
           {recording ? (
             <Button
               type="button"
               variant="destructive"
-              size="sm"
+              size={compact ? "icon" : "sm"}
               onClick={stopRecording}
+              title="إيقاف التسجيل"
             >
               <Square className="h-4 w-4" />
-              إيقاف
+              {!compact && "إيقاف"}
             </Button>
           ) : (
             <Button
               type="button"
-              variant="outline"
-              size="sm"
+              variant={compact ? "secondary" : "outline"}
+              size={compact ? "icon" : "sm"}
               onClick={startRecording}
+              title="تسجيل رسالة صوتية"
             >
               <Mic className="h-4 w-4" />
-              تسجيل
+              {!compact && "تسجيل"}
             </Button>
           )}
           {recording && (
             <span
-              className="flex items-center gap-1 text-sm font-semibold text-destructive"
+              className={
+                compact
+                  ? "flex items-center gap-1 text-xs font-semibold text-destructive"
+                  : "flex items-center gap-1 text-sm font-semibold text-destructive"
+              }
               dir="ltr"
             >
               <span className="h-2 w-2 animate-pulse rounded-full bg-destructive" />
@@ -150,7 +169,7 @@ export default function AudioRecorder({
           )}
         </div>
       )}
-      {audioUrl && fileName && (
+      {!compact && audioUrl && fileName && (
         <p className="text-xs text-muted-foreground" dir="ltr">
           {fileName}
         </p>
