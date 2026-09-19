@@ -80,7 +80,7 @@ export default function ZoomLinkForm({
               onChange={(e) => setLink(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              يُحذف الرابط تلقائيًا بعد نصف ساعة من بداية الحصة — اتركه فارغًا
+              يُحذف الرابط تلقائيًا بعد ساعتان من بداية الحصة — اتركه فارغًا
               لمسحه
             </p>
           </div>
