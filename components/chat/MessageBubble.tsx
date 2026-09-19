@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Reply } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Download, Pause, Play, Reply } from "lucide-react";
 import { cn } from "@/app/lib/utils";
 import type { ChatMessageDTO } from "@/hooks/useChat";
 
@@ -60,6 +60,84 @@ function QuoteBlock({
           {text || (isAudioUrl(imageUrl ?? "") ? "رسالة صوتية" : "صورة")}
         </div>
       </div>
+    </div>
+  );
+}
+
+function VoiceMessage({ src }: { src: string }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playing, setPlaying] = useState(false);
+  const [duration, setDuration] = useState<number | null>(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onLoadedMetadata = () => setDuration(audio.duration || null);
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    const onEnded = () => setPlaying(false);
+
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("ended", onEnded);
+
+    return () => {
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, []);
+
+  const togglePlayback = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      await audio.play();
+    } else {
+      audio.pause();
+    }
+  };
+
+  return (
+    <div className="mb-1.5 flex w-full max-w-[260px] items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-2 py-1.5 shadow-sm">
+      <audio ref={audioRef} src={src} preload="metadata" />
+
+      <button
+        type="button"
+        onClick={togglePlayback}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm transition hover:bg-emerald-600"
+        aria-label={playing ? "إيقاف الصوت" : "تشغيل الصوت"}
+      >
+        {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
+      </button>
+
+      <div className="min-w-0 flex-1" dir="ltr">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-emerald-100">
+          <div className="h-full w-1/2 rounded-full bg-emerald-500" />
+        </div>
+      </div>
+
+      {duration && (
+        <span className="text-[10px] font-medium text-emerald-700" dir="ltr">
+          {Math.ceil(duration)}s
+        </span>
+      )}
+
+      <a
+        href={src}
+        target="_blank"
+        rel="noopener noreferrer"
+        download
+        className="flex h-7 w-7 items-center justify-center rounded-full text-emerald-700 transition hover:bg-emerald-50"
+        aria-label="تحميل الملف"
+        title="تحميل الملف"
+      >
+        <Download className="h-3.5 w-3.5" />
+      </a>
     </div>
   );
 }
@@ -218,14 +296,7 @@ export default function MessageBubble({
               />
             )}
             {message.imageUrl && isAudioUrl(message.imageUrl) ? (
-              <div className="mb-1.5 w-full max-w-[260px]">
-                <audio
-                  controls
-                  src={message.imageUrl}
-                  className="w-full"
-                  dir="ltr"
-                />
-              </div>
+              <VoiceMessage src={message.imageUrl} />
             ) : message.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
