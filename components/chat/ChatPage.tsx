@@ -29,6 +29,9 @@ function roomKey(classId: string, teacherId?: string | null) {
   return `${classId}|${teacherId ?? "all"}`;
 }
 
+const selectClassName =
+  "h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
+
 function Conversation({
   classId,
   className,
@@ -182,6 +185,8 @@ export default function ChatPage() {
   const { user, loading: authLoading } = useAuth();
   const { chats, loading, error } = useChatList();
   const [selected, setSelected] = useState<string | null>(null);
+  const [classFilter, setClassFilter] = useState("");
+  const [teacherFilter, setTeacherFilter] = useState("");
 
   // الطالب له غرفة واحدة عادة — يُفتح مباشرة
   useEffect(() => {
@@ -197,6 +202,23 @@ export default function ChatPage() {
     return <EmptyState title="تعذّر التحميل" message={error} />;
   }
   if (!user) return null;
+
+  const classOptions = Array.from(
+    new Map(chats.map((c) => [c.classId, c.className])).entries()
+  );
+  const teacherOptions = Array.from(
+    new Map(
+      chats
+        .filter((c) => c.teacherId && (!classFilter || c.classId === classFilter))
+        .map((c) => [c.teacherId as string, c.teacherName ?? ""])
+    ).entries()
+  );
+
+  const filteredChats = chats.filter(
+    (c) =>
+      (!classFilter || c.classId === classFilter) &&
+      (!teacherFilter || c.teacherId === teacherFilter)
+  );
 
   const current = chats.find(
     (c) => roomKey(c.classId, c.teacherId) === selected
@@ -229,8 +251,44 @@ export default function ChatPage() {
           <div className="border-b px-4 py-3 text-sm font-semibold">
             المحادثات
           </div>
+          <div className="grid grid-cols-2 gap-2 border-b px-4 py-3">
+            <select
+              className={selectClassName}
+              value={classFilter}
+              onChange={(e) => {
+                setClassFilter(e.target.value);
+                setTeacherFilter("");
+              }}
+            >
+              <option value="">كل الصفوف</option>
+              {classOptions.map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+            <select
+              className={selectClassName}
+              value={teacherFilter}
+              onChange={(e) => setTeacherFilter(e.target.value)}
+            >
+              <option value="">كل المعلمين</option>
+              {teacherOptions.map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex-1 divide-y overflow-y-auto">
-            {chats.map((c) => (
+            {filteredChats.length === 0 ? (
+              <EmptyState
+                icon={MessagesSquare}
+                title="لا نتائج"
+                message="لا توجد محادثات مطابقة للفلتر المحدد"
+              />
+            ) : (
+              filteredChats.map((c) => (
               <button
                 key={roomKey(c.classId, c.teacherId)}
                 type="button"
@@ -278,7 +336,8 @@ export default function ChatPage() {
                   </div>
                 )}
               </button>
-            ))}
+              ))
+            )}
           </div>
         </div>
       )}

@@ -11,6 +11,7 @@ import AssignParentDialog from "@/components/forms/AssignParentDialog";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import StatCard from "@/components/shared/StatCard";
 import { useStudents } from "@/hooks/useStudents";
+import { useAuth } from "@/hooks/useAuth";
 import { formatDate } from "@/app/lib/utils";
 import type { StudentDTO } from "@/types";
 
@@ -25,7 +26,10 @@ const selectClassName =
 
 export default function AdminStudentsPage() {
   const { students, loading, refetch } = useStudents();
+  const { role } = useAuth();
   const { toast } = useToast();
+  // إحصائيات أعداد الطلاب تظهر للإدارة فقط — المشرف يرى القائمة دون أعداد
+  const showStats = role === "admin";
   const [classFilter, setClassFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -84,37 +88,39 @@ export default function AdminStudentsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="إجمالي الطلاب"
-          value={stats.total}
-          icon={Users}
-          iconClassName="text-blue-600"
-          iconBgClassName="bg-blue-500/10"
-        />
-        <StatCard
-          title="الطلاب النشطون"
-          value={stats.active}
-          icon={UserCheck}
-          iconClassName="text-emerald-600"
-          iconBgClassName="bg-emerald-500/10"
-        />
-        <StatCard
-          title="اشتراكات تنتهي قريبًا"
-          value={stats.expiringSoon}
-          icon={CalendarClock}
-          iconClassName="text-amber-600"
-          iconBgClassName="bg-amber-500/10"
-          description="خلال 30 يومًا القادمة"
-        />
-        <StatCard
-          title="بدون صف"
-          value={stats.withoutClass}
-          icon={UserX}
-          iconClassName="text-rose-600"
-          iconBgClassName="bg-rose-500/10"
-        />
-      </div>
+      {showStats && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="إجمالي الطلاب"
+            value={stats.total}
+            icon={Users}
+            iconClassName="text-blue-600"
+            iconBgClassName="bg-blue-500/10"
+          />
+          <StatCard
+            title="الطلاب النشطون"
+            value={stats.active}
+            icon={UserCheck}
+            iconClassName="text-emerald-600"
+            iconBgClassName="bg-emerald-500/10"
+          />
+          <StatCard
+            title="اشتراكات تنتهي قريبًا"
+            value={stats.expiringSoon}
+            icon={CalendarClock}
+            iconClassName="text-amber-600"
+            iconBgClassName="bg-amber-500/10"
+            description="خلال 30 يومًا القادمة"
+          />
+          <StatCard
+            title="بدون صف"
+            value={stats.withoutClass}
+            icon={UserX}
+            iconClassName="text-rose-600"
+            iconBgClassName="bg-rose-500/10"
+          />
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap gap-2">
