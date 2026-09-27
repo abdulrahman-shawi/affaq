@@ -25,15 +25,23 @@ function sameDay(a: string, b: string) {
   return new Date(a).toDateString() === new Date(b).toDateString();
 }
 
+function roomKey(classId: string, teacherId?: string | null) {
+  return `${classId}|${teacherId ?? "all"}`;
+}
+
 function Conversation({
   classId,
   className,
+  teacherName,
   viewerId,
+  teacherId,
   onBack,
 }: {
   classId: string;
   className: string;
+  teacherName?: string | null;
   viewerId: string;
+  teacherId?: string | null;
   onBack?: () => void;
 }) {
   const {
@@ -46,7 +54,7 @@ function Conversation({
     loadOlder,
     sendMessage,
     toggleReaction,
-  } = useClassChat(classId, viewerId);
+  } = useClassChat(classId, viewerId, teacherId);
   const [replyTo, setReplyTo] = useState<ChatMessageDTO | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -82,9 +90,11 @@ function Conversation({
           {className.charAt(0)}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold">{className}</div>
+          <div className="truncate text-sm font-semibold">
+            {teacherName ? `${className} • ${teacherName}` : className}
+          </div>
           <div className="text-[11px] text-muted-foreground">
-            {live ? "متصل مباشرة" : "دردشة الصف"}
+            {live ? "متصل مباشرة" : teacherName ? "دردشة المعلم" : "دردشة الصف"}
           </div>
         </div>
       </div>
@@ -173,9 +183,11 @@ export default function ChatPage() {
   const { chats, loading, error } = useChatList();
   const [selected, setSelected] = useState<string | null>(null);
 
-  // الطالب له صف واحد عادة — يُفتح مباشرة
+  // الطالب له غرفة واحدة عادة — يُفتح مباشرة
   useEffect(() => {
-    if (!selected && chats.length === 1) setSelected(chats[0].classId);
+    if (!selected && chats.length === 1) {
+      setSelected(roomKey(chats[0].classId, chats[0].teacherId));
+    }
   }, [chats, selected]);
 
   if (authLoading || loading) {
@@ -186,7 +198,9 @@ export default function ChatPage() {
   }
   if (!user) return null;
 
-  const current = chats.find((c) => c.classId === selected);
+  const current = chats.find(
+    (c) => roomKey(c.classId, c.teacherId) === selected
+  );
 
   return (
     <div
@@ -199,7 +213,9 @@ export default function ChatPage() {
         <Conversation
           classId={current.classId}
           className={current.className}
+          teacherName={current.teacherName}
           viewerId={user.id}
+          teacherId={current.teacherId}
           onBack={chats.length > 1 ? () => setSelected(null) : undefined}
         />
       ) : chats.length === 0 ? (
@@ -216,16 +232,18 @@ export default function ChatPage() {
           <div className="flex-1 divide-y overflow-y-auto">
             {chats.map((c) => (
               <button
-                key={c.classId}
+                key={roomKey(c.classId, c.teacherId)}
                 type="button"
-                onClick={() => setSelected(c.classId)}
+                onClick={() => setSelected(roomKey(c.classId, c.teacherId))}
                 className="flex w-full items-center gap-3 px-4 py-3 text-start transition-colors hover:bg-muted/50"
               >
                 <div className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-emerald-100 text-sm font-semibold text-emerald-700">
                   {c.className.charAt(0)}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold">{c.className}</div>
+                  <div className="text-sm font-semibold">
+                    {c.teacherName ? `${c.className} • ${c.teacherName}` : c.className}
+                  </div>
                   {c.lastMessage ? (
                     <div className="flex items-center gap-1 truncate text-xs text-muted-foreground">
                       {c.lastMessage.imageUrl && (
@@ -247,7 +265,7 @@ export default function ChatPage() {
                     </div>
                   ) : (
                     <div className="text-xs text-muted-foreground">
-                      لا رسائل بعد
+                      {c.teacherName ? `لا رسائل في دردشة ${c.teacherName}` : "لا رسائل بعد"}
                     </div>
                   )}
                 </div>

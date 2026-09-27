@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
-import { getChatClassIds } from "@/app/lib/chatAccess";
+import { getChatRoomsForUser } from "@/app/lib/chatAccess";
 
 export const dynamic = "force-dynamic";
 
-function isAudioUrl(url: string | null) {
-  return !!url && /\.(mp3|wav|m4a|aac|ogg|oga|webm)(\?.*)?$/i.test(url);
-}
-
-// قائمة محادثات الصفوف المتاحة للمستخدم مع آخر رسالة في كل منها
+// قائمة محادثات الصفوف / المعلمين المتاحة للمستخدم مع آخر رسالة في كل غرفة
 export async function GET() {
   try {
     const sessionUser = await getSessionUser();
@@ -17,34 +13,46 @@ export async function GET() {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
 
-    const classIds = await getChatClassIds(sessionUser.id, sessionUser.role);
-    if (classIds.length === 0) return NextResponse.json([]);
+    const rooms = await getChatRoomsForUser(sessionUser.id, sessionUser.role);
+    if (rooms.length === 0) return NextResponse.json([]);
 
-    const classes = await prisma.classLevel.findMany({
-      where: { id: { in: classIds } },
+    const roomIds = rooms.map((room) => room.classId);
+    const teacherIds = rooms
+      .filter((room) => room.teacherId)
+      .map((room) => room.teacherId as string);
+
+    const latestMessages = await prisma.chatMessage.findMany({
+      where: {
+        classId: { in: roomIds },
+        ...(teacherIds.length > 0 ? { teacherId: { in: teacherIds } } : {}),
+      },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
-        name: true,
-        chatMessages: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-          select: {
-            content: true,
-            imageUrl: true,
-            createdAt: true,
-            sender: { select: { name: true } },
-          },
-        },
+        classId: true,
+        teacherId: true,
+        content: true,
+        imageUrl: true,
+        createdAt: true,
+        sender: { select: { name: true } },
       },
-      orderBy: { order: "asc" },
     });
 
+    const latestByRoom = new Map<string, (typeof latestMessages)[number]>();
+    for (const message of latestMessages) {
+      const key = `${message.classId}:${message.teacherId ?? "all"}`;
+      if (!latestByRoom.has(key)) latestByRoom.set(key, message);
+    }
+
     return NextResponse.json(
-      classes.map((c) => {
-        const last = c.chatMessages[0];
+      rooms.map((room) => {
+        const key = `${room.classId}:${room.teacherId ?? "all"}`;
+        const last = latestByRoom.get(key);
         return {
-          classId: c.id,
-          className: c.name,
+          classId: room.classId,
+          teacherId: room.teacherId,
+          className: room.className,
+          teacherName: room.teacherName,
           lastMessage: last
             ? {
                 senderName: last.sender.name,

@@ -23,20 +23,26 @@ export async function GET(
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
+
+    const { searchParams } = new URL(req.url);
+    const teacherId = searchParams.get("teacherId");
     const allowed = await canAccessClassChat(
       sessionUser.id,
       sessionUser.role,
-      params.classId
+      params.classId,
+      teacherId
     );
     if (!allowed) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
-    const { searchParams } = new URL(req.url);
     const before = searchParams.get("before");
 
     const messages = await prisma.chatMessage.findMany({
-      where: { classId: params.classId },
+      where: {
+        classId: params.classId,
+        ...(teacherId ? { teacherId } : { teacherId: null }),
+      },
       include: chatMessageInclude,
       orderBy: { createdAt: "desc" },
       take: PAGE_SIZE + 1,
@@ -67,16 +73,20 @@ export async function POST(
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
+
+    const body = await req.json();
+    const requestedTeacherId =
+      typeof body.teacherId === "string" && body.teacherId ? body.teacherId : null;
     const allowed = await canAccessClassChat(
       sessionUser.id,
       sessionUser.role,
-      params.classId
+      params.classId,
+      requestedTeacherId
     );
     if (!allowed) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
-    const body = await req.json();
     const content =
       typeof body.content === "string" ? body.content.trim() : "";
     const imageUrl =
@@ -114,9 +124,15 @@ export async function POST(
       }
     }
 
+    const teacherId =
+      sessionUser.role === "teacher"
+        ? (await prisma.teacher.findUnique({ where: { userId: sessionUser.id }, select: { id: true } }))?.id ?? null
+        : requestedTeacherId;
+
     const message = await prisma.chatMessage.create({
       data: {
         classId: params.classId,
+        teacherId,
         senderId: sessionUser.id,
         content: content || null,
         imageUrl: attachmentUrl,
@@ -128,7 +144,11 @@ export async function POST(
 
     const pusher = getPusher();
     if (pusher) {
-      await pusher.trigger(chatChannelName(params.classId), "new-message", dto);
+      await pusher.trigger(
+        chatChannelName(params.classId, teacherId || requestedTeacherId),
+        "new-message",
+        dto
+      );
     }
 
     // إشعار الطرف الآخر: رسالة الطالب تُشعِر معلمات الصف، ورسالة المعلمة/الإدارة تُشعِر الطلاب
@@ -140,7 +160,10 @@ export async function POST(
     const recipients = fromStudent
       ? (
           await prisma.teacher.findMany({
-            where: { classes: { some: { id: params.classId } } },
+            where: {
+              classes: { some: { id: params.classId } },
+              ...(teacherId ? { id: teacherId } : {}),
+            },
             select: { user: { select: { id: true, role: true } } },
           })
         ).map((t) => t.user)

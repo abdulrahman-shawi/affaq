@@ -28,7 +28,7 @@ export async function POST(
 
     const message = await prisma.chatMessage.findUnique({
       where: { id: params.messageId },
-      select: { classId: true },
+      select: { classId: true, teacherId: true },
     });
     if (!message) {
       return NextResponse.json({ error: "الرسالة غير موجودة" }, { status: 404 });
@@ -36,7 +36,8 @@ export async function POST(
     const allowed = await canAccessClassChat(
       sessionUser.id,
       sessionUser.role,
-      message.classId
+      message.classId,
+      message.teacherId
     );
     if (!allowed) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
@@ -66,10 +67,14 @@ export async function POST(
 
     const pusher = getPusher();
     if (pusher) {
-      await pusher.trigger(chatChannelName(message.classId), "reaction", {
-        messageId: params.messageId,
-        reactions,
-      });
+      await pusher.trigger(
+        chatChannelName(message.classId, message.teacherId),
+        "reaction",
+        {
+          messageId: params.messageId,
+          reactions,
+        }
+      );
     }
 
     return NextResponse.json({ reactions: summary });

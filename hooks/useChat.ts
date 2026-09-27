@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getPusherClient } from "@/app/lib/pusher-client";
+import { chatChannelName } from "@/app/lib/chatAccess";
 
 export type ChatReactionSummary = {
   emoji: string;
@@ -12,6 +13,7 @@ export type ChatReactionSummary = {
 export type ChatMessageDTO = {
   id: string;
   classId: string;
+  teacherId: string | null;
   content: string | null;
   imageUrl: string | null;
   createdAt: string;
@@ -27,7 +29,9 @@ export type ChatMessageDTO = {
 
 export type ChatListItem = {
   classId: string;
+  teacherId: string | null;
   className: string;
+  teacherName: string | null;
   lastMessage: {
     senderName: string;
     content: string | null;
@@ -77,7 +81,11 @@ function summarizeRaw(
   return Array.from(map.values());
 }
 
-export function useClassChat(classId: string | null, viewerId?: string) {
+export function useClassChat(
+  classId: string | null,
+  viewerId?: string,
+  teacherId?: string | null
+) {
   const [messages, setMessages] = useState<ChatMessageDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -91,7 +99,8 @@ export function useClassChat(classId: string | null, viewerId?: string) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/chat/${classId}/messages`);
+      const qs = teacherId ? `?teacherId=${encodeURIComponent(teacherId)}` : "";
+      const res = await fetch(`/api/chat/${classId}/messages${qs}`);
       if (!res.ok) throw new Error("فشل في تحميل الرسائل");
       const data = await res.json();
       setMessages(data.messages);
@@ -101,7 +110,7 @@ export function useClassChat(classId: string | null, viewerId?: string) {
     } finally {
       setLoading(false);
     }
-  }, [classId]);
+  }, [classId, teacherId]);
 
   useEffect(() => {
     setMessages([]);
@@ -112,6 +121,7 @@ export function useClassChat(classId: string | null, viewerId?: string) {
   useEffect(() => {
     if (!classId) return;
     const pusher = getPusherClient();
+    const roomChannelName = chatChannelName(classId, teacherId ?? null);
     if (!pusher) {
       pollRef.current = setInterval(load, 10000);
       return () => {
@@ -119,7 +129,7 @@ export function useClassChat(classId: string | null, viewerId?: string) {
       };
     }
 
-    const channel = pusher.subscribe(`private-chat-class-${classId}`);
+    const channel = pusher.subscribe(roomChannelName);
 
     channel.bind("pusher:subscription_succeeded", () => setLive(true));
     channel.bind("pusher:subscription_error", () => {
@@ -148,21 +158,22 @@ export function useClassChat(classId: string | null, viewerId?: string) {
 
     return () => {
       channel.unbind_all();
-      pusher.unsubscribe(`private-chat-class-${classId}`);
+      pusher.unsubscribe(roomChannelName);
       if (pollRef.current) {
         clearInterval(pollRef.current);
         pollRef.current = null;
       }
       setLive(false);
     };
-  }, [classId, viewerId, load]);
+  }, [classId, viewerId, teacherId, load]);
 
   const loadOlder = useCallback(async () => {
     if (!classId || messages.length === 0 || loadingOlder || !hasMore) return;
     setLoadingOlder(true);
     try {
+      const qs = teacherId ? `&teacherId=${encodeURIComponent(teacherId)}` : "";
       const res = await fetch(
-        `/api/chat/${classId}/messages?before=${messages[0].id}`
+        `/api/chat/${classId}/messages?before=${messages[0].id}${qs}`
       );
       if (!res.ok) throw new Error("فشل في تحميل الرسائل");
       const data = await res.json();
@@ -173,7 +184,7 @@ export function useClassChat(classId: string | null, viewerId?: string) {
     } finally {
       setLoadingOlder(false);
     }
-  }, [classId, messages, loadingOlder, hasMore]);
+  }, [classId, messages, loadingOlder, hasMore, teacherId]);
 
   const sendMessage = useCallback(
     async (input: {
@@ -182,10 +193,19 @@ export function useClassChat(classId: string | null, viewerId?: string) {
       replyToId?: string;
     }) => {
       if (!classId) return;
+      const payload: {
+        content?: string;
+        imageUrl?: string;
+        replyToId?: string;
+        teacherId?: string | null;
+      } = {
+        ...input,
+        teacherId: teacherId ?? null,
+      };
       const res = await fetch(`/api/chat/${classId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error ?? "فشل في إرسال الرسالة");
@@ -194,7 +214,7 @@ export function useClassChat(classId: string | null, viewerId?: string) {
         prev.some((m) => m.id === data.id) ? prev : [...prev, data]
       );
     },
-    [classId]
+    [classId, teacherId]
   );
 
   const toggleReaction = useCallback(

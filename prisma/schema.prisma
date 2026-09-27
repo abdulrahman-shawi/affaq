@@ -95,6 +95,7 @@ model Teacher {
   quizzes        Quiz[]
   assignments    Assignment[]
   supervisors    SupervisorTeacher[]
+  chatMessages   ChatMessage[]
 }
 
 model Payment {
@@ -329,6 +330,8 @@ model ChatMessage {
   id        String        @id @default(uuid())
   classId   String
   class     ClassLevel    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId String?
+  teacher   Teacher?      @relation(fields: [teacherId], references: [id], onDelete: SetNull)
   senderId  String
   sender    User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
   content   String?
@@ -339,7 +342,7 @@ model ChatMessage {
   reactions ChatReaction[]
   createdAt DateTime      @default(now())
 
-  @@index([classId, createdAt])
+  @@index([classId, teacherId, createdAt])
 }
 
 // تفاعل مستخدم على رسالة دردشة — سجل واحد لكل (رسالة، مستخدم، إيموجي)

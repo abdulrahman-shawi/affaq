@@ -1,7 +1,14 @@
 import { prisma } from "@/app/lib/prisma";
 
+export type ChatRoomDescriptor = {
+  classId: string;
+  className: string;
+  teacherId: string | null;
+  teacherName: string | null;
+};
+
 // صلاحية الوصول لدردشة الصفوف:
-// طالب → صفه فقط، معلمة → صفوفها، مدير → كل الصفوف، مشرف → الصفوف التي يشرف عليها
+// طالب → صفه فقط، معلم → صفوفه، مدير → كل الصفوف، مشرف → الصفوف التي يشرف عليها
 export async function getChatClassIds(
   userId: string,
   role: string
@@ -34,15 +41,65 @@ export async function getChatClassIds(
   return [];
 }
 
+export async function getChatRoomsForUser(
+  userId: string,
+  role: string,
+  classId?: string | null,
+  teacherId?: string | null
+): Promise<ChatRoomDescriptor[]> {
+  const allowedClasses = await getChatClassIds(userId, role);
+  const selectedClassIds = classId
+    ? allowedClasses.filter((id) => id === classId)
+    : allowedClasses;
+
+  if (selectedClassIds.length === 0) return [];
+
+  let targetTeacherId: string | null = teacherId ?? null;
+  if (role === "teacher" && !targetTeacherId) {
+    const me = await prisma.teacher.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+    targetTeacherId = me?.id ?? null;
+  }
+
+  const teachers = await prisma.teacher.findMany({
+    where: {
+      ...(targetTeacherId ? { id: targetTeacherId } : {}),
+      classes: { some: { id: { in: selectedClassIds } } },
+    },
+    select: {
+      id: true,
+      user: { select: { name: true } },
+      classes: {
+        where: { id: { in: selectedClassIds } },
+        select: { id: true, name: true },
+      },
+    },
+  });
+
+  return teachers.flatMap((teacher) =>
+    teacher.classes.map((c) => ({
+      classId: c.id,
+      className: c.name,
+      teacherId: teacher.id,
+      teacherName: teacher.user.name,
+    }))
+  );
+}
+
 export async function canAccessClassChat(
   userId: string,
   role: string,
-  classId: string
+  classId: string,
+  teacherId?: string | null
 ): Promise<boolean> {
-  const ids = await getChatClassIds(userId, role);
-  return ids.includes(classId);
+  const rooms = await getChatRoomsForUser(userId, role, classId, teacherId);
+  return rooms.some((room) => room.classId === classId && (!teacherId || room.teacherId === teacherId));
 }
 
-export function chatChannelName(classId: string): string {
-  return `private-chat-class-${classId}`;
+export function chatChannelName(classId: string, teacherId?: string | null): string {
+  return teacherId
+    ? `private-chat-class-${classId}-teacher-${teacherId}`
+    : `private-chat-class-${classId}`;
 }

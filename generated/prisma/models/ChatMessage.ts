@@ -27,6 +27,7 @@ export type AggregateChatMessage = {
 export type ChatMessageMinAggregateOutputType = {
   id: string | null
   classId: string | null
+  teacherId: string | null
   senderId: string | null
   content: string | null
   imageUrl: string | null
@@ -37,6 +38,7 @@ export type ChatMessageMinAggregateOutputType = {
 export type ChatMessageMaxAggregateOutputType = {
   id: string | null
   classId: string | null
+  teacherId: string | null
   senderId: string | null
   content: string | null
   imageUrl: string | null
@@ -47,6 +49,7 @@ export type ChatMessageMaxAggregateOutputType = {
 export type ChatMessageCountAggregateOutputType = {
   id: number
   classId: number
+  teacherId: number
   senderId: number
   content: number
   imageUrl: number
@@ -59,6 +62,7 @@ export type ChatMessageCountAggregateOutputType = {
 export type ChatMessageMinAggregateInputType = {
   id?: true
   classId?: true
+  teacherId?: true
   senderId?: true
   content?: true
   imageUrl?: true
@@ -69,6 +73,7 @@ export type ChatMessageMinAggregateInputType = {
 export type ChatMessageMaxAggregateInputType = {
   id?: true
   classId?: true
+  teacherId?: true
   senderId?: true
   content?: true
   imageUrl?: true
@@ -79,6 +84,7 @@ export type ChatMessageMaxAggregateInputType = {
 export type ChatMessageCountAggregateInputType = {
   id?: true
   classId?: true
+  teacherId?: true
   senderId?: true
   content?: true
   imageUrl?: true
@@ -162,6 +168,7 @@ export type ChatMessageGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type ChatMessageGroupByOutputType = {
   id: string
   classId: string
+  teacherId: string | null
   senderId: string
   content: string | null
   imageUrl: string | null
@@ -193,12 +200,14 @@ export type ChatMessageWhereInput = {
   NOT?: Prisma.ChatMessageWhereInput | Prisma.ChatMessageWhereInput[]
   id?: Prisma.StringFilter<"ChatMessage"> | string
   classId?: Prisma.StringFilter<"ChatMessage"> | string
+  teacherId?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   senderId?: Prisma.StringFilter<"ChatMessage"> | string
   content?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   replyToId?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   class?: Prisma.XOR<Prisma.ClassLevelScalarRelationFilter, Prisma.ClassLevelWhereInput>
+  teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   replyTo?: Prisma.XOR<Prisma.ChatMessageNullableScalarRelationFilter, Prisma.ChatMessageWhereInput> | null
   replies?: Prisma.ChatMessageListRelationFilter
@@ -208,12 +217,14 @@ export type ChatMessageWhereInput = {
 export type ChatMessageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   classId?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrderInput | Prisma.SortOrder
   senderId?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   replyToId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   class?: Prisma.ClassLevelOrderByWithRelationInput
+  teacher?: Prisma.TeacherOrderByWithRelationInput
   sender?: Prisma.UserOrderByWithRelationInput
   replyTo?: Prisma.ChatMessageOrderByWithRelationInput
   replies?: Prisma.ChatMessageOrderByRelationAggregateInput
@@ -226,12 +237,14 @@ export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ChatMessageWhereInput[]
   NOT?: Prisma.ChatMessageWhereInput | Prisma.ChatMessageWhereInput[]
   classId?: Prisma.StringFilter<"ChatMessage"> | string
+  teacherId?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   senderId?: Prisma.StringFilter<"ChatMessage"> | string
   content?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   replyToId?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
   class?: Prisma.XOR<Prisma.ClassLevelScalarRelationFilter, Prisma.ClassLevelWhereInput>
+  teacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   replyTo?: Prisma.XOR<Prisma.ChatMessageNullableScalarRelationFilter, Prisma.ChatMessageWhereInput> | null
   replies?: Prisma.ChatMessageListRelationFilter
@@ -241,6 +254,7 @@ export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
 export type ChatMessageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   classId?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrderInput | Prisma.SortOrder
   senderId?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -257,6 +271,7 @@ export type ChatMessageScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ChatMessageScalarWhereWithAggregatesInput | Prisma.ChatMessageScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ChatMessage"> | string
   classId?: Prisma.StringWithAggregatesFilter<"ChatMessage"> | string
+  teacherId?: Prisma.StringNullableWithAggregatesFilter<"ChatMessage"> | string | null
   senderId?: Prisma.StringWithAggregatesFilter<"ChatMessage"> | string
   content?: Prisma.StringNullableWithAggregatesFilter<"ChatMessage"> | string | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"ChatMessage"> | string | null
@@ -270,6 +285,7 @@ export type ChatMessageCreateInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   class: Prisma.ClassLevelCreateNestedOneWithoutChatMessagesInput
+  teacher?: Prisma.TeacherCreateNestedOneWithoutChatMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutChatMessagesInput
   replyTo?: Prisma.ChatMessageCreateNestedOneWithoutRepliesInput
   replies?: Prisma.ChatMessageCreateNestedManyWithoutReplyToInput
@@ -279,6 +295,7 @@ export type ChatMessageCreateInput = {
 export type ChatMessageUncheckedCreateInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -294,6 +311,7 @@ export type ChatMessageUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   class?: Prisma.ClassLevelUpdateOneRequiredWithoutChatMessagesNestedInput
+  teacher?: Prisma.TeacherUpdateOneWithoutChatMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutChatMessagesNestedInput
   replyTo?: Prisma.ChatMessageUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.ChatMessageUpdateManyWithoutReplyToNestedInput
@@ -303,6 +321,7 @@ export type ChatMessageUpdateInput = {
 export type ChatMessageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -315,6 +334,7 @@ export type ChatMessageUncheckedUpdateInput = {
 export type ChatMessageCreateManyInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -332,6 +352,7 @@ export type ChatMessageUpdateManyMutationInput = {
 export type ChatMessageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -357,6 +378,7 @@ export type ChatMessageNullableScalarRelationFilter = {
 export type ChatMessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   classId?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
@@ -367,6 +389,7 @@ export type ChatMessageCountOrderByAggregateInput = {
 export type ChatMessageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   classId?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
@@ -377,6 +400,7 @@ export type ChatMessageMaxOrderByAggregateInput = {
 export type ChatMessageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   classId?: Prisma.SortOrder
+  teacherId?: Prisma.SortOrder
   senderId?: Prisma.SortOrder
   content?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
@@ -428,6 +452,48 @@ export type ChatMessageUncheckedUpdateManyWithoutSenderNestedInput = {
   connect?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
   update?: Prisma.ChatMessageUpdateWithWhereUniqueWithoutSenderInput | Prisma.ChatMessageUpdateWithWhereUniqueWithoutSenderInput[]
   updateMany?: Prisma.ChatMessageUpdateManyWithWhereWithoutSenderInput | Prisma.ChatMessageUpdateManyWithWhereWithoutSenderInput[]
+  deleteMany?: Prisma.ChatMessageScalarWhereInput | Prisma.ChatMessageScalarWhereInput[]
+}
+
+export type ChatMessageCreateNestedManyWithoutTeacherInput = {
+  create?: Prisma.XOR<Prisma.ChatMessageCreateWithoutTeacherInput, Prisma.ChatMessageUncheckedCreateWithoutTeacherInput> | Prisma.ChatMessageCreateWithoutTeacherInput[] | Prisma.ChatMessageUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.ChatMessageCreateOrConnectWithoutTeacherInput | Prisma.ChatMessageCreateOrConnectWithoutTeacherInput[]
+  createMany?: Prisma.ChatMessageCreateManyTeacherInputEnvelope
+  connect?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+}
+
+export type ChatMessageUncheckedCreateNestedManyWithoutTeacherInput = {
+  create?: Prisma.XOR<Prisma.ChatMessageCreateWithoutTeacherInput, Prisma.ChatMessageUncheckedCreateWithoutTeacherInput> | Prisma.ChatMessageCreateWithoutTeacherInput[] | Prisma.ChatMessageUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.ChatMessageCreateOrConnectWithoutTeacherInput | Prisma.ChatMessageCreateOrConnectWithoutTeacherInput[]
+  createMany?: Prisma.ChatMessageCreateManyTeacherInputEnvelope
+  connect?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+}
+
+export type ChatMessageUpdateManyWithoutTeacherNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatMessageCreateWithoutTeacherInput, Prisma.ChatMessageUncheckedCreateWithoutTeacherInput> | Prisma.ChatMessageCreateWithoutTeacherInput[] | Prisma.ChatMessageUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.ChatMessageCreateOrConnectWithoutTeacherInput | Prisma.ChatMessageCreateOrConnectWithoutTeacherInput[]
+  upsert?: Prisma.ChatMessageUpsertWithWhereUniqueWithoutTeacherInput | Prisma.ChatMessageUpsertWithWhereUniqueWithoutTeacherInput[]
+  createMany?: Prisma.ChatMessageCreateManyTeacherInputEnvelope
+  set?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  disconnect?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  delete?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  connect?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  update?: Prisma.ChatMessageUpdateWithWhereUniqueWithoutTeacherInput | Prisma.ChatMessageUpdateWithWhereUniqueWithoutTeacherInput[]
+  updateMany?: Prisma.ChatMessageUpdateManyWithWhereWithoutTeacherInput | Prisma.ChatMessageUpdateManyWithWhereWithoutTeacherInput[]
+  deleteMany?: Prisma.ChatMessageScalarWhereInput | Prisma.ChatMessageScalarWhereInput[]
+}
+
+export type ChatMessageUncheckedUpdateManyWithoutTeacherNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatMessageCreateWithoutTeacherInput, Prisma.ChatMessageUncheckedCreateWithoutTeacherInput> | Prisma.ChatMessageCreateWithoutTeacherInput[] | Prisma.ChatMessageUncheckedCreateWithoutTeacherInput[]
+  connectOrCreate?: Prisma.ChatMessageCreateOrConnectWithoutTeacherInput | Prisma.ChatMessageCreateOrConnectWithoutTeacherInput[]
+  upsert?: Prisma.ChatMessageUpsertWithWhereUniqueWithoutTeacherInput | Prisma.ChatMessageUpsertWithWhereUniqueWithoutTeacherInput[]
+  createMany?: Prisma.ChatMessageCreateManyTeacherInputEnvelope
+  set?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  disconnect?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  delete?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  connect?: Prisma.ChatMessageWhereUniqueInput | Prisma.ChatMessageWhereUniqueInput[]
+  update?: Prisma.ChatMessageUpdateWithWhereUniqueWithoutTeacherInput | Prisma.ChatMessageUpdateWithWhereUniqueWithoutTeacherInput[]
+  updateMany?: Prisma.ChatMessageUpdateManyWithWhereWithoutTeacherInput | Prisma.ChatMessageUpdateManyWithWhereWithoutTeacherInput[]
   deleteMany?: Prisma.ChatMessageScalarWhereInput | Prisma.ChatMessageScalarWhereInput[]
 }
 
@@ -551,6 +617,7 @@ export type ChatMessageCreateWithoutSenderInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   class: Prisma.ClassLevelCreateNestedOneWithoutChatMessagesInput
+  teacher?: Prisma.TeacherCreateNestedOneWithoutChatMessagesInput
   replyTo?: Prisma.ChatMessageCreateNestedOneWithoutRepliesInput
   replies?: Prisma.ChatMessageCreateNestedManyWithoutReplyToInput
   reactions?: Prisma.ChatReactionCreateNestedManyWithoutMessageInput
@@ -559,6 +626,7 @@ export type ChatMessageCreateWithoutSenderInput = {
 export type ChatMessageUncheckedCreateWithoutSenderInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   content?: string | null
   imageUrl?: string | null
   replyToId?: string | null
@@ -599,6 +667,7 @@ export type ChatMessageScalarWhereInput = {
   NOT?: Prisma.ChatMessageScalarWhereInput | Prisma.ChatMessageScalarWhereInput[]
   id?: Prisma.StringFilter<"ChatMessage"> | string
   classId?: Prisma.StringFilter<"ChatMessage"> | string
+  teacherId?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   senderId?: Prisma.StringFilter<"ChatMessage"> | string
   content?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"ChatMessage"> | string | null
@@ -606,11 +675,62 @@ export type ChatMessageScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ChatMessage"> | Date | string
 }
 
+export type ChatMessageCreateWithoutTeacherInput = {
+  id?: string
+  content?: string | null
+  imageUrl?: string | null
+  createdAt?: Date | string
+  class: Prisma.ClassLevelCreateNestedOneWithoutChatMessagesInput
+  sender: Prisma.UserCreateNestedOneWithoutChatMessagesInput
+  replyTo?: Prisma.ChatMessageCreateNestedOneWithoutRepliesInput
+  replies?: Prisma.ChatMessageCreateNestedManyWithoutReplyToInput
+  reactions?: Prisma.ChatReactionCreateNestedManyWithoutMessageInput
+}
+
+export type ChatMessageUncheckedCreateWithoutTeacherInput = {
+  id?: string
+  classId: string
+  senderId: string
+  content?: string | null
+  imageUrl?: string | null
+  replyToId?: string | null
+  createdAt?: Date | string
+  replies?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutReplyToInput
+  reactions?: Prisma.ChatReactionUncheckedCreateNestedManyWithoutMessageInput
+}
+
+export type ChatMessageCreateOrConnectWithoutTeacherInput = {
+  where: Prisma.ChatMessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChatMessageCreateWithoutTeacherInput, Prisma.ChatMessageUncheckedCreateWithoutTeacherInput>
+}
+
+export type ChatMessageCreateManyTeacherInputEnvelope = {
+  data: Prisma.ChatMessageCreateManyTeacherInput | Prisma.ChatMessageCreateManyTeacherInput[]
+  skipDuplicates?: boolean
+}
+
+export type ChatMessageUpsertWithWhereUniqueWithoutTeacherInput = {
+  where: Prisma.ChatMessageWhereUniqueInput
+  update: Prisma.XOR<Prisma.ChatMessageUpdateWithoutTeacherInput, Prisma.ChatMessageUncheckedUpdateWithoutTeacherInput>
+  create: Prisma.XOR<Prisma.ChatMessageCreateWithoutTeacherInput, Prisma.ChatMessageUncheckedCreateWithoutTeacherInput>
+}
+
+export type ChatMessageUpdateWithWhereUniqueWithoutTeacherInput = {
+  where: Prisma.ChatMessageWhereUniqueInput
+  data: Prisma.XOR<Prisma.ChatMessageUpdateWithoutTeacherInput, Prisma.ChatMessageUncheckedUpdateWithoutTeacherInput>
+}
+
+export type ChatMessageUpdateManyWithWhereWithoutTeacherInput = {
+  where: Prisma.ChatMessageScalarWhereInput
+  data: Prisma.XOR<Prisma.ChatMessageUpdateManyMutationInput, Prisma.ChatMessageUncheckedUpdateManyWithoutTeacherInput>
+}
+
 export type ChatMessageCreateWithoutClassInput = {
   id?: string
   content?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
+  teacher?: Prisma.TeacherCreateNestedOneWithoutChatMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutChatMessagesInput
   replyTo?: Prisma.ChatMessageCreateNestedOneWithoutRepliesInput
   replies?: Prisma.ChatMessageCreateNestedManyWithoutReplyToInput
@@ -619,6 +739,7 @@ export type ChatMessageCreateWithoutClassInput = {
 
 export type ChatMessageUncheckedCreateWithoutClassInput = {
   id?: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -660,6 +781,7 @@ export type ChatMessageCreateWithoutRepliesInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   class: Prisma.ClassLevelCreateNestedOneWithoutChatMessagesInput
+  teacher?: Prisma.TeacherCreateNestedOneWithoutChatMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutChatMessagesInput
   replyTo?: Prisma.ChatMessageCreateNestedOneWithoutRepliesInput
   reactions?: Prisma.ChatReactionCreateNestedManyWithoutMessageInput
@@ -668,6 +790,7 @@ export type ChatMessageCreateWithoutRepliesInput = {
 export type ChatMessageUncheckedCreateWithoutRepliesInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -687,6 +810,7 @@ export type ChatMessageCreateWithoutReplyToInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   class: Prisma.ClassLevelCreateNestedOneWithoutChatMessagesInput
+  teacher?: Prisma.TeacherCreateNestedOneWithoutChatMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutChatMessagesInput
   replies?: Prisma.ChatMessageCreateNestedManyWithoutReplyToInput
   reactions?: Prisma.ChatReactionCreateNestedManyWithoutMessageInput
@@ -695,6 +819,7 @@ export type ChatMessageCreateWithoutReplyToInput = {
 export type ChatMessageUncheckedCreateWithoutReplyToInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -730,6 +855,7 @@ export type ChatMessageUpdateWithoutRepliesInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   class?: Prisma.ClassLevelUpdateOneRequiredWithoutChatMessagesNestedInput
+  teacher?: Prisma.TeacherUpdateOneWithoutChatMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutChatMessagesNestedInput
   replyTo?: Prisma.ChatMessageUpdateOneWithoutRepliesNestedInput
   reactions?: Prisma.ChatReactionUpdateManyWithoutMessageNestedInput
@@ -738,6 +864,7 @@ export type ChatMessageUpdateWithoutRepliesInput = {
 export type ChatMessageUncheckedUpdateWithoutRepliesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -768,6 +895,7 @@ export type ChatMessageCreateWithoutReactionsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   class: Prisma.ClassLevelCreateNestedOneWithoutChatMessagesInput
+  teacher?: Prisma.TeacherCreateNestedOneWithoutChatMessagesInput
   sender: Prisma.UserCreateNestedOneWithoutChatMessagesInput
   replyTo?: Prisma.ChatMessageCreateNestedOneWithoutRepliesInput
   replies?: Prisma.ChatMessageCreateNestedManyWithoutReplyToInput
@@ -776,6 +904,7 @@ export type ChatMessageCreateWithoutReactionsInput = {
 export type ChatMessageUncheckedCreateWithoutReactionsInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -806,6 +935,7 @@ export type ChatMessageUpdateWithoutReactionsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   class?: Prisma.ClassLevelUpdateOneRequiredWithoutChatMessagesNestedInput
+  teacher?: Prisma.TeacherUpdateOneWithoutChatMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutChatMessagesNestedInput
   replyTo?: Prisma.ChatMessageUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.ChatMessageUpdateManyWithoutReplyToNestedInput
@@ -814,6 +944,7 @@ export type ChatMessageUpdateWithoutReactionsInput = {
 export type ChatMessageUncheckedUpdateWithoutReactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -825,6 +956,7 @@ export type ChatMessageUncheckedUpdateWithoutReactionsInput = {
 export type ChatMessageCreateManySenderInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   content?: string | null
   imageUrl?: string | null
   replyToId?: string | null
@@ -837,6 +969,7 @@ export type ChatMessageUpdateWithoutSenderInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   class?: Prisma.ClassLevelUpdateOneRequiredWithoutChatMessagesNestedInput
+  teacher?: Prisma.TeacherUpdateOneWithoutChatMessagesNestedInput
   replyTo?: Prisma.ChatMessageUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.ChatMessageUpdateManyWithoutReplyToNestedInput
   reactions?: Prisma.ChatReactionUpdateManyWithoutMessageNestedInput
@@ -845,6 +978,7 @@ export type ChatMessageUpdateWithoutSenderInput = {
 export type ChatMessageUncheckedUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   replyToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -856,6 +990,51 @@ export type ChatMessageUncheckedUpdateWithoutSenderInput = {
 export type ChatMessageUncheckedUpdateManyWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replyToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ChatMessageCreateManyTeacherInput = {
+  id?: string
+  classId: string
+  senderId: string
+  content?: string | null
+  imageUrl?: string | null
+  replyToId?: string | null
+  createdAt?: Date | string
+}
+
+export type ChatMessageUpdateWithoutTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  class?: Prisma.ClassLevelUpdateOneRequiredWithoutChatMessagesNestedInput
+  sender?: Prisma.UserUpdateOneRequiredWithoutChatMessagesNestedInput
+  replyTo?: Prisma.ChatMessageUpdateOneWithoutRepliesNestedInput
+  replies?: Prisma.ChatMessageUpdateManyWithoutReplyToNestedInput
+  reactions?: Prisma.ChatReactionUpdateManyWithoutMessageNestedInput
+}
+
+export type ChatMessageUncheckedUpdateWithoutTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  classId?: Prisma.StringFieldUpdateOperationsInput | string
+  senderId?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replyToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  replies?: Prisma.ChatMessageUncheckedUpdateManyWithoutReplyToNestedInput
+  reactions?: Prisma.ChatReactionUncheckedUpdateManyWithoutMessageNestedInput
+}
+
+export type ChatMessageUncheckedUpdateManyWithoutTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  classId?: Prisma.StringFieldUpdateOperationsInput | string
+  senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   replyToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -864,6 +1043,7 @@ export type ChatMessageUncheckedUpdateManyWithoutSenderInput = {
 
 export type ChatMessageCreateManyClassInput = {
   id?: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -876,6 +1056,7 @@ export type ChatMessageUpdateWithoutClassInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUpdateOneWithoutChatMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutChatMessagesNestedInput
   replyTo?: Prisma.ChatMessageUpdateOneWithoutRepliesNestedInput
   replies?: Prisma.ChatMessageUpdateManyWithoutReplyToNestedInput
@@ -884,6 +1065,7 @@ export type ChatMessageUpdateWithoutClassInput = {
 
 export type ChatMessageUncheckedUpdateWithoutClassInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -895,6 +1077,7 @@ export type ChatMessageUncheckedUpdateWithoutClassInput = {
 
 export type ChatMessageUncheckedUpdateManyWithoutClassInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -905,6 +1088,7 @@ export type ChatMessageUncheckedUpdateManyWithoutClassInput = {
 export type ChatMessageCreateManyReplyToInput = {
   id?: string
   classId: string
+  teacherId?: string | null
   senderId: string
   content?: string | null
   imageUrl?: string | null
@@ -917,6 +1101,7 @@ export type ChatMessageUpdateWithoutReplyToInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   class?: Prisma.ClassLevelUpdateOneRequiredWithoutChatMessagesNestedInput
+  teacher?: Prisma.TeacherUpdateOneWithoutChatMessagesNestedInput
   sender?: Prisma.UserUpdateOneRequiredWithoutChatMessagesNestedInput
   replies?: Prisma.ChatMessageUpdateManyWithoutReplyToNestedInput
   reactions?: Prisma.ChatReactionUpdateManyWithoutMessageNestedInput
@@ -925,6 +1110,7 @@ export type ChatMessageUpdateWithoutReplyToInput = {
 export type ChatMessageUncheckedUpdateWithoutReplyToInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -936,6 +1122,7 @@ export type ChatMessageUncheckedUpdateWithoutReplyToInput = {
 export type ChatMessageUncheckedUpdateManyWithoutReplyToInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   classId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderId?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -985,12 +1172,14 @@ export type ChatMessageCountOutputTypeCountReactionsArgs<ExtArgs extends runtime
 export type ChatMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   classId?: boolean
+  teacherId?: boolean
   senderId?: boolean
   content?: boolean
   imageUrl?: boolean
   replyToId?: boolean
   createdAt?: boolean
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
+  teacher?: boolean | Prisma.ChatMessage$teacherArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   replyTo?: boolean | Prisma.ChatMessage$replyToArgs<ExtArgs>
   replies?: boolean | Prisma.ChatMessage$repliesArgs<ExtArgs>
@@ -1001,12 +1190,14 @@ export type ChatMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ChatMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   classId?: boolean
+  teacherId?: boolean
   senderId?: boolean
   content?: boolean
   imageUrl?: boolean
   replyToId?: boolean
   createdAt?: boolean
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
+  teacher?: boolean | Prisma.ChatMessage$teacherArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   replyTo?: boolean | Prisma.ChatMessage$replyToArgs<ExtArgs>
 }, ExtArgs["result"]["chatMessage"]>
@@ -1014,12 +1205,14 @@ export type ChatMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
 export type ChatMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   classId?: boolean
+  teacherId?: boolean
   senderId?: boolean
   content?: boolean
   imageUrl?: boolean
   replyToId?: boolean
   createdAt?: boolean
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
+  teacher?: boolean | Prisma.ChatMessage$teacherArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   replyTo?: boolean | Prisma.ChatMessage$replyToArgs<ExtArgs>
 }, ExtArgs["result"]["chatMessage"]>
@@ -1027,6 +1220,7 @@ export type ChatMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 export type ChatMessageSelectScalar = {
   id?: boolean
   classId?: boolean
+  teacherId?: boolean
   senderId?: boolean
   content?: boolean
   imageUrl?: boolean
@@ -1034,9 +1228,10 @@ export type ChatMessageSelectScalar = {
   createdAt?: boolean
 }
 
-export type ChatMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "classId" | "senderId" | "content" | "imageUrl" | "replyToId" | "createdAt", ExtArgs["result"]["chatMessage"]>
+export type ChatMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "classId" | "teacherId" | "senderId" | "content" | "imageUrl" | "replyToId" | "createdAt", ExtArgs["result"]["chatMessage"]>
 export type ChatMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
+  teacher?: boolean | Prisma.ChatMessage$teacherArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   replyTo?: boolean | Prisma.ChatMessage$replyToArgs<ExtArgs>
   replies?: boolean | Prisma.ChatMessage$repliesArgs<ExtArgs>
@@ -1045,11 +1240,13 @@ export type ChatMessageInclude<ExtArgs extends runtime.Types.Extensions.Internal
 }
 export type ChatMessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
+  teacher?: boolean | Prisma.ChatMessage$teacherArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   replyTo?: boolean | Prisma.ChatMessage$replyToArgs<ExtArgs>
 }
 export type ChatMessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   class?: boolean | Prisma.ClassLevelDefaultArgs<ExtArgs>
+  teacher?: boolean | Prisma.ChatMessage$teacherArgs<ExtArgs>
   sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   replyTo?: boolean | Prisma.ChatMessage$replyToArgs<ExtArgs>
 }
@@ -1058,6 +1255,7 @@ export type $ChatMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "ChatMessage"
   objects: {
     class: Prisma.$ClassLevelPayload<ExtArgs>
+    teacher: Prisma.$TeacherPayload<ExtArgs> | null
     sender: Prisma.$UserPayload<ExtArgs>
     replyTo: Prisma.$ChatMessagePayload<ExtArgs> | null
     replies: Prisma.$ChatMessagePayload<ExtArgs>[]
@@ -1066,6 +1264,7 @@ export type $ChatMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     classId: string
+    teacherId: string | null
     senderId: string
     content: string | null
     imageUrl: string | null
@@ -1466,6 +1665,7 @@ readonly fields: ChatMessageFieldRefs;
 export interface Prisma__ChatMessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   class<T extends Prisma.ClassLevelDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClassLevelDefaultArgs<ExtArgs>>): Prisma.Prisma__ClassLevelClient<runtime.Types.Result.GetResult<Prisma.$ClassLevelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  teacher<T extends Prisma.ChatMessage$teacherArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMessage$teacherArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   sender<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   replyTo<T extends Prisma.ChatMessage$replyToArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMessage$replyToArgs<ExtArgs>>): Prisma.Prisma__ChatMessageClient<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   replies<T extends Prisma.ChatMessage$repliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMessage$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1501,6 +1701,7 @@ export interface Prisma__ChatMessageClient<T, Null = never, ExtArgs extends runt
 export interface ChatMessageFieldRefs {
   readonly id: Prisma.FieldRef<"ChatMessage", 'String'>
   readonly classId: Prisma.FieldRef<"ChatMessage", 'String'>
+  readonly teacherId: Prisma.FieldRef<"ChatMessage", 'String'>
   readonly senderId: Prisma.FieldRef<"ChatMessage", 'String'>
   readonly content: Prisma.FieldRef<"ChatMessage", 'String'>
   readonly imageUrl: Prisma.FieldRef<"ChatMessage", 'String'>
@@ -1904,6 +2105,25 @@ export type ChatMessageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many ChatMessages to delete.
    */
   limit?: number
+}
+
+/**
+ * ChatMessage.teacher
+ */
+export type ChatMessage$teacherArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Teacher
+   */
+  select?: Prisma.TeacherSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Teacher
+   */
+  omit?: Prisma.TeacherOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeacherInclude<ExtArgs> | null
+  where?: Prisma.TeacherWhereInput
 }
 
 /**

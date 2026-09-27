@@ -375,6 +375,7 @@ export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[k
 export const ChatMessageScalarFieldEnum = {
   id: 'id',
   classId: 'classId',
+  teacherId: 'teacherId',
   senderId: 'senderId',
   content: 'content',
   imageUrl: 'imageUrl',

@@ -35,6 +35,7 @@ export function chatMessageToDTO(m: ChatMessageWithRelations, viewerId: string) 
   return {
     id: m.id,
     classId: m.classId,
+    teacherId: m.teacherId ?? null,
     content: m.content,
     imageUrl: m.imageUrl,
     createdAt: m.createdAt,

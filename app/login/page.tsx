@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { signIn, getSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,11 +19,26 @@ import { useSiteSettings } from "@/components/SiteSettingsProvider";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { academyName, logoUrl } = useSiteSettings();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role) {
+      router.replace(roleDashboardPath(session.user.role));
+    }
+  }, [router, session, status]);
+
+  if (status === "loading") {
+    return null;
+  }
+
+  if (status === "authenticated") {
+    return null;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

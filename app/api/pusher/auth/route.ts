@@ -25,15 +25,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "طلب غير صالح" }, { status: 400 });
   }
 
-  const match = channelName.match(/^private-chat-class-(.+)$/);
+  const match = channelName.match(/^private-chat-class-(.+?)(?:-teacher-(.+))?$/);
   if (!match) {
     return NextResponse.json({ error: "قناة غير معروفة" }, { status: 403 });
   }
 
+  const classId = decodeURIComponent(match[1]);
+  const teacherId = match[2] ? decodeURIComponent(match[2]) : null;
+
   const allowed = await canAccessClassChat(
     sessionUser.id,
     sessionUser.role,
-    match[1]
+    classId,
+    teacherId
   );
   if (!allowed) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
