@@ -1,5 +1,7 @@
 import { prisma } from "@/app/lib/prisma";
 
+export { chatChannelName } from "@/app/lib/chatChannel";
+
 export type ChatRoomDescriptor = {
   classId: string;
   className: string;
@@ -96,10 +98,4 @@ export async function canAccessClassChat(
 ): Promise<boolean> {
   const rooms = await getChatRoomsForUser(userId, role, classId, teacherId);
   return rooms.some((room) => room.classId === classId && (!teacherId || room.teacherId === teacherId));
-}
-
-export function chatChannelName(classId: string, teacherId?: string | null): string {
-  return teacherId
-    ? `private-chat-class-${classId}-teacher-${teacherId}`
-    : `private-chat-class-${classId}`;
 }

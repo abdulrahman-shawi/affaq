@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getPusherClient } from "@/app/lib/pusher-client";
-import { chatChannelName } from "@/app/lib/chatAccess";
+import { chatChannelName } from "@/app/lib/chatChannel";
 
 export type ChatReactionSummary = {
   emoji: string;
