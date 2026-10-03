@@ -21,6 +21,8 @@ export default function ProfilePage() {
   const { update } = useSession();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [restrictedName, setRestrictedName] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -41,6 +43,8 @@ export default function ProfilePage() {
       .then((user) => {
         setName(user.name ?? "");
         setEmail(user.email ?? "");
+        setPhone(user.phone ?? "");
+        setRestrictedName(user.role === "student" || user.role === "parent");
         setImageUrl(user.image ?? null);
         setPreview(user.image ?? null);
       })
@@ -90,6 +94,7 @@ export default function ProfilePage() {
         body: JSON.stringify({
           name,
           email,
+          phone,
           image: finalImageUrl,
           ...(newPassword ? { currentPassword, newPassword } : {}),
         }),
@@ -188,7 +193,24 @@ export default function ProfilePage() {
                 id="profile-name"
                 required
                 value={name}
+                disabled={restrictedName}
                 onChange={(e) => setName(e.target.value)}
+              />
+              {restrictedName && (
+                <p className="text-xs text-muted-foreground">
+                  لا يمكن تغيير الاسم — تواصل مع الإدارة لتعديله
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="profile-phone">رقم الهاتف</Label>
+              <Input
+                id="profile-phone"
+                type="tel"
+                dir="ltr"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
 

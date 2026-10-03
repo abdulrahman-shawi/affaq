@@ -14,7 +14,7 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: sessionUser.id },
-      select: { id: true, name: true, email: true, image: true },
+      select: { id: true, name: true, email: true, image: true, phone: true, role: true },
     });
     if (!user) {
       return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
@@ -34,10 +34,33 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, image, currentPassword, newPassword } = body;
+    const { name, email, phone, image, currentPassword, newPassword } = body;
 
-    if (!name) {
+    const current = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      select: { name: true, role: true },
+    });
+    if (!current) {
+      return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
+    }
+
+    // الطلاب وأولياء الأمور لا يمكنهم تغيير أسمائهم
+    const restrictedRole =
+      current.role === "student" || current.role === "parent";
+    const finalName = restrictedRole ? current.name : name;
+
+    if (!finalName) {
       return NextResponse.json({ error: "الاسم مطلوب" }, { status: 400 });
+    }
+
+    if (phone) {
+      const phoneOwner = await prisma.user.findUnique({ where: { phone } });
+      if (phoneOwner && phoneOwner.id !== sessionUser.id) {
+        return NextResponse.json(
+          { error: "رقم الهاتف مستخدم مسبقًا" },
+          { status: 409 }
+        );
+      }
     }
 
     if (email) {
@@ -80,8 +103,9 @@ export async function PATCH(req: Request) {
     const updated = await prisma.user.update({
       where: { id: sessionUser.id },
       data: {
-        name,
+        name: finalName,
         email: email || null,
+        phone: phone || null,
         image: image || null,
         ...(hashedPassword ? { password: hashedPassword } : {}),
       },

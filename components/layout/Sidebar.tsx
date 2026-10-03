@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
   Users,
@@ -117,13 +120,18 @@ export const roleLabels: Record<Role, string> = {
   student: "طالب",
 };
 
-export default function Sidebar({ role }: { role: Role }) {
+export default function Sidebar({ role, onClose }: { role: Role; onClose?: () => void }) {
   const pathname = usePathname();
   const items = roleNav[role];
   const accent = roleAccent[role];
   const { academyName, logoUrl } = useSiteSettings();
   // أول عنصر هو الصفحة الرئيسية للوحة — يُفعّل عند التطابق التام فقط
   const homeHref = items[0]?.href;
+
+  // عند التنقل في الجوال يُغلق الدرج تلقائياً
+  useEffect(() => {
+    onClose?.();
+  }, [pathname, onClose]);
 
   return (
     <aside className="flex h-full w-64 flex-col border-l bg-card print:hidden">
@@ -135,6 +143,17 @@ export default function Sidebar({ role }: { role: Role }) {
           <GraduationCap className={cn("h-8 w-8", accent.logo)} />
         )}
         <span className="text-xl font-bold">{academyName}</span>
+        {onClose && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="me-auto"
+            onClick={onClose}
+            title="إغلاق القائمة"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        )}
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-4">
         {items.map((item) => {
