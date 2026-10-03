@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -128,8 +128,11 @@ export default function Sidebar({ role, onClose }: { role: Role; onClose?: () =>
   // أول عنصر هو الصفحة الرئيسية للوحة — يُفعّل عند التطابق التام فقط
   const homeHref = items[0]?.href;
 
-  // عند التنقل في الجوال يُغلق الدرج تلقائياً
+  // عند التنقل في الجوال يُغلق الدرج تلقائياً — دون إغلاقه عند الفتح الأول
+  const prevPathname = useRef(pathname);
   useEffect(() => {
+    if (prevPathname.current === pathname) return;
+    prevPathname.current = pathname;
     onClose?.();
   }, [pathname, onClose]);
 
