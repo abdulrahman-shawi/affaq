@@ -1,6 +1,13 @@
 import type { Column } from "./DataTable";
 import { Badge } from "@/components/ui/badge";
 import StudentPaymentsDialog from "@/components/shared/StudentPaymentsDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { formatCurrency, formatDate, getSubscriptionStatus } from "@/app/lib/utils";
 import type {
   StudentDTO,
@@ -102,10 +109,48 @@ export function parentColumns(): Column<ParentDTO>[] {
     },
     {
       header: "الأبناء",
-      cell: (p) =>
-        p.children?.length
-          ? p.children.map((c) => c.user?.name ?? "—").join("، ")
-          : "—",
+      cell: (p) => {
+        const names = (p.children ?? [])
+          .map((c) => c.user?.name)
+          .filter((n): n is string => Boolean(n));
+        if (names.length === 0) return "—";
+        if (names.length === 1) return names[0];
+        return (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap"
+              >
+                {names[0]}
+                <Badge
+                  variant="secondary"
+                  className="cursor-pointer hover:bg-accent"
+                >
+                  +{names.length - 1}
+                </Badge>
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  أبناء {p.user?.name ?? "ولي الأمر"} ({names.length})
+                </DialogTitle>
+              </DialogHeader>
+              <ul className="max-h-96 space-y-2 overflow-y-auto">
+                {names.map((name, i) => (
+                  <li
+                    key={i}
+                    className="rounded-md border px-3 py-2 text-sm"
+                  >
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </DialogContent>
+          </Dialog>
+        );
+      },
     },
   ];
 }
