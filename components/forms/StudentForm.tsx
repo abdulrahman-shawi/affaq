@@ -55,7 +55,9 @@ export default function StudentForm({
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<CreateStudentInput>(initialForm);
   const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
-  const [paymentStatus, setPaymentStatus] = useState<"paid" | "partial" | "unpaid">("unpaid");
+  const [paymentStatus, setPaymentStatus] = useState<
+    "paid" | "partial" | "unpaid" | "none"
+  >(isEdit ? "none" : "unpaid");
   const [paidAmount, setPaidAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"bank" | "cash">("bank");
 
@@ -83,7 +85,7 @@ export default function StudentForm({
             }
           : initialForm
       );
-      setPaymentStatus("unpaid");
+      setPaymentStatus(isEdit ? "none" : "unpaid");
       setPaidAmount("");
       setPaymentMethod("bank");
       fetch("/api/classes")
@@ -124,7 +126,7 @@ export default function StudentForm({
             ),
             shift: form.shift || undefined,
             currency: form.currency || undefined,
-            ...(!isEdit
+            ...(paymentStatus === "paid" || paymentStatus === "partial"
               ? {
                   paymentStatus,
                   paidAmount:
@@ -384,29 +386,34 @@ export default function StudentForm({
               </select>
             </div>
           </div>
-          {!isEdit && (
-            <div className="space-y-2">
-              <Label>حالة دفع الاشتراك</Label>
-              <div className="flex gap-4 text-sm">
-                {(
-                  [
-                    ["paid", "تم الدفع"],
-                    ["partial", "دفع جزئي"],
-                    ["unpaid", "لم يتم الدفع"],
-                  ] as const
-                ).map(([value, label]) => (
-                  <label key={value} className="flex items-center gap-1.5">
-                    <input
-                      type="radio"
-                      name="payment-status"
-                      checked={paymentStatus === value}
-                      onChange={() => setPaymentStatus(value)}
-                    />
-                    {label}
-                  </label>
-                ))}
-              </div>
-              {paymentStatus !== "unpaid" && (
+          <div className="space-y-2">
+            <Label>حالة دفع الاشتراك</Label>
+            <div className="flex gap-4 text-sm">
+              {(
+                (isEdit
+                  ? [
+                      ["paid", "تم الدفع"],
+                      ["partial", "دفع جزئي"],
+                      ["none", "بدون تسجيل دفعة"],
+                    ]
+                  : [
+                      ["paid", "تم الدفع"],
+                      ["partial", "دفع جزئي"],
+                      ["unpaid", "لم يتم الدفع"],
+                    ]) as ["paid" | "partial" | "unpaid" | "none", string][]
+              ).map(([value, label]) => (
+                <label key={value} className="flex items-center gap-1.5">
+                  <input
+                    type="radio"
+                    name="payment-status"
+                    checked={paymentStatus === value}
+                    onChange={() => setPaymentStatus(value)}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+            {(paymentStatus === "paid" || paymentStatus === "partial") && (
                 <div className="grid grid-cols-2 gap-4 pt-2">
                   {paymentStatus === "partial" && (
                     <div className="space-y-2">
@@ -448,7 +455,6 @@ export default function StudentForm({
                 </div>
               )}
             </div>
-          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting

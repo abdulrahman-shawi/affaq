@@ -48,6 +48,9 @@ export async function PATCH(
       guardianPhones,
       shift,
       currency,
+      paymentStatus,
+      paidAmount,
+      paymentMethod,
     } = body;
 
     if (!name) {
@@ -85,7 +88,29 @@ export async function PATCH(
       );
     }
 
-    const updated = await prisma.student.update({
+    // تسجيل دفعة جديدة عند التعديل (اختياري) — تُنشأ سجلًا في جدول المدفوعات
+    const wantsPayment =
+      paymentStatus === "paid" || paymentStatus === "partial";
+    const fee = monthlyFee ? Number(monthlyFee) : student.monthlyFee;
+    if (wantsPayment) {
+      if (!fee || fee <= 0) {
+        return NextResponse.json(
+          { error: "يجب تحديد رسم اشتراك شهري قبل تسجيل الدفع" },
+          { status: 400 }
+        );
+      }
+      if (paymentStatus === "partial" && !(Number(paidAmount) > 0)) {
+        return NextResponse.json(
+          { error: "أدخل المبلغ المدفوع" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const hashed = password ? await bcrypt.hash(password, 10) : null;
+
+    const [updated] = await prisma.$transaction([
+      prisma.student.update({
       where: { id: params.id },
       data: {
         class: classId ? { connect: { id: classId } } : { disconnect: true },
@@ -106,12 +131,31 @@ export async function PATCH(
             name,
             email: email || null,
             phone: phone || null,
-            ...(password ? { password: await bcrypt.hash(password, 10) } : {}),
+            ...(hashed ? { password: hashed } : {}),
           },
         },
       },
       include: { user: true, parent: { include: { user: true } }, class: true },
-    });
+      }),
+      ...(wantsPayment
+        ? [
+            prisma.payment.create({
+              data: {
+                studentId: student.id,
+                amount: paymentStatus === "paid" ? fee! : Number(paidAmount),
+                dueAmount: fee,
+                method: paymentMethod === "cash" ? "cash" : "bank",
+                period: "monthly",
+                months: 1,
+                note:
+                  paymentStatus === "paid"
+                    ? "دفعة مسجلة عند تعديل بيانات الطالب"
+                    : "دفعة جزئية عند تعديل بيانات الطالب",
+              },
+            }),
+          ]
+        : []),
+    ]);
 
     return NextResponse.json(updated);
   } catch {
