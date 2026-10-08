@@ -162,7 +162,7 @@ export default function StudentForm({
         <DialogHeader>
           <DialogTitle>{isEdit ? "تعديل الطالب" : "إضافة طالب جديد"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           <div className="space-y-2">
             <Label htmlFor="student-name">اسم الطالب</Label>
             <Input
@@ -178,6 +178,7 @@ export default function StudentForm({
               id="student-email"
               type="email"
               dir="ltr"
+              autoComplete="off"
               value={form.email ?? ""}
               onChange={(e) => set("email", e.target.value)}
             />
@@ -197,6 +198,7 @@ export default function StudentForm({
                 id="student-password"
                 type="password"
                 dir="ltr"
+                autoComplete="new-password"
                 placeholder={
                   isEdit ? "اتركه فارغًا للإبقاء على الحالية" : "123456 افتراضيًا"
                 }
