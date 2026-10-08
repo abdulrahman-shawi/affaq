@@ -415,7 +415,7 @@ export default function StudentForm({
             </div>
             {(paymentStatus === "paid" || paymentStatus === "partial") && (
                 <div className="grid grid-cols-2 gap-4 pt-2">
-                  {paymentStatus === "partial" && (
+                  {(paymentStatus === "partial" || !form.monthlyFee) && (
                     <div className="space-y-2">
                       <Label htmlFor="student-paid-amount">
                         المبلغ المدفوع ({CURRENCY_LABELS[form.currency ?? "SAR"]})

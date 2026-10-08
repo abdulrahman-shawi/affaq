@@ -93,13 +93,8 @@ export async function PATCH(
       paymentStatus === "paid" || paymentStatus === "partial";
     const fee = monthlyFee ? Number(monthlyFee) : student.monthlyFee;
     if (wantsPayment) {
-      if (!fee || fee <= 0) {
-        return NextResponse.json(
-          { error: "يجب تحديد رسم اشتراك شهري قبل تسجيل الدفع" },
-          { status: 400 }
-        );
-      }
-      if (paymentStatus === "partial" && !(Number(paidAmount) > 0)) {
+      const amount = paymentStatus === "paid" && fee ? fee : Number(paidAmount);
+      if (!(amount > 0)) {
         return NextResponse.json(
           { error: "أدخل المبلغ المدفوع" },
           { status: 400 }
@@ -142,7 +137,8 @@ export async function PATCH(
             prisma.payment.create({
               data: {
                 studentId: student.id,
-                amount: paymentStatus === "paid" ? fee! : Number(paidAmount),
+                amount:
+                  paymentStatus === "paid" && fee ? fee : Number(paidAmount),
                 dueAmount: fee,
                 method: paymentMethod === "cash" ? "cash" : "bank",
                 period: "monthly",
