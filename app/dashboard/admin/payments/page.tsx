@@ -29,15 +29,29 @@ export default function AdminPaymentsPage() {
   const { payments, loading, refetch } = usePayments();
   const [methodFilter, setMethodFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [classFilter, setClassFilter] = useState("all");
+
+  // الصفوف المرتبطة بالطلاب الذين لديهم مدفوعات — مصدر خيارات فلتر الصف
+  const classOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const p of payments) {
+      const cls = p.student?.class;
+      if (cls && !map.has(cls.id)) map.set(cls.id, cls.name);
+    }
+    return Array.from(map.entries()).sort((a, b) =>
+      a[1].localeCompare(b[1], "ar")
+    );
+  }, [payments]);
 
   const filtered = useMemo(
     () =>
       payments.filter(
         (p) =>
           (methodFilter === "all" || p.method === methodFilter) &&
-          (periodFilter === "all" || p.period === periodFilter)
+          (periodFilter === "all" || p.period === periodFilter) &&
+          (classFilter === "all" || p.student?.class?.id === classFilter)
       ),
-    [payments, methodFilter, periodFilter]
+    [payments, methodFilter, periodFilter, classFilter]
   );
 
   // تجميع فواتير كل طالب في صف واحد — إجمالي المدفوع والمستحق والمتبقي
@@ -154,6 +168,18 @@ export default function AdminPaymentsPage() {
             {Object.entries(PERIOD_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
+              </option>
+            ))}
+          </select>
+          <select
+            className={selectClassName}
+            value={classFilter}
+            onChange={(e) => setClassFilter(e.target.value)}
+          >
+            <option value="all">كل الصفوف</option>
+            {classOptions.map(([id, name]) => (
+              <option key={id} value={id}>
+                {name}
               </option>
             ))}
           </select>

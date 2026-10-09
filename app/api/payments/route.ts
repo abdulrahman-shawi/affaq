@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
     const payments = await prisma.payment.findMany({
       where: studentId ? { studentId } : undefined,
-      include: { student: { include: { user: true } } },
+      include: { student: { include: { user: true, class: true } } },
       orderBy: { date: "desc" },
     });
     return NextResponse.json(payments);
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         receiptUrl: receiptUrl || null,
         note: note || null,
       },
-      include: { student: { include: { user: true } } },
+      include: { student: { include: { user: true, class: true } } },
     });
 
     // تمديد الاشتراك بعدد الأشهر المدفوعة وإعادة تفعيل الطالب
