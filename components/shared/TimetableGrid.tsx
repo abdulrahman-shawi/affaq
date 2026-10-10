@@ -15,8 +15,8 @@ export const DAY_LABELS = [
   "السبت",
 ];
 
-// الأسبوع الدراسي الافتراضي: الأحد–الخميس
-const SCHOOL_DAYS = [0, 1, 2, 3, 4];
+// الأسبوع الدراسي الافتراضي: الأحد–الخميس والسبت (دون الجمعة)
+const SCHOOL_DAYS = [0, 1, 2, 3, 4, 6];
 
 const HOUR_PX = 96;
 const MIN_CARD_PX = 56;
