@@ -57,12 +57,16 @@ export default function AttendanceDialog({
   const [error, setError] = useState<string | null>(null);
   const [students, setStudents] = useState<StudentDTO[]>([]);
   const [marks, setMarks] = useState<Record<string, string>>({});
+  // الطلاب الذين غيّر المعلم حالتهم يدويًا في هذه الجلسة —
+  // فقط تعديلاتهم تُحفظ، ولا ندوس تسجيلًا تلقائيًا حدث أثناء فتح النافذة
+  const [dirty, setDirty] = useState<Set<string>>(new Set());
 
   // عند الفتح: نجلب طلاب صف الحصة وأي حضور مسجل مسبقًا لنفس الحصة
   useEffect(() => {
     if (!open) return;
     setError(null);
     setLoading(true);
+    setDirty(new Set());
     (async () => {
       try {
         const [classesRes, studentsRes, attendanceRes] = await Promise.all([
@@ -106,6 +110,21 @@ export default function AttendanceDialog({
     setSaving(true);
     setError(null);
     try {
+      // نجلب الحضور المسجل الآن مباشرة قبل الحفظ — فقد يكون طالب دخل الحصة
+      // (وتسجل حاضرًا تلقائيًا) أثناء فتح هذه النافذة
+      let serverMarks: Record<string, string> = {};
+      try {
+        const res = await fetch(`/api/attendance?sessionId=${session.id}`);
+        if (res.ok) {
+          const list: AttendanceDTO[] = await res.json();
+          serverMarks = Object.fromEntries(
+            list.map((a) => [a.studentId, a.status])
+          );
+        }
+      } catch {
+        // إن تعذر الجلب نعتمد حالة النافذة كما هي
+      }
+
       const res = await fetch("/api/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,7 +132,9 @@ export default function AttendanceDialog({
           sessionId: session.id,
           records: students.map((s) => ({
             studentId: s.id,
-            status: marks[s.id] ?? "absent",
+            status: dirty.has(s.id)
+              ? (marks[s.id] ?? "absent")
+              : (serverMarks[s.id] ?? marks[s.id] ?? "absent"),
           })),
         }),
       });
@@ -164,9 +185,10 @@ export default function AttendanceDialog({
                       <button
                         key={st.value}
                         type="button"
-                        onClick={() =>
-                          setMarks((m) => ({ ...m, [s.id]: st.value }))
-                        }
+                        onClick={() => {
+                          setMarks((m) => ({ ...m, [s.id]: st.value }));
+                          setDirty((prev) => new Set(prev).add(s.id));
+                        }}
                         className={`flex items-center gap-1 rounded-md border px-2 py-1 text-xs transition-colors ${
                           active
                             ? st.activeClass
