@@ -52,6 +52,8 @@ export function studentBasicColumns(): Column<StudentDTO>[] {
 
 export function studentColumns(options?: {
   onToggleStatus?: (student: StudentDTO) => void;
+  /** عرض كلمة السر النصية — للإدارة فقط (تخفيها واجهة الـ API عن باقي الأدوار) */
+  showPassword?: boolean;
 }): Column<StudentDTO>[] {
   return [
     { header: "رقم الطالب", cell: (s) => s.studentNumber ?? "—" },
@@ -60,6 +62,21 @@ export function studentColumns(options?: {
     { header: "اسم الأم", cell: (s) => s.motherName ?? "—" },
     { header: "البريد الإلكتروني", cell: (s) => s.user?.email ?? "—" },
     { header: "رقم الهاتف", cell: (s) => s.user?.phone ?? "—" },
+    ...(options?.showPassword
+      ? [
+          {
+            header: "كلمة السر",
+            cell: (s: StudentDTO) =>
+              s.user?.plainPassword ? (
+                <span dir="ltr" className="inline-block">
+                  {s.user.plainPassword}
+                </span>
+              ) : (
+                "—"
+              ),
+          },
+        ]
+      : []),
     {
       header: "هواتف ولي الأمر",
       cell: (s) => (s.guardianPhones?.length ? s.guardianPhones.join("، ") : "—"),

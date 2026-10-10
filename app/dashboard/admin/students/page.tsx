@@ -21,6 +21,28 @@ const STATUS_LABELS: Record<string, string> = {
   suspended: "موقوف",
 };
 
+const EXPORT_HEADERS = [
+  "رقم الطالب",
+  "الاسم",
+  "البريد",
+  "الجوال",
+  "الصف",
+  "الحالة",
+  "نهاية الاشتراك",
+  "ولي الأمر",
+];
+
+const exportRow = (s: StudentDTO) => [
+  s.studentNumber,
+  s.user?.name,
+  s.user?.email,
+  s.user?.phone,
+  s.class?.name ?? "بدون صف",
+  STATUS_LABELS[s.status] ?? s.status,
+  formatDate(s.subEndDate),
+  s.parent?.user?.name,
+];
+
 const selectClassName =
   "flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
@@ -188,33 +210,54 @@ export default function AdminStudentsPage() {
       </div>
 
       <DataTable
-        columns={studentColumns({ onToggleStatus: handleToggleStatus })}
+        columns={studentColumns({
+          onToggleStatus: handleToggleStatus,
+          // كلمة السر تظهر للإدارة فقط — المشرف يرى القائمة دونها
+          showPassword: role === "admin",
+        })}
         data={filtered}
         loading={loading}
         emptyTitle="لا يوجد طلاب"
         emptyMessage="ابدأ بإضافة أول طالب"
-        csv={{
-          filename: "الطلاب.xlsx",
-          headers: [
-            "رقم الطالب",
-            "الاسم",
-            "البريد",
-            "الجوال",
-            "الصف",
-            "الحالة",
-            "نهاية الاشتراك",
-            "ولي الأمر",
-          ],
-          row: (s) => [
-            s.studentNumber,
-            s.user?.name,
-            s.user?.email,
-            s.user?.phone,
-            s.class?.name ?? "بدون صف",
-            STATUS_LABELS[s.status] ?? s.status,
-            formatDate(s.subEndDate),
-            s.parent?.user?.name,
-          ],
+        csvSheets={{
+          // اسم الملف يعبّر عن الفلتر: صف محدد باسمه، وكل الصفوف باسم الأكاديمية
+          filename: () =>
+            classFilter !== "all"
+              ? `طلاب ${classFilter}.xlsx`
+              : "طلاب أكاديمية آفاق التعليمية.xlsx",
+          sheets: (rows) => {
+            if (classFilter !== "all") {
+              return [
+                {
+                  name: classFilter,
+                  headers: EXPORT_HEADERS,
+                  rows: rows.map(exportRow),
+                },
+              ];
+            }
+            // كل الصفوف: تجميع الطلاب حسب الصف — كل صف في ورقة منفصلة
+            const groups = new Map<string, StudentDTO[]>();
+            for (const s of rows) {
+              const key = s.class?.name ?? "بدون صف";
+              const list = groups.get(key) ?? [];
+              list.push(s);
+              groups.set(key, list);
+            }
+            return Array.from(groups.entries())
+              .sort(([a], [b]) => {
+                // ترتيب الأوراق كترتيب الصفوف في قائمة الفلترة
+                const ia = classNames.indexOf(a);
+                const ib = classNames.indexOf(b);
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+              })
+              .map(([name, list]) => ({
+                name,
+                headers: EXPORT_HEADERS,
+                rows: list.map(exportRow),
+              }));
+          },
         }}
         searchValue={(s) =>
           [s.studentNumber, s.user?.name, s.user?.email, s.user?.phone, s.parent?.user?.name]

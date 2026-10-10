@@ -141,7 +141,7 @@ export async function PATCH(
             name,
             email: email || null,
             phone: phone || null,
-            ...(hashed ? { password: hashed } : {}),
+            ...(hashed ? { password: hashed, plainPassword: password } : {}),
           },
         },
       },

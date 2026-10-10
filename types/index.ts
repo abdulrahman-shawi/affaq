@@ -24,6 +24,8 @@ export interface UserDTO {
   name: string;
   role: Role;
   phone?: string | null;
+  /** نسخة نصية من كلمة المرور — تُرجع من الـ API للإدارة فقط */
+  plainPassword?: string | null;
   createdAt: string;
 }
 

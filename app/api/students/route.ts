@@ -25,6 +25,13 @@ export async function GET() {
       include: { user: true, parent: { include: { user: true } }, class: true },
       orderBy: { user: { name: "asc" } },
     });
+    // كلمة السر النصية تظهر للإدارة فقط — نخفيها عن باقي الأدوار
+    if (sessionUser.role !== "admin") {
+      for (const s of students) {
+        if (s.user) s.user.plainPassword = null;
+        if (s.parent?.user) s.parent.user.plainPassword = null;
+      }
+    }
     return NextResponse.json(students);
   } catch {
     return NextResponse.json({ error: "فشل في تحميل الطلاب" }, { status: 500 });
@@ -164,6 +171,7 @@ export async function POST(req: Request) {
                 name: parentName,
                 phone: primaryFree ? primaryPhone : null,
                 password: hashed,
+                plainPassword: password || "123456",
                 role: "parent",
               },
             },
@@ -214,6 +222,7 @@ export async function POST(req: Request) {
           email: email || null,
           phone: phone || null,
           password: hashed,
+          plainPassword: password || "123456",
           role: "student",
         },
       },

@@ -15,7 +15,11 @@ import { Button } from "@/components/ui/button";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import Pagination from "@/components/shared/Pagination";
-import { downloadXlsx } from "@/app/lib/exportXlsx";
+import {
+  downloadXlsx,
+  downloadXlsxSheets,
+  type XlsxSheet,
+} from "@/app/lib/exportXlsx";
 
 export interface Column<T> {
   header: string;
@@ -27,6 +31,12 @@ export interface CsvExport<T> {
   filename: string;
   headers: string[];
   row: (row: T) => (string | number | null | undefined)[];
+}
+
+/** تصدير متعدد الأوراق — كل ورقة جدول باسمها الخاص */
+export interface MultiSheetExport<T> {
+  filename: string | ((rows: T[]) => string);
+  sheets: (rows: T[]) => XlsxSheet[];
 }
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
@@ -46,6 +56,7 @@ export default function DataTable<T>({
   selectable = false,
   bulkActions,
   csv,
+  csvSheets,
 }: {
   columns: Column<T>[];
   data: T[];
@@ -66,6 +77,8 @@ export default function DataTable<T>({
   bulkActions?: (selected: T[], clear: () => void) => ReactNode;
   /** تمريره يفعّل زر تصدير Excel — يصدّر الصفوف بعد البحث الحالي */
   csv?: CsvExport<T>;
+  /** تصدير Excel متعدد الأوراق — يتقدّم على csv عند تمريرهما معًا */
+  csvSheets?: MultiSheetExport<T>;
 }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
@@ -136,17 +149,26 @@ export default function DataTable<T>({
             <div />
           )}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {csv && (
+            {(csvSheets || csv) && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  downloadXlsx(
-                    csv.filename,
-                    csv.headers,
-                    filtered.map((row) => csv.row(row))
-                  )
-                }
+                onClick={() => {
+                  const rows = filtered;
+                  if (csvSheets) {
+                    const filename =
+                      typeof csvSheets.filename === "function"
+                        ? csvSheets.filename(rows)
+                        : csvSheets.filename;
+                    downloadXlsxSheets(filename, csvSheets.sheets(rows));
+                  } else if (csv) {
+                    downloadXlsx(
+                      csv.filename,
+                      csv.headers,
+                      rows.map((row) => csv.row(row))
+                    );
+                  }
+                }}
               >
                 <Download className="h-4 w-4" />
                 تصدير Excel

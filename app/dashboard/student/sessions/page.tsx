@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { Video, CheckCircle2, Clock } from "lucide-react";
 import {
   Card,
@@ -8,19 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import StatCard from "@/components/shared/StatCard";
-import { useToast } from "@/components/ui/toaster";
-import { useAuth } from "@/hooks/useAuth";
-import type {
-  AttendanceDTO,
-  ClassLevelDTO,
-  SessionDTO,
-  StudentDTO,
-} from "@/types";
+import { SessionJoinButton } from "@/components/shared/TodaySessionsCard";
+import { useTodaySessions } from "@/hooks/useTodaySessions";
+import { useMemo } from "react";
 
 function formatTime(date: string | Date): string {
   return new Intl.DateTimeFormat("ar-SA", {
@@ -29,96 +22,8 @@ function formatTime(date: string | Date): string {
   }).format(new Date(date));
 }
 
-function isToday(date: string | Date): boolean {
-  const d = new Date(date);
-  const now = new Date();
-  return (
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate()
-  );
-}
-
 export default function StudentSessionsPage() {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [sessions, setSessions] = useState<SessionDTO[]>([]);
-  const [attendedIds, setAttendedIds] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(true);
-  const [joining, setJoining] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      try {
-        const [studentsRes, classesRes, sessionsRes] = await Promise.all([
-          fetch("/api/students"),
-          fetch("/api/classes"),
-          fetch("/api/sessions"),
-        ]);
-        const students: StudentDTO[] = studentsRes.ok
-          ? await studentsRes.json()
-          : [];
-        const classes: ClassLevelDTO[] = classesRes.ok
-          ? await classesRes.json()
-          : [];
-        const me = students.find((s) => s.userId === user.id);
-        // Session.grade يقابل ClassLevel.order (نفس اتفاق SessionForm)
-        const order = classes.find((c) => c.id === me?.classId)?.order ?? null;
-        const all: SessionDTO[] = sessionsRes.ok ? await sessionsRes.json() : [];
-        setSessions(
-          all.filter(
-            (s) => order !== null && s.grade === order && isToday(s.date)
-          )
-        );
-
-        if (me) {
-          const attendanceRes = await fetch(
-            `/api/attendance?studentId=${me.id}`
-          );
-          const attendance: AttendanceDTO[] = attendanceRes.ok
-            ? await attendanceRes.json()
-            : [];
-          // لا نعتبر "غائب" حضورًا — زر الدخول يجب أن يبقى متاحًا لتسجيل الحضور
-          setAttendedIds(
-            new Set(
-              attendance
-                .filter((a) => a.status === "present" || a.status === "late")
-                .map((a) => a.sessionId)
-            )
-          );
-        }
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [user]);
-
-  // تسجيل الحضور تلقائياً ثم فتح رابط الزوم
-  async function handleJoin(session: SessionDTO) {
-    setJoining(session.id);
-    try {
-      const res = await fetch("/api/attendance/check-in", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId: session.id }),
-      });
-      const body = await res.json().catch(() => null);
-      if (!res.ok) {
-        throw new Error(body?.error ?? "فشل في تسجيل الحضور");
-      }
-      setAttendedIds((prev) => new Set(prev).add(session.id));
-      toast({ variant: "success", title: "تم تسجيل حضورك" });
-      window.open(body.zoomLink, "_blank", "noopener,noreferrer");
-    } catch (e) {
-      toast({
-        variant: "destructive",
-        title: e instanceof Error ? e.message : "حدث خطأ غير متوقع",
-      });
-    } finally {
-      setJoining(null);
-    }
-  }
+  const { sessions, attendedIds, loading, joining, join } = useTodaySessions();
 
   const sorted = useMemo(
     () =>
@@ -197,29 +102,13 @@ export default function StudentSessionsPage() {
                     {formatTime(session.date)}
                   </p>
                 </div>
-                {attended ? (
-                  session.zoomLink && (
-                    <Button asChild variant="outline" className="w-full">
-                      <a
-                        href={session.zoomLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Video className="h-4 w-4" />
-                        إعادة الدخول للحصة
-                      </a>
-                    </Button>
-                  )
-                ) : (
-                  <Button
-                    className="w-full"
-                    onClick={() => handleJoin(session)}
-                    disabled={joining === session.id}
-                  >
-                    <Video className="h-4 w-4" />
-                    {joining === session.id ? "جارٍ الدخول..." : "دخول الحصة"}
-                  </Button>
-                )}
+                <SessionJoinButton
+                  session={session}
+                  attended={attended}
+                  joining={joining === session.id}
+                  onJoin={join}
+                  className="w-full"
+                />
               </CardContent>
             </Card>
           );

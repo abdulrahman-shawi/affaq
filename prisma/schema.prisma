@@ -18,6 +18,8 @@ model User {
   id            String         @id @default(uuid())
   email         String?        @unique
   password      String
+  // نسخة نصية من كلمة المرور — تُملأ عند الإنشاء/التعديل وتُعرض للإدارة فقط
+  plainPassword String?
   name          String
   role          String         // "admin", "supervisor", "teacher", "parent", "student"
   phone         String?        @unique
