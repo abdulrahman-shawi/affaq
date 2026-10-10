@@ -49,7 +49,9 @@ export function studentBasicColumns(): Column<StudentDTO>[] {
   ];
 }
 
-export function studentColumns(): Column<StudentDTO>[] {
+export function studentColumns(options?: {
+  onToggleStatus?: (student: StudentDTO) => void;
+}): Column<StudentDTO>[] {
   return [
     { header: "رقم الطالب", cell: (s) => s.studentNumber ?? "—" },
     { header: "الاسم", cell: (s) => s.user?.name ?? "—" },
@@ -70,11 +72,26 @@ export function studentColumns(): Column<StudentDTO>[] {
     {
       header: "الحالة",
       cell: (s) => {
-        const status = getSubscriptionStatus(s.subEndDate) ?? s.status;
-        return (
+        // الإيقاف اليدوي يتقدّم على حالة الاشتراك المشتقة من التاريخ
+        const status =
+          s.status === "suspended"
+            ? "suspended"
+            : (getSubscriptionStatus(s.subEndDate) ?? s.status);
+        const badge = (
           <Badge variant={statusVariants[status] ?? "secondary"}>
             {statusLabels[status] ?? status}
           </Badge>
+        );
+        if (!options?.onToggleStatus) return badge;
+        return (
+          <button
+            type="button"
+            title="اضغط لتغيير حالة الطالب (تفعيل / إيقاف)"
+            onClick={() => options.onToggleStatus!(s)}
+            className="cursor-pointer rounded-md transition-opacity hover:opacity-70"
+          >
+            {badge}
+          </button>
         );
       },
     },

@@ -51,10 +51,25 @@ export async function PATCH(
       paymentStatus,
       paidAmount,
       paymentMethod,
+      status,
     } = body;
 
-    if (!name) {
+    if (!name && status === undefined) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
+    }
+
+    if (status !== undefined && !["active", "expired", "suspended"].includes(status)) {
+      return NextResponse.json({ error: "حالة غير صالحة" }, { status: 400 });
+    }
+
+    // تعديل سريع للحالة فقط (من الجدول) — دون المساس بباقي البيانات
+    if (!name) {
+      const updated = await prisma.student.update({
+        where: { id: params.id },
+        data: { status },
+        include: { user: true, parent: { include: { user: true } }, class: true },
+      });
+      return NextResponse.json(updated);
     }
 
     if (classId) {

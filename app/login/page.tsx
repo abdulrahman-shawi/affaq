@@ -26,6 +26,16 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { academyName, logoUrl } = useSiteSettings();
 
+  // رسالة عند طرد الطالب من الجلسة بسبب إيقاف حسابه أو انتهاء اشتراكه
+  useEffect(() => {
+    const blocked = new URLSearchParams(window.location.search).get("blocked");
+    if (blocked === "suspended") {
+      setError("تم إيقاف حسابك من قبل الإدارة. تم تسجيل خروجك تلقائيًا.");
+    } else if (blocked === "expired") {
+      setError("انتهى اشتراكك في الأكاديمية. تم تسجيل خروجك تلقائيًا.");
+    }
+  }, []);
+
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role) {
       router.replace(roleDashboardPath(session.user.role));
@@ -52,7 +62,13 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError("الاسم أو البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      if (result.error === "ACCOUNT_SUSPENDED") {
+        setError("تم إيقاف حسابك من قبل الإدارة. تواصل معنا لتفعيله.");
+      } else if (result.error === "SUBSCRIPTION_EXPIRED") {
+        setError("انتهى اشتراكك. يرجى تجديد الاشتراك للدخول.");
+      } else {
+        setError("الاسم أو البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      }
       setLoading(false);
       return;
     }

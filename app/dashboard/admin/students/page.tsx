@@ -66,6 +66,33 @@ export default function AdminStudentsPage() {
     };
   }, [students]);
 
+  async function handleToggleStatus(student: StudentDTO) {
+    const next = student.status === "suspended" ? "active" : "suspended";
+    try {
+      const res = await fetch(`/api/students/${student.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: next }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? "فشل في تغيير الحالة");
+      }
+      toast({
+        variant: "success",
+        title: next === "suspended" ? "تم إيقاف الطالب" : "تم تفعيل الطالب",
+        description: student.user?.name,
+      });
+      refetch();
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "فشل تغيير الحالة",
+        description: err instanceof Error ? err.message : "حدث خطأ غير متوقع",
+      });
+    }
+  }
+
   async function handleDelete(student: StudentDTO) {
     try {
       const res = await fetch(`/api/students/${student.id}`, {
@@ -161,7 +188,7 @@ export default function AdminStudentsPage() {
       </div>
 
       <DataTable
-        columns={studentColumns()}
+        columns={studentColumns({ onToggleStatus: handleToggleStatus })}
         data={filtered}
         loading={loading}
         emptyTitle="لا يوجد طلاب"

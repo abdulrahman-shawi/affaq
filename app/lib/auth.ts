@@ -32,6 +32,20 @@ export const authOptions: NextAuthOptions = {
         const valid = await bcrypt.compare(credentials.password, user.password);
         if (!valid) return null;
 
+        // منع الطلاب غير النشطين (موقوف / منتهي الاشتراك) من تسجيل الدخول
+        if (user.role === "student") {
+          const student = await prisma.student.findUnique({
+            where: { userId: user.id },
+          });
+          if (student && student.status !== "active") {
+            throw new Error(
+              student.status === "suspended"
+                ? "ACCOUNT_SUSPENDED"
+                : "SUBSCRIPTION_EXPIRED"
+            );
+          }
+        }
+
         return {
           id: user.id,
           email: user.email,
