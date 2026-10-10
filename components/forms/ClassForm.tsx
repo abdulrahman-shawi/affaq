@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toaster";
+import { displayOrder } from "@/app/lib/classOrder";
 import type { ClassLevelDTO, SubjectDTO } from "@/types";
 
 export default function ClassForm({
@@ -39,7 +40,9 @@ export default function ClassForm({
     if (open) {
       setError(null);
       setName(classLevel?.name ?? "");
-      setOrder(classLevel?.order ?? 0);
+      setOrder(
+        classLevel ? displayOrder(classLevel.order, classLevel.shift) : 0
+      );
       setShift(classLevel?.shift ?? "");
       setSubjectIds(classLevel?.subjects?.map((s) => s.id) ?? []);
       fetch("/api/subjects")
@@ -112,6 +115,9 @@ export default function ClassForm({
                 value={order}
                 onChange={(e) => setOrder(Number(e.target.value))}
               />
+              <p className="text-xs text-muted-foreground">
+                يُخزَّن للدوام المسائي بإضافة 100 تلقائيًا لتمييزه عن الصباحي
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="class-shift">الدوام</Label>

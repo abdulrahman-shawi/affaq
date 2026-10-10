@@ -89,7 +89,7 @@ export default function AttendanceDialog({
         );
         setMarks(
           Object.fromEntries(
-            classStudents.map((s) => [s.id, existingMap[s.id] ?? "present"])
+            classStudents.map((s) => [s.id, existingMap[s.id] ?? "absent"])
           )
         );
       } catch {
@@ -113,7 +113,7 @@ export default function AttendanceDialog({
           sessionId: session.id,
           records: students.map((s) => ({
             studentId: s.id,
-            status: marks[s.id] ?? "present",
+            status: marks[s.id] ?? "absent",
           })),
         }),
       });
@@ -159,7 +159,7 @@ export default function AttendanceDialog({
                 </span>
                 <div className="flex gap-1">
                   {statuses.map((st) => {
-                    const active = (marks[s.id] ?? "present") === st.value;
+                    const active = (marks[s.id] ?? "absent") === st.value;
                     return (
                       <button
                         key={st.value}

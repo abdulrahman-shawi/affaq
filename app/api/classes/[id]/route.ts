@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
+import { storedOrder, displayOrder } from "@/app/lib/classOrder";
 
 
 export const dynamic = "force-dynamic";
@@ -39,16 +40,37 @@ export async function PATCH(
       );
     }
 
+    const nextShift =
+      shift === "morning" || shift === "evening" || shift === null
+        ? shift
+        : classLevel.shift;
+
+    // نسترجع الترتيب الأساسي (بدون فرق المسائي) ثم نطبّقه على الدوام الجديد،
+    // حتى يبقى ترتيب المسائي مميزًا حتى لو غيّر المدير الدوام فقط
+    const baseOrder =
+      order !== undefined && Number.isInteger(Number(order))
+        ? Number(order)
+        : displayOrder(classLevel.order, classLevel.shift);
+    const finalOrder = storedOrder(baseOrder, nextShift);
+
+    if (finalOrder !== classLevel.order) {
+      const orderOwner = await prisma.classLevel.findFirst({
+        where: { order: finalOrder, NOT: { id: params.id } },
+      });
+      if (orderOwner) {
+        return NextResponse.json(
+          { error: "يوجد صف آخر بنفس الترتيب — اختر رقمًا مختلفًا" },
+          { status: 409 }
+        );
+      }
+    }
+
     const updated = await prisma.classLevel.update({
       where: { id: params.id },
       data: {
         name: name.trim(),
-        ...(shift === "morning" || shift === "evening" || shift === null
-          ? { shift }
-          : {}),
-        ...(order !== undefined && Number.isInteger(Number(order))
-          ? { order: Number(order) }
-          : {}),
+        ...(nextShift !== classLevel.shift ? { shift: nextShift } : {}),
+        ...(finalOrder !== classLevel.order ? { order: finalOrder } : {}),
         // عند إرسال subjectIds نستبدل المواد المرتبطة بالكامل
         ...(Array.isArray(subjectIds)
           ? { subjects: { set: subjectIds.map((id: string) => ({ id })) } }

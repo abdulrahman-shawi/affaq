@@ -8,11 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StatCard from "@/components/shared/StatCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { useAssignments } from "@/hooks/useAssignments";
+import { useClassNames, formatGrade } from "@/hooks/useClassNames";
 import { formatDate } from "@/app/lib/utils";
 import type { SessionDTO } from "@/types";
 
 export default function TeacherDashboard() {
   const { assignments } = useAssignments();
+  const classNames = useClassNames();
   const [sessions, setSessions] = useState<SessionDTO[]>([]);
 
   useEffect(() => {
@@ -92,7 +94,7 @@ export default function TeacherDashboard() {
                 >
                   <span className="font-medium">{s.subject}</span>
                   <span className="text-sm text-muted-foreground">
-                    الصف {s.grade} — {formatDate(s.date)}
+                    {formatGrade(s.grade, classNames)} — {formatDate(s.date)}
                   </span>
                 </div>
               ))}

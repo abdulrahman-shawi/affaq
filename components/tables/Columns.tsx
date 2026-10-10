@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { formatCurrency, formatDate, getSubscriptionStatus } from "@/app/lib/utils";
+import { displayOrder } from "@/app/lib/classOrder";
 import type {
   StudentDTO,
   TeacherDTO,
@@ -267,7 +268,7 @@ export function gradeColumns(): Column<GradeDTO>[] {
 export function classColumns(): Column<ClassLevelDTO>[] {
   return [
     { header: "الاسم", cell: (c) => c.name },
-    { header: "الترتيب", cell: (c) => c.order },
+    { header: "الترتيب", cell: (c) => displayOrder(c.order, c.shift) },
     { header: "الدوام", cell: (c) => (c.shift ? (shiftLabels[c.shift] ?? c.shift) : "—") },
     {
       header: "المواد",

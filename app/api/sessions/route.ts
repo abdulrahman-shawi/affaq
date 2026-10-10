@@ -98,6 +98,30 @@ export async function POST(req: Request) {
       include: { teacher: { include: { user: true } } },
     });
 
+    // القيمة الافتراضية للحضور: غائب لجميع طلاب الصف —
+    // يتحول تلقائيًا إلى حاضر عند دخول الطالب الحصة، ويعدّله المعلم يدويًا
+    const classStudents = await prisma.student.findMany({
+      where: { class: { order: Number(grade) } },
+      select: { id: true },
+    });
+    if (classStudents.length > 0) {
+      const existingMarks = await prisma.attendance.findMany({
+        where: { sessionId: session.id },
+        select: { studentId: true },
+      });
+      const marked = new Set(existingMarks.map((a) => a.studentId));
+      const toCreate = classStudents.filter((s) => !marked.has(s.id));
+      if (toCreate.length > 0) {
+        await prisma.attendance.createMany({
+          data: toCreate.map((s) => ({
+            sessionId: session.id,
+            studentId: s.id,
+            status: "absent",
+          })),
+        });
+      }
+    }
+
     return NextResponse.json(session, { status: 201 });
   } catch {
     return NextResponse.json({ error: "فشل في إنشاء الحصة" }, { status: 500 });

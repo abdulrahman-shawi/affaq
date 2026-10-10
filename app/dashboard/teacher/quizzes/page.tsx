@@ -131,10 +131,18 @@ export default function TeacherQuizzesPage() {
     };
   }, [quizzes, students, classes]);
 
+  const classNameByOrder = useMemo(
+    () => new Map(classes.map((c) => [c.order, c.name])),
+    [classes]
+  );
+
   const columns: Column<QuizDTO>[] = [
     { header: "العنوان", cell: (q) => q.title },
     { header: "المادة", cell: (q) => q.subject },
-    { header: "الصف", cell: (q) => `الصف ${q.grade}` },
+    {
+      header: "الصف",
+      cell: (q) => classNameByOrder.get(q.grade) ?? `الصف ${q.grade}`,
+    },
     {
       header: "الحالة",
       cell: (q) =>

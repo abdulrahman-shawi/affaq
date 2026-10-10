@@ -10,36 +10,41 @@ import AttendanceDialog from "@/components/forms/AttendanceDialog";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import StatCard from "@/components/shared/StatCard";
 import { formatDate } from "@/app/lib/utils";
+import { useClassNames, formatGrade } from "@/hooks/useClassNames";
 import type { SessionDTO } from "@/types";
-
-const columns: Column<SessionDTO>[] = [
-  { header: "المادة", cell: (s) => s.subject },
-  { header: "الصف", cell: (s) => `الصف ${s.grade}` },
-  { header: "المعلم", cell: (s) => s.teacher?.user?.name ?? "—" },
-  { header: "التاريخ", cell: (s) => formatDate(s.date) },
-  {
-    header: "Zoom",
-    cell: (s) =>
-      s.zoomLink ? (
-        <a
-          href={s.zoomLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-primary hover:underline"
-        >
-          <ExternalLink className="h-4 w-4" />
-          حضور الجلسة
-        </a>
-      ) : (
-        "—"
-      ),
-  },
-];
 
 export default function TeacherSessionsPage() {
   const { toast } = useToast();
+  const classNames = useClassNames();
   const [sessions, setSessions] = useState<SessionDTO[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const columns = useMemo<Column<SessionDTO>[]>(
+    () => [
+      { header: "المادة", cell: (s) => s.subject },
+      { header: "الصف", cell: (s) => formatGrade(s.grade, classNames) },
+      { header: "المعلم", cell: (s) => s.teacher?.user?.name ?? "—" },
+      { header: "التاريخ", cell: (s) => formatDate(s.date) },
+      {
+        header: "Zoom",
+        cell: (s) =>
+          s.zoomLink ? (
+            <a
+              href={s.zoomLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-primary hover:underline"
+            >
+              <ExternalLink className="h-4 w-4" />
+              حضور الجلسة
+            </a>
+          ) : (
+            "—"
+          ),
+      },
+    ],
+    [classNames]
+  );
 
   const refetch = useCallback(async () => {
     setLoading(true);

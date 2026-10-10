@@ -63,7 +63,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // تسجيل الحضور مرة واحدة فقط، دون تغيير سجل موجود
+    // دخول الطالب الحصة = حضور: ننشئ سجلًا إن لم يوجد،
+    // ونقلب أي حالة سابقة (غائب/متأخر) إلى حاضر
     const existing = await prisma.attendance.findFirst({
       where: { sessionId: session.id, studentId: student.id },
     });
@@ -75,11 +76,16 @@ export async function POST(req: Request) {
           status: "present",
         },
       });
+    } else if (existing.status !== "present") {
+      await prisma.attendance.update({
+        where: { id: existing.id },
+        data: { status: "present" },
+      });
     }
 
     return NextResponse.json({
       zoomLink: session.zoomLink,
-      alreadyMarked: Boolean(existing),
+      alreadyMarked: existing?.status === "present",
     });
   } catch {
     return NextResponse.json({ error: "فشل في تسجيل الحضور" }, { status: 500 });

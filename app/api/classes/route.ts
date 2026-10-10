@@ -3,6 +3,7 @@ import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { getSupervisorClassIds } from "@/app/lib/supervisorScope";
 import { getTeacherClassIds } from "@/app/lib/teacherScope";
+import { storedOrder } from "@/app/lib/classOrder";
 
 export const dynamic = "force-dynamic";
 
@@ -53,11 +54,28 @@ export async function POST(req: Request) {
       );
     }
 
+    const normalizedShift =
+      shift === "morning" || shift === "evening" ? shift : null;
+    const finalOrder = storedOrder(
+      Number.isInteger(Number(order)) ? Number(order) : 0,
+      normalizedShift
+    );
+
+    const orderOwner = await prisma.classLevel.findFirst({
+      where: { order: finalOrder },
+    });
+    if (orderOwner) {
+      return NextResponse.json(
+        { error: "يوجد صف آخر بنفس الترتيب — اختر رقمًا مختلفًا" },
+        { status: 409 }
+      );
+    }
+
     const classLevel = await prisma.classLevel.create({
       data: {
         name: name.trim(),
-        order: Number.isInteger(Number(order)) ? Number(order) : 0,
-        shift: shift === "morning" || shift === "evening" ? shift : null,
+        order: finalOrder,
+        shift: normalizedShift,
         ...(Array.isArray(subjectIds) && subjectIds.length > 0
           ? { subjects: { connect: subjectIds.map((id: string) => ({ id })) } }
           : {}),
