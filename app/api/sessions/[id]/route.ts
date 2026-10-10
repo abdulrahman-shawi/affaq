@@ -24,7 +24,14 @@ export async function PATCH(
     const body = await req.json();
     const { grade, subject, date, zoomLink, recordingUrl } = body;
 
-    if (!grade || !subject || !date) {
+    // قد يكون grade = 0 (ترتيب صف "الروضة") — لا نستخدم !grade
+    if (
+      grade === undefined ||
+      grade === null ||
+      grade === "" ||
+      !subject ||
+      !date
+    ) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 

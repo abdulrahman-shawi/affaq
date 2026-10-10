@@ -27,7 +27,15 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { title, subject, grade, dueDate, fileUrl, fileName } = body;
 
-    if (!title || !subject || !grade || !dueDate) {
+    // قد يكون grade = 0 (ترتيب صف "الروضة") — لا نستخدم !grade
+    if (
+      !title ||
+      !subject ||
+      grade === undefined ||
+      grade === null ||
+      grade === "" ||
+      !dueDate
+    ) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 

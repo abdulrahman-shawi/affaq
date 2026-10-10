@@ -42,7 +42,15 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { teacherId, grade, subject, date, zoomLink, recordingUrl } = body;
 
-    if (!teacherId || !grade || !subject || !date) {
+    // ملاحظة: قد يكون grade = 0 (ترتيب صف "الروضة" مثلًا) — لا نستخدم !grade
+    if (
+      !teacherId ||
+      grade === undefined ||
+      grade === null ||
+      grade === "" ||
+      !subject ||
+      !date
+    ) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 

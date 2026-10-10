@@ -99,7 +99,8 @@ export async function PATCH(
       data.subject = subject;
     }
     if (grade !== undefined) {
-      if (!grade) {
+      // قد يكون grade = 0 (ترتيب صف "الروضة") — لا نستخدم !grade
+      if (grade === null || grade === "") {
         return NextResponse.json({ error: "الصف مطلوب" }, { status: 400 });
       }
       data.grade = Number(grade);

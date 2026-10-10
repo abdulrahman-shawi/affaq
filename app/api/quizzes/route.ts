@@ -72,7 +72,9 @@ export async function POST(req: Request) {
     if (
       !title?.trim() ||
       !subject ||
-      !grade ||
+      grade === undefined ||
+      grade === null ||
+      grade === "" ||
       !teacherId ||
       !Array.isArray(questions) ||
       questions.length === 0
