@@ -194,7 +194,7 @@ export default function AdminStudentsPage() {
         emptyTitle="لا يوجد طلاب"
         emptyMessage="ابدأ بإضافة أول طالب"
         csv={{
-          filename: "الطلاب.csv",
+          filename: "الطلاب.xlsx",
           headers: [
             "رقم الطالب",
             "الاسم",

@@ -204,7 +204,7 @@ export default function AdminPaymentsPage() {
         searchValue={(s) => s.studentName}
         searchPlaceholder="ابحث باسم الطالب..."
         csv={{
-          filename: "المدفوعات.csv",
+          filename: "المدفوعات.xlsx",
           headers: [
             "الطالب",
             "العملة",

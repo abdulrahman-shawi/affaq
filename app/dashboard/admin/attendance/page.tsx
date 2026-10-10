@@ -89,7 +89,7 @@ export default function AdminAttendancePage() {
         }
         searchPlaceholder="ابحث باسم الطالب أو المادة..."
         csv={{
-          filename: "الحضور.csv",
+          filename: "الحضور.xlsx",
           headers: ["التاريخ", "الطالب", "المادة", "الحالة", "ملاحظة"],
           row: (a) => [
             formatDate(a.session?.date),

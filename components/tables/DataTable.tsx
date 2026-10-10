@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import Loading from "@/components/shared/Loading";
 import EmptyState from "@/components/shared/EmptyState";
 import Pagination from "@/components/shared/Pagination";
-import { downloadCsv } from "@/app/lib/csv";
+import { downloadXlsx } from "@/app/lib/exportXlsx";
 
 export interface Column<T> {
   header: string;
@@ -64,7 +64,7 @@ export default function DataTable<T>({
   selectable?: boolean;
   /** شريط يظهر عند وجود صفوف محددة (إجراءات جماعية) */
   bulkActions?: (selected: T[], clear: () => void) => ReactNode;
-  /** تمريره يفعّل زر تصدير CSV — يصدّر الصفوف بعد البحث الحالي */
+  /** تمريره يفعّل زر تصدير Excel — يصدّر الصفوف بعد البحث الحالي */
   csv?: CsvExport<T>;
 }) {
   const [page, setPage] = useState(1);
@@ -141,7 +141,7 @@ export default function DataTable<T>({
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  downloadCsv(
+                  downloadXlsx(
                     csv.filename,
                     csv.headers,
                     filtered.map((row) => csv.row(row))
@@ -149,7 +149,7 @@ export default function DataTable<T>({
                 }
               >
                 <Download className="h-4 w-4" />
-                تصدير CSV
+                تصدير Excel
               </Button>
             )}
             <span>عرض</span>
