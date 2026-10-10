@@ -79,11 +79,11 @@ export default function StudentSessionsPage() {
           const attendance: AttendanceDTO[] = attendanceRes.ok
             ? await attendanceRes.json()
             : [];
-          // لا نعتبر "غائب"/"متأخر" حضورًا — زر الدخول يجب أن يبقى متاحًا لتسجيل الحضور
+          // لا نعتبر "غائب" حضورًا — زر الدخول يجب أن يبقى متاحًا لتسجيل الحضور
           setAttendedIds(
             new Set(
               attendance
-                .filter((a) => a.status === "present")
+                .filter((a) => a.status === "present" || a.status === "late")
                 .map((a) => a.sessionId)
             )
           );

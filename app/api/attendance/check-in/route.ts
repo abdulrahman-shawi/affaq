@@ -63,29 +63,58 @@ export async function POST(req: Request) {
       );
     }
 
+    // تحديد الحالة حسب وقت الدخول مقارنة ببداية الحصة المجدولة:
+    // دخول قبل البداية = حاضر، دخول بعدها (مع مهلة سماح) = متأخر
+    const localNow = new Date(
+      now.toLocaleString("en-US", { timeZone: "Asia/Damascus" })
+    );
+    const LATE_GRACE_MINUTES = 5;
+    let targetStatus: "present" | "late" = "present";
+    const slot = await prisma.timetableSlot.findFirst({
+      where: {
+        teacherId: session.teacherId,
+        subject: session.subject,
+        dayOfWeek: localNow.getDay(),
+        class: { order: student.class.order },
+      },
+    });
+    if (slot) {
+      const [h, m] = slot.startTime.split(":").map(Number);
+      const startMinutes = h * 60 + m;
+      const nowMinutes = localNow.getHours() * 60 + localNow.getMinutes();
+      if (nowMinutes > startMinutes + LATE_GRACE_MINUTES) {
+        targetStatus = "late";
+      }
+    }
+
     // دخول الطالب الحصة = حضور: ننشئ سجلًا إن لم يوجد،
-    // ونقلب أي حالة سابقة (غائب/متأخر) إلى حاضر
+    // ونرقّي أي حالة سابقة (غائب/متأخر) دون أن نخفض "حاضر" إلى "متأخر"
+    const RANK: Record<string, number> = { absent: 0, late: 1, present: 2 };
     const existing = await prisma.attendance.findFirst({
       where: { sessionId: session.id, studentId: student.id },
     });
+    const finalStatus =
+      !existing || RANK[targetStatus] > (RANK[existing.status] ?? 0)
+        ? targetStatus
+        : existing.status;
     if (!existing) {
       await prisma.attendance.create({
         data: {
           sessionId: session.id,
           studentId: student.id,
-          status: "present",
+          status: targetStatus,
         },
       });
-    } else if (existing.status !== "present") {
+    } else if (finalStatus !== existing.status) {
       await prisma.attendance.update({
         where: { id: existing.id },
-        data: { status: "present" },
+        data: { status: finalStatus },
       });
     }
 
     return NextResponse.json({
       zoomLink: session.zoomLink,
-      alreadyMarked: existing?.status === "present",
+      status: finalStatus,
     });
   } catch {
     return NextResponse.json({ error: "فشل في تسجيل الحضور" }, { status: 500 });
