@@ -7,11 +7,50 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
+    }
+
+    // الطالب يرى واجبات صفّه فقط (grade = ClassLevel.order المخزّن،
+    // ويشمل فرق الدوام المسائي +100)
+    let where: { grade: number } | undefined;
+    let submissionsInclude: true | { where: { studentId: string } } = true;
+    if (sessionUser.role === "student") {
+      const student = await prisma.student.findUnique({
+        where: { userId: sessionUser.id },
+        select: { id: true, class: { select: { order: true } } },
+      });
+      if (!student?.class) {
+        return NextResponse.json([]);
+      }
+      where = { grade: student.class.order };
+      // لا نُرجع تسليمات الزملاء — تسليم الطالب نفسه فقط
+      submissionsInclude = { where: { studentId: student.id } };
+    }
+
     const assignments = await prisma.assignment.findMany({
-      include: { submissions: true },
+      where,
+      include: { submissions: submissionsInclude },
       orderBy: { dueDate: "asc" },
     });
-    return NextResponse.json(assignments);
+
+    // نرفق اسم الصف لكل واجب — يعرض للمعلم اسم الصف بدل رقمه
+    // حتى لو لم يكن الصف ضمن صفوفه المسندة (قائمة /api/classes محصورة بصفوفه)
+    const grades = [...new Set(assignments.map((a) => a.grade))];
+    const classLevels = grades.length
+      ? await prisma.classLevel.findMany({
+          where: { order: { in: grades } },
+          select: { order: true, name: true },
+        })
+      : [];
+    const nameByOrder = new Map(classLevels.map((c) => [c.order, c.name]));
+    const result = assignments.map((a) => ({
+      ...a,
+      className: nameByOrder.get(a.grade) ?? null,
+    }));
+
+    return NextResponse.json(result);
   } catch {
     return NextResponse.json({ error: "فشل في تحميل الواجبات" }, { status: 500 });
   }
