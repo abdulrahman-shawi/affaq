@@ -37,7 +37,10 @@ export async function GET() {
 
     // نرفق اسم الصف لكل واجب — يعرض للمعلم اسم الصف بدل رقمه
     // حتى لو لم يكن الصف ضمن صفوفه المسندة (قائمة /api/classes محصورة بصفوفه)
-    const grades = [...new Set(assignments.map((a) => a.grade))];
+    // dedupe بدون Set spread لتوافق target القديم في tsconfig
+    const grades = assignments
+      .map((a) => a.grade)
+      .filter((g, i, arr) => arr.indexOf(g) === i);
     const classLevels = grades.length
       ? await prisma.classLevel.findMany({
           where: { order: { in: grades } },
