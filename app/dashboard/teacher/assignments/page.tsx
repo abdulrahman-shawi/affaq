@@ -20,7 +20,12 @@ export default function TeacherAssignmentsPage() {
     () => [
       { header: "العنوان", cell: (a) => a.title },
       { header: "المادة", cell: (a) => a.subject },
-      { header: "الصف", cell: (a) => formatGrade(a.grade, classNames) },
+      // اسم الصف يأتي مرفقاً من الـ API (className) — يعمل حتى للصفوف
+      // غير المسندة للمعلم، ونبقي formatGrade احتياطاً للبيانات القديمة
+      {
+        header: "الصف",
+        cell: (a) => a.className ?? formatGrade(a.grade, classNames),
+      },
       { header: "تاريخ التسليم", cell: (a) => formatDate(a.dueDate) },
       {
         header: "الملف",
