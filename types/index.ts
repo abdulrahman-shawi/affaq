@@ -14,6 +14,7 @@ export type GradeType = "quiz" | "exam" | "homework";
 export type NotificationType =
   | "subscription"
   | "assignment"
+  | "quiz"
   | "grade"
   | "attendance"
   | "message";
@@ -103,8 +104,8 @@ export interface PaymentDTO {
   student?: StudentDTO;
   amount: number;
   date: string;
-  method: string;
-  period: string;
+  method: PaymentMethod;
+  period: PaymentPeriod;
   months?: number | null;
   dueAmount?: number | null;
   receiptUrl?: string | null;
@@ -205,6 +206,8 @@ export interface AssignmentDTO {
   title: string;
   subject: string;
   grade: number;
+  /** اسم الصف — يُرفق من الـ API (grade = ClassLevel.order) */
+  className?: string | null;
   dueDate: string;
   fileUrl?: string | null;
   fileName?: string | null;
@@ -430,8 +433,8 @@ export interface CreateQuizInput {
   grade: number;
   durationMinutes?: number | null;
   published?: boolean;
-  attachmentUrl?: string | null;
-  attachmentName?: string | null;
+  attachmentUrl?: string;
+  attachmentName?: string;
   questions: CreateQuizQuestionInput[];
 }
 
