@@ -433,8 +433,8 @@ export interface CreateQuizInput {
   grade: number;
   durationMinutes?: number | null;
   published?: boolean;
-  attachmentUrl?: string;
-  attachmentName?: string;
+  attachmentUrl?: string | null;
+  attachmentName?: string | null;
   questions: CreateQuizQuestionInput[];
 }
 
