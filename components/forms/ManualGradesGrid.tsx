@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toaster";
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -254,16 +253,18 @@ export default function ManualGradesGrid() {
       {classId && classSubjects.length > 0 && classStudents.length > 0 && (
         <>
           <div className="overflow-auto rounded-md border max-h-[70vh]">
-            <Table className="min-w-max">
+            {/* table مباشرة بدل مكوّن Table كي لا يتداخل غلافاه مع التمرير،
+                وborder-separate لأن border-collapse الافتراضي يعطّل sticky */}
+            <table className="w-full caption-bottom text-sm border-separate border-spacing-0 min-w-max">
               <TableHeader>
-                <TableRow>
+                <TableRow className="hover:bg-transparent">
                   <TableHead className="sticky right-0 top-0 z-20 bg-background min-w-40">
                     الطالب
                   </TableHead>
                   {classSubjects.map((subject) => (
                     <TableHead
                       key={subject.id}
-                      className="sticky top-0 z-10 min-w-32 bg-background text-center"
+                      className="sticky top-0 z-10 min-w-32 border-s border-border bg-background text-center"
                     >
                       <div className="space-y-1">
                         <div>{subject.name}</div>
@@ -290,12 +291,15 @@ export default function ManualGradesGrid() {
               </TableHeader>
               <TableBody>
                 {classStudents.map((student, rowIndex) => (
-                  <TableRow key={student.id}>
-                    <TableCell className="sticky right-0 z-10 bg-background font-medium">
+                  <TableRow key={student.id} className="hover:bg-transparent">
+                    <TableCell className="sticky right-0 z-10 min-w-40 bg-background font-medium">
                       {student.user?.name ?? "—"}
                     </TableCell>
                     {classSubjects.map((subject, colIndex) => (
-                      <TableCell key={subject.id} className="p-1 text-center">
+                      <TableCell
+                        key={subject.id}
+                        className="border-s border-border p-1 text-center"
+                      >
                         <Input
                           type="number"
                           min={0}
@@ -319,7 +323,7 @@ export default function ManualGradesGrid() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </table>
           </div>
           <p className="text-xs text-muted-foreground">
             الخلايا الفارغة لا تُغيّر شيئًا عند الحفظ — اكتب الدرجة ثم Enter
