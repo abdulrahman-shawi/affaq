@@ -1,0 +1,374 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+model User {
+  id            String         @id @default(uuid())
+  email         String?        @unique
+  password      String
+  // نسخة نصية من كلمة المرور — تُملأ عند الإنشاء/التعديل وتُعرض للإدارة فقط
+  plainPassword String?
+  name          String
+  role          String         // "admin", "supervisor", "teacher", "parent", "student"
+  phone         String?        @unique
+  image         String?        // رابط الصورة الشخصية
+  createdAt     DateTime       @default(now())
+
+  teacher       Teacher?
+  parent        Parent?
+  student       Student?
+  notifications Notification[]
+
+  sentMessages      Message[]
+  messageRecipients MessageRecipient[]
+
+  chatMessages  ChatMessage[]
+  chatReactions ChatReaction[]
+  showcasePosts ShowcasePost[]
+
+  // الصفوف التي يشرف عليها (للمستخدمين بدور supervisor فقط)
+  supervisedClasses ClassLevel[] @relation("SupervisorClasses")
+  // تعيينات معلمات محددات لكل صف تحت إشرافه
+  supervisedTeachers SupervisorTeacher[]
+}
+
+model Parent {
+  id       String    @id @default(uuid())
+  userId   String    @unique
+  user     User      @relation(fields: [userId], references: [id])
+
+  children Student[] @relation("ParentChildren")
+
+  phones String[] // أرقام هواتف إضافية — الرقم الأساسي في User.phone
+}
+
+model Student {
+  id            String       @id @default(uuid())
+  studentNumber Int          @unique @default(autoincrement())
+  userId        String       @unique
+  user        User         @relation(fields: [userId], references: [id])
+  parentId    String?
+  parent      Parent?      @relation("ParentChildren", fields: [parentId], references: [id])
+  classId     String?
+  class       ClassLevel?  @relation(fields: [classId], references: [id], onDelete: SetNull)
+  status        String       @default("active")
+  subEndDate    DateTime?
+  subReminderAt DateTime?
+  monthlyFee    Float?        // رسم الاشتراك الشهري
+  address       String?       // السكن الحالي
+  birthDate     DateTime?     // تاريخ الميلاد
+  regGoal       String?       // هدف التسجيل
+  fatherName    String?       // اسم الأب
+  motherName    String?       // اسم الأم
+  guardianPhones String[]     // أرقام هواتف ولي الأمر (يمكن أكثر من رقم)
+  shift         String?       // دوام الطالب: "morning" صباحي | "evening" مسائي
+  currency      String?       // عملة رسوم الطالب: "SYP" ليرة سورية | "USD" دولار | "SAR" ريال سعودي | "AED" درهم إماراتي
+
+  payments     Payment[]
+  attendance   Attendance[]
+  submissions  Submission[]
+  grades       Grade[]
+  quizAttempts QuizAttempt[]
+  showcasePosts ShowcasePost[]
+}
+
+model Teacher {
+  id       String       @id @default(uuid())
+  userId   String       @unique
+  user     User         @relation(fields: [userId], references: [id])
+  shift    String?      // دوام المعلم: "morning" صباحي | "evening" مسائي
+  subjects Subject[]
+  classes  ClassLevel[]
+
+  sessions       Session[]
+  timetableSlots TimetableSlot[]
+  quizzes        Quiz[]
+  assignments    Assignment[]
+  supervisors    SupervisorTeacher[]
+  chatMessages   ChatMessage[]
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  amount    Float
+  date      DateTime @default(now())
+  method    String   // "bank", "cash"
+  period    String   // "year", "semester", "monthly"
+  months    Int?
+  dueAmount  Float?  // المبلغ المستحق الكلي للفترة — المتبقي = dueAmount - amount
+  receiptUrl String? // صورة إشعار الدفع (Vercel Blob)
+  note       String?
+}
+
+model Session {
+  id           String       @id @default(uuid())
+  teacherId    String
+  teacher      Teacher      @relation(fields: [teacherId], references: [id])
+  grade        Int
+  subject      String
+  date         DateTime
+  zoomLink     String?
+  recordingUrl String?
+
+  attendance Attendance[]
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  status    String   // "present", "absent", "late"
+  note      String?
+}
+
+model Assignment {
+  id        String       @id @default(uuid())
+  title     String
+  subject   String
+  grade     Int
+  dueDate   DateTime
+  fileUrl   String?
+  fileName  String?
+  // المعلم الذي أنشأ الواجب — فارغ للواجبات القديمة أو ما أنشأه المدير
+  teacherId String?
+  teacher   Teacher?     @relation(fields: [teacherId], references: [id])
+
+  submissions Submission[]
+}
+
+model Submission {
+  id           String     @id @default(uuid())
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  studentId    String
+  student      Student    @relation(fields: [studentId], references: [id])
+  fileUrl      String?
+  text         String?
+  grade        Float?
+  feedback     String?
+  submittedAt  DateTime   @default(now())
+
+  gradeRecord Grade?
+}
+
+model Grade {
+  id        String   @id @default(uuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  subject   String
+  type      String   // "quiz", "exam", "homework"
+  score     Float
+  maxScore  Float
+  date      DateTime @default(now())
+  note      String?
+  // ربط اختياري بتسليم واجب — يمنع تكرار الدرجة عند إعادة التقييم (upsert)
+  submissionId String?     @unique
+  submission   Submission? @relation(fields: [submissionId], references: [id])
+}
+
+model Message {
+  id         String             @id @default(uuid())
+  content    String
+  senderId   String
+  sender     User               @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  toAll      Boolean            @default(false)
+  classes    MessageClass[]
+  recipients MessageRecipient[]
+  createdAt  DateTime           @default(now())
+}
+
+model MessageClass {
+  messageId String
+  classId   String
+  message   Message    @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  class     ClassLevel @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, classId])
+}
+
+model MessageRecipient {
+  messageId String
+  userId    String
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId])
+}
+
+model ClassLevel {
+  id             String          @id @default(uuid())
+  name           String          @unique
+  order          Int             @default(0)
+  shift          String?         // دوام الصف: "morning" صباحي | "evening" مسائي
+  subjects       Subject[]
+  students       Student[]
+  teachers       Teacher[]
+  supervisors    User[]           @relation("SupervisorClasses")
+  supervisorTeachers SupervisorTeacher[]
+  messages       MessageClass[]
+  chatMessages   ChatMessage[]
+  timetableSlots TimetableSlot[]
+  createdAt      DateTime        @default(now())
+}
+
+model Subject {
+  id        String       @id @default(uuid())
+  name      String       @unique
+  classes   ClassLevel[]
+  teachers  Teacher[]
+  createdAt DateTime     @default(now())
+}
+
+// تعيين معلمات محددات لمشرف ضمن صف بعينه — غياب السجلات = إشراف على كل معلمات الصف
+model SupervisorTeacher {
+  supervisorId String
+  supervisor   User       @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  classId      String
+  class        ClassLevel @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId    String
+  teacher      Teacher    @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@id([supervisorId, classId, teacherId])
+}
+
+model TimetableSlot {
+  id        String     @id @default(uuid())
+  classId   String
+  class     ClassLevel @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId String
+  teacher   Teacher    @relation(fields: [teacherId], references: [id])
+  subject   String
+  dayOfWeek Int        // 0=الأحد .. 6=السبت
+  startTime String     // "HH:MM"
+  endTime   String     // "HH:MM"
+  zoomLink  String?    // رابط زوم الخاص بهذا اليوم — كل يوم له رابط مستقل
+
+  @@unique([classId, dayOfWeek, startTime])
+}
+
+model Quiz {
+  id              String         @id @default(uuid())
+  title           String
+  subject         String
+  grade           Int
+  durationMinutes Int?           // مهلة الاختبار بالدقائق — فارغة = بلا مؤقت
+  published       Boolean        @default(true) // مسودة = لا تظهر للطلاب
+  attachmentUrl   String?        // مرفق اختياري (صورة أو ملف) مخزَّن في Vercel Blob
+  attachmentName  String?
+  teacherId       String
+  teacher         Teacher        @relation(fields: [teacherId], references: [id])
+  createdAt       DateTime       @default(now())
+  questions       QuizQuestion[]
+  attempts        QuizAttempt[]
+}
+
+model QuizQuestion {
+  id           String @id @default(uuid())
+  quizId       String
+  quiz         Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  type         String @default("mcq") // "mcq" | "truefalse" | "essay"
+  text         String
+  options      String[]
+  correctIndex Int    // essay = -1 (تصحيح يدوي، لا توجد إجابة صحيحة تلقائية)
+  points       Float  @default(1)
+}
+
+model QuizAttempt {
+  id          String   @id @default(uuid())
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers     Json     // لكل سؤال: فهرس الخيار (mcq/truefalse) أو نص الإجابة (essay)
+  essayScores Float[]  // درجة كل سؤال كتابي بترتيب الأسئلة (0 عند غير الكتابية)
+  graded      Boolean  @default(true) // false = بانتظار تصحيح المعلم للأسئلة الكتابية
+  score       Float
+  maxScore    Float
+  submittedAt DateTime @default(now())
+
+  @@unique([quizId, studentId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  body      String
+  type      String   // "subscription", "assignment", "quiz", "grade", "attendance", "message"
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+// إعدادات الموقع — صف واحد ثابت (singleton) بمعرف "site"
+model SiteSettings {
+  id          String   @id @default("site")
+  siteName    String   @default("آفاق أكاديمي") // اسم الموقع (عنوان المتصفح)
+  academyName String   @default("آفاق أكاديمي") // اسم الأكاديمية الظاهر في الواجهة
+  logoUrl     String?  // رابط اللوغو المرفوع
+  faviconUrl  String?  // رابط أيقونة الموقع (تظهر بجانب الاسم في تبويب المتصفح)
+  updatedAt   DateTime @updatedAt
+}
+
+// رسالة دردشة جماعية ضمن صف — نص و/أو صورة مع رد اختياري (اقتباس)
+model ChatMessage {
+  id        String        @id @default(uuid())
+  classId   String
+  class     ClassLevel    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId String?
+  teacher   Teacher?      @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  senderId  String
+  sender    User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content   String?
+  imageUrl  String?       // صورة مرفقة (Vercel Blob)
+  replyToId String?
+  replyTo   ChatMessage?  @relation("ChatReply", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies   ChatMessage[] @relation("ChatReply")
+  reactions ChatReaction[]
+  createdAt DateTime      @default(now())
+
+  @@index([classId, teacherId, createdAt])
+}
+
+// تفاعل مستخدم على رسالة دردشة — سجل واحد لكل (رسالة، مستخدم، إيموجي)
+model ChatReaction {
+  messageId String
+  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emoji     String
+
+  @@id([messageId, userId, emoji])
+}
+
+// منشور تميّز — صورة أو فيديو لطالب متميز يظهر لجميع الأدوار
+model ShowcasePost {
+  id          String   @id @default(uuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  mediaUrl    String   // رابط الصورة أو الفيديو (Vercel Blob)
+  mediaType   String   // "image" | "video"
+  caption     String?
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}

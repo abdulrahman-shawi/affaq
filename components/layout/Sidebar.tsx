@@ -1,0 +1,186 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  CreditCard,
+  CalendarCheck,
+  CalendarDays,
+  ClipboardList,
+  MessagesSquare,
+  MessageCircle,
+  ChartBar,
+  BookOpen,
+  FileText,
+  Inbox,
+  Baby,
+  School,
+  Video,
+  ClipboardCheck,
+  Settings,
+  UserCog,
+  User,
+  type LucideIcon,
+} from "lucide-react";
+import { cn } from "@/app/lib/utils";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
+import type { Role } from "@/types";
+
+export interface NavItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+const adminNav: NavItem[] = [
+  { href: "/dashboard/admin", label: "لوحة التحكم", icon: LayoutDashboard },
+  { href: "/dashboard/admin/students", label: "الطلاب", icon: GraduationCap },
+  { href: "/dashboard/admin/teachers", label: "المعلمون", icon: Users },
+  { href: "/dashboard/admin/supervisors", label: "المشرفون", icon: UserCog },
+  { href: "/dashboard/admin/parents", label: "أولياء الأمور", icon: Baby },
+  { href: "/dashboard/admin/classes", label: "الصفوف", icon: School },
+  { href: "/dashboard/admin/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
+  { href: "/dashboard/admin/subjects", label: "المواد", icon: BookOpen },
+  { href: "/dashboard/admin/payments", label: "المدفوعات", icon: CreditCard },
+  { href: "/dashboard/admin/attendance", label: "الحضور", icon: CalendarCheck },
+  { href: "/dashboard/admin/grades", label: "الدرجات", icon: ClipboardList },
+  { href: "/dashboard/admin/messages", label: "الرسائل", icon: MessagesSquare },
+  { href: "/dashboard/admin/chat", label: "المحادثات", icon: MessageCircle },
+  { href: "/dashboard/admin/reports", label: "التقارير", icon: ChartBar },
+  { href: "/dashboard/admin/settings", label: "الإعدادات", icon: Settings },
+  { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
+];
+
+// صفحات لا تظهر للمشرف — لوحة التحكم والتقارير والمدفوعات وإدارة المشرفين خاصة بالأدمن
+const SUPERVISOR_HIDDEN = [
+  "/dashboard/admin",
+  "/dashboard/admin/reports",
+  "/dashboard/admin/payments",
+  "/dashboard/admin/supervisors",
+];
+
+export const roleNav: Record<Role, NavItem[]> = {
+  admin: adminNav,
+  supervisor: adminNav.filter((i) => !SUPERVISOR_HIDDEN.includes(i.href)),
+  teacher: [
+    { href: "/dashboard/teacher", label: "لوحة التحكم", icon: LayoutDashboard },
+    { href: "/dashboard/teacher/students", label: "طلابي", icon: GraduationCap },
+    { href: "/dashboard/teacher/sessions", label: "الحصص", icon: BookOpen },
+    { href: "/dashboard/teacher/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
+    { href: "/dashboard/teacher/assignments", label: "الواجبات", icon: FileText },
+    { href: "/dashboard/teacher/quizzes", label: "الاختبارات", icon: ClipboardCheck },
+    { href: "/dashboard/teacher/submissions", label: "التسليمات", icon: Inbox },
+    { href: "/dashboard/teacher/grades", label: "الدرجات", icon: ClipboardList },
+    { href: "/dashboard/teacher/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/teacher/chat", label: "المحادثات", icon: MessageCircle },
+    { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
+  ],
+  parent: [
+    { href: "/dashboard/parent", label: "لوحة التحكم", icon: LayoutDashboard },
+    { href: "/dashboard/parent/children", label: "أبنائي", icon: Baby },
+    { href: "/dashboard/parent/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
+    { href: "/dashboard/parent/attendance", label: "الحضور", icon: CalendarCheck },
+    { href: "/dashboard/parent/grades", label: "الدرجات", icon: ClipboardList },
+    { href: "/dashboard/parent/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
+  ],
+  student: [
+    { href: "/dashboard/student", label: "لوحة التحكم", icon: LayoutDashboard },
+    { href: "/dashboard/student/assignments", label: "واجباتي", icon: FileText },
+    { href: "/dashboard/student/quizzes", label: "اختباراتي", icon: ClipboardCheck },
+    { href: "/dashboard/student/sessions", label: "حصصي", icon: BookOpen },
+    { href: "/dashboard/student/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
+    { href: "/dashboard/student/recordings", label: "التسجيلات", icon: Video },
+    { href: "/dashboard/student/grades", label: "درجاتي", icon: ClipboardList },
+    { href: "/dashboard/student/messages", label: "الرسائل", icon: MessagesSquare },
+    { href: "/dashboard/student/chat", label: "المحادثات", icon: MessageCircle },
+    { href: "/dashboard/profile", label: "الملف الشخصي", icon: User },
+  ],
+};
+
+export const roleAccent: Record<Role, { active: string; logo: string }> = {
+  admin: { active: "bg-blue-100 text-blue-700", logo: "text-blue-600" },
+  supervisor: { active: "bg-cyan-100 text-cyan-700", logo: "text-cyan-600" },
+  teacher: { active: "bg-emerald-100 text-emerald-700", logo: "text-emerald-600" },
+  parent: { active: "bg-amber-100 text-amber-700", logo: "text-amber-600" },
+  student: { active: "bg-violet-100 text-violet-700", logo: "text-violet-600" },
+};
+
+export const roleLabels: Record<Role, string> = {
+  admin: "مدير النظام",
+  supervisor: "مشرف",
+  teacher: "معلم",
+  parent: "ولي أمر",
+  student: "طالب",
+};
+
+export default function Sidebar({ role, onClose }: { role: Role; onClose?: () => void }) {
+  const pathname = usePathname();
+  const items = roleNav[role];
+  const accent = roleAccent[role];
+  const { academyName, logoUrl } = useSiteSettings();
+  // أول عنصر هو الصفحة الرئيسية للوحة — يُفعّل عند التطابق التام فقط
+  const homeHref = items[0]?.href;
+
+  // عند التنقل في الجوال يُغلق الدرج تلقائياً — دون إغلاقه عند الفتح الأول
+  const prevPathname = useRef(pathname);
+  useEffect(() => {
+    if (prevPathname.current === pathname) return;
+    prevPathname.current = pathname;
+    onClose?.();
+  }, [pathname, onClose]);
+
+  return (
+    <aside className="flex h-full w-64 flex-col border-l bg-card print:hidden">
+      <div className="flex items-center gap-2 border-b p-6">
+        {logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} alt={academyName} className="h-8 w-8 rounded object-contain" />
+        ) : (
+          <GraduationCap className={cn("h-8 w-8", accent.logo)} />
+        )}
+        <span className="text-xl font-bold">{academyName}</span>
+        {onClose && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="me-auto"
+            onClick={onClose}
+            title="إغلاق القائمة"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        )}
+      </div>
+      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+        {items.map((item) => {
+          const isActive =
+            item.href === homeHref
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                isActive
+                  ? accent.active
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              )}
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
+}

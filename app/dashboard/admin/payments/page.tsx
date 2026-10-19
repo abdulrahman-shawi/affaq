@@ -1,0 +1,228 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Plus, CreditCard, Banknote, Landmark, Wallet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import StatCard from "@/components/shared/StatCard";
+import DataTable from "@/components/tables/DataTable";
+import { studentPaymentSummaryColumns } from "@/components/tables/Columns";
+import PaymentForm from "@/components/forms/PaymentForm";
+import { usePayments } from "@/hooks/usePayments";
+import { formatCurrencyBreakdown, CURRENCY_LABELS } from "@/app/lib/utils";
+import type { Currency, PaymentDTO, StudentPaymentsSummary } from "@/types";
+
+const METHOD_LABELS: Record<string, string> = {
+  bank: "تحويل بنكي",
+  cash: "نقدي",
+};
+
+const PERIOD_LABELS: Record<string, string> = {
+  year: "سنوي",
+  semester: "فصلي",
+  monthly: "شهري",
+};
+
+const selectClassName =
+  "flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
+
+export default function AdminPaymentsPage() {
+  const { payments, loading, refetch } = usePayments();
+  const [methodFilter, setMethodFilter] = useState("all");
+  const [periodFilter, setPeriodFilter] = useState("all");
+  const [classFilter, setClassFilter] = useState("all");
+
+  // الصفوف المرتبطة بالطلاب الذين لديهم مدفوعات — مصدر خيارات فلتر الصف
+  const classOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const p of payments) {
+      const cls = p.student?.class;
+      if (cls && !map.has(cls.id)) map.set(cls.id, cls.name);
+    }
+    return Array.from(map.entries()).sort((a, b) =>
+      a[1].localeCompare(b[1], "ar")
+    );
+  }, [payments]);
+
+  const filtered = useMemo(
+    () =>
+      payments.filter(
+        (p) =>
+          (methodFilter === "all" || p.method === methodFilter) &&
+          (periodFilter === "all" || p.period === periodFilter) &&
+          (classFilter === "all" || p.student?.class?.id === classFilter)
+      ),
+    [payments, methodFilter, periodFilter, classFilter]
+  );
+
+  // تجميع فواتير كل طالب في صف واحد — إجمالي المدفوع والمستحق والمتبقي
+  const summaries = useMemo<StudentPaymentsSummary[]>(() => {
+    const byStudent = new Map<string, StudentPaymentsSummary>();
+    for (const p of filtered) {
+      let s = byStudent.get(p.studentId);
+      if (!s) {
+        s = {
+          studentId: p.studentId,
+          studentName: p.student?.user?.name ?? "—",
+          currency: p.student?.currency ?? null,
+          payments: [],
+          invoiceCount: 0,
+          totalPaid: 0,
+          totalDue: null,
+          remaining: null,
+        };
+        byStudent.set(p.studentId, s);
+      }
+      s.payments.push(p);
+      s.invoiceCount += 1;
+      s.totalPaid += p.amount;
+      // المستحق ثابت لكل طالب = رسم الاشتراك الشهري، لا يُجمع مع كل فاتورة
+      if (s.totalDue == null)
+        s.totalDue = p.student?.monthlyFee ?? p.dueAmount ?? null;
+    }
+    for (const s of Array.from(byStudent.values())) {
+      s.remaining = s.totalDue != null ? Math.max(0, s.totalDue - s.totalPaid) : null;
+    }
+    return Array.from(byStudent.values()).sort((a, b) =>
+      a.studentName.localeCompare(b.studentName, "ar")
+    );
+  }, [filtered]);
+
+  // المبالغ تُجمع لكل عملة على حدة — لا يصح جمع عملات مختلفة في رقم واحد
+  const sumByCurrency = (list: PaymentDTO[]) => {
+    const map: Partial<Record<Currency, number>> = {};
+    for (const p of list) {
+      const cur: Currency = p.student?.currency ?? "SAR";
+      map[cur] = (map[cur] ?? 0) + p.amount;
+    }
+    return map;
+  };
+
+  const totalByCurrency = sumByCurrency(filtered);
+  const bankByCurrency = sumByCurrency(
+    filtered.filter((p) => p.method === "bank")
+  );
+  const cashByCurrency = sumByCurrency(
+    filtered.filter((p) => p.method === "cash")
+  );
+  const remainingByCurrency: Partial<Record<Currency, number>> = {};
+  for (const s of summaries) {
+    if (s.remaining != null && s.remaining > 0) {
+      const cur: Currency = s.currency ?? "SAR";
+      remainingByCurrency[cur] = (remainingByCurrency[cur] ?? 0) + s.remaining;
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="إجمالي المدفوعات"
+          value={formatCurrencyBreakdown(totalByCurrency)}
+          icon={CreditCard}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="تحويل بنكي"
+          value={formatCurrencyBreakdown(bankByCurrency)}
+          icon={Landmark}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="نقدي"
+          value={formatCurrencyBreakdown(cashByCurrency)}
+          icon={Banknote}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="إجمالي المتبقي"
+          value={formatCurrencyBreakdown(remainingByCurrency)}
+          icon={Wallet}
+          iconClassName="text-red-600"
+          iconBgClassName="bg-red-500/10"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap gap-2">
+          <select
+            className={selectClassName}
+            value={methodFilter}
+            onChange={(e) => setMethodFilter(e.target.value)}
+          >
+            <option value="all">كل طرق الدفع</option>
+            {Object.entries(METHOD_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <select
+            className={selectClassName}
+            value={periodFilter}
+            onChange={(e) => setPeriodFilter(e.target.value)}
+          >
+            <option value="all">كل الفترات</option>
+            {Object.entries(PERIOD_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <select
+            className={selectClassName}
+            value={classFilter}
+            onChange={(e) => setClassFilter(e.target.value)}
+          >
+            <option value="all">كل الصفوف</option>
+            {classOptions.map(([id, name]) => (
+              <option key={id} value={id}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <PaymentForm
+          onSuccess={refetch}
+          trigger={
+            <Button>
+              <Plus className="h-4 w-4" />
+              تسجيل دفعة
+            </Button>
+          }
+        />
+      </div>
+
+      <DataTable
+        columns={studentPaymentSummaryColumns()}
+        data={summaries}
+        loading={loading}
+        emptyTitle="لا توجد مدفوعات"
+        emptyMessage="لم يتم تسجيل أي دفعة بعد"
+        searchValue={(s) => s.studentName}
+        searchPlaceholder="ابحث باسم الطالب..."
+        csv={{
+          filename: "المدفوعات.xlsx",
+          headers: [
+            "الطالب",
+            "العملة",
+            "عدد الفواتير",
+            "إجمالي المدفوع",
+            "إجمالي المستحق",
+            "المتبقي",
+          ],
+          row: (s) => [
+            s.studentName,
+            CURRENCY_LABELS[s.currency ?? "SAR"],
+            s.invoiceCount,
+            s.totalPaid,
+            s.totalDue ?? "",
+            s.remaining ?? "",
+          ],
+        }}
+      />
+    </div>
+  );
+}

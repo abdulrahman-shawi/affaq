@@ -1,0 +1,139 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { BookOpen, FileText, Inbox, ClipboardList, ClipboardCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import StatCard from "@/components/shared/StatCard";
+import EmptyState from "@/components/shared/EmptyState";
+import { useAssignments } from "@/hooks/useAssignments";
+import { useClassNames, formatGrade } from "@/hooks/useClassNames";
+import { formatDate } from "@/app/lib/utils";
+import type { SessionDTO } from "@/types";
+
+export default function TeacherDashboard() {
+  const { assignments } = useAssignments();
+  const classNames = useClassNames();
+  const [sessions, setSessions] = useState<SessionDTO[]>([]);
+
+  useEffect(() => {
+    fetch("/api/sessions")
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setSessions)
+      .catch(() => setSessions([]));
+  }, []);
+
+  const today = new Date().toDateString();
+  const todaysSessions = sessions.filter(
+    (s) => new Date(s.date).toDateString() === today
+  );
+
+  const totalSubmissions = assignments.reduce(
+    (sum, a) => sum + (a.submissions?.length ?? 0),
+    0
+  );
+
+  const pendingGrading = assignments.reduce(
+    (sum, a) =>
+      sum + (a.submissions?.filter((s) => s.grade == null).length ?? 0),
+    0
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="حصص اليوم"
+          value={todaysSessions.length}
+          icon={BookOpen}
+          iconClassName="text-emerald-600"
+          iconBgClassName="bg-emerald-500/10"
+        />
+        <StatCard
+          title="الواجبات النشطة"
+          value={assignments.length}
+          icon={FileText}
+          iconClassName="text-blue-600"
+          iconBgClassName="bg-blue-500/10"
+        />
+        <StatCard
+          title="التسليمات المستلمة"
+          value={totalSubmissions}
+          icon={Inbox}
+          iconClassName="text-violet-600"
+          iconBgClassName="bg-violet-500/10"
+        />
+        <StatCard
+          title="بانتظار التقييم"
+          value={pendingGrading}
+          icon={ClipboardCheck}
+          iconClassName="text-amber-600"
+          iconBgClassName="bg-amber-500/10"
+          description={pendingGrading > 0 ? "تسليمات تحتاج مراجعة" : undefined}
+        />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">حصص اليوم</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {todaysSessions.length === 0 ? (
+            <EmptyState
+              icon={BookOpen}
+              title="لا توجد حصص اليوم"
+              message="ستظهر حصص اليوم هنا"
+            />
+          ) : (
+            <div className="space-y-2">
+              {todaysSessions.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center justify-between rounded-md border p-3"
+                >
+                  <span className="font-medium">{s.subject}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {formatGrade(s.grade, classNames)} — {formatDate(s.date)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">إجراءات سريعة</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-3">
+          <Button asChild variant="outline">
+            <Link href="/dashboard/teacher/sessions">
+              <BookOpen className="h-4 w-4" />
+              إنشاء حصة
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/dashboard/teacher/assignments">
+              <FileText className="h-4 w-4" />
+              إنشاء واجب
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/dashboard/teacher/submissions">
+              <Inbox className="h-4 w-4" />
+              مراجعة التسليمات
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/dashboard/teacher/grades">
+              <ClipboardList className="h-4 w-4" />
+              رصد الدرجات
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

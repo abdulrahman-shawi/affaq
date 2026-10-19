@@ -1,0 +1,176 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { BookOpen, CheckCircle2, Clock, Eye, Hourglass, Play } from "lucide-react";
+import DataTable, { type Column } from "@/components/tables/DataTable";
+import StatCard from "@/components/shared/StatCard";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import TakeQuizDialog from "@/components/forms/TakeQuizDialog";
+import QuizReviewDialog from "@/components/forms/QuizReviewDialog";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuizzes } from "@/hooks/useQuizzes";
+import { useStudents } from "@/hooks/useStudents";
+import { formatDate } from "@/app/lib/utils";
+import type { ClassLevelDTO, QuizDTO } from "@/types";
+
+export default function StudentQuizzesPage() {
+  const { user } = useAuth();
+  const { students } = useStudents();
+  const { quizzes, loading, refetch } = useQuizzes();
+  const [classOrder, setClassOrder] = useState<number | null>(null);
+
+  const me = useMemo(
+    () => students.find((s) => s.userId === user?.id),
+    [students, user]
+  );
+
+  // Quiz.grade يقابل ClassLevel.order (نفس اتفاق Session/Assignment)
+  useEffect(() => {
+    if (!me?.classId) return;
+    (async () => {
+      const res = await fetch("/api/classes");
+      const classes: ClassLevelDTO[] = res.ok ? await res.json() : [];
+      setClassOrder(classes.find((c) => c.id === me.classId)?.order ?? null);
+    })();
+  }, [me?.classId]);
+
+  const myQuizzes = useMemo(
+    () =>
+      classOrder === null
+        ? []
+        : quizzes.filter((q) => q.grade === classOrder),
+    [quizzes, classOrder]
+  );
+
+  function myAttempt(quiz: QuizDTO) {
+    // الخادم يرجع للطالب محاولاته فقط
+    return quiz.attempts?.find((a) => a.studentId === me?.id);
+  }
+
+  // ملخص حالة اختبارات الطالب من قائمة myQuizzes نفسها
+  const stats = useMemo(() => {
+    let pending = 0;
+    let grading = 0;
+    let graded = 0;
+    for (const q of myQuizzes) {
+      const attempt = q.attempts?.find((a) => a.studentId === me?.id);
+      if (!attempt) pending++;
+      else if (attempt.graded === false) grading++;
+      else graded++;
+    }
+    return { total: myQuizzes.length, pending, grading, graded };
+  }, [myQuizzes, me]);
+
+  const columns: Column<QuizDTO>[] = [
+    { header: "العنوان", cell: (q) => q.title },
+    { header: "المادة", cell: (q) => q.subject },
+    { header: "المعلم", cell: (q) => q.teacher?.user?.name ?? "—" },
+    {
+      header: "الأسئلة",
+      cell: (q) => (
+        <Badge variant="secondary">{q.questions?.length ?? 0}</Badge>
+      ),
+    },
+    {
+      header: "المدة",
+      cell: (q) =>
+        q.durationMinutes ? (
+          <Badge variant="outline">{q.durationMinutes} دقيقة</Badge>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
+    },
+    { header: "التاريخ", cell: (q) => formatDate(q.createdAt) },
+    {
+      header: "الحالة",
+      cell: (q) => {
+        const attempt = myAttempt(q);
+        if (!attempt) return <Badge variant="warning">لم يُؤدَّ</Badge>;
+        if (attempt.graded === false)
+          return <Badge variant="warning">قيد التصحيح</Badge>;
+        return (
+          <Badge variant="success">
+            {attempt.score} / {attempt.maxScore}
+          </Badge>
+        );
+      },
+    },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <h1 className="text-lg font-semibold">اختباراتي</h1>
+      {!loading && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="إجمالي الاختبارات"
+            value={stats.total}
+            icon={BookOpen}
+            iconClassName="text-blue-600"
+            iconBgClassName="bg-blue-500/10"
+          />
+          <StatCard
+            title="لم يُؤدَّ بعد"
+            value={stats.pending}
+            icon={Clock}
+            iconClassName="text-amber-600"
+            iconBgClassName="bg-amber-500/10"
+          />
+          <StatCard
+            title="قيد التصحيح"
+            value={stats.grading}
+            icon={Hourglass}
+            iconClassName="text-violet-600"
+            iconBgClassName="bg-violet-500/10"
+          />
+          <StatCard
+            title="تم التصحيح"
+            value={stats.graded}
+            icon={CheckCircle2}
+            iconClassName="text-emerald-600"
+            iconBgClassName="bg-emerald-500/10"
+          />
+        </div>
+      )}
+      <DataTable
+        columns={columns}
+        data={myQuizzes}
+        loading={loading}
+        emptyTitle="لا توجد اختبارات"
+        emptyMessage="ستظهر اختبارات صفّك هنا عند إضافتها من قبل المعلم"
+        actions={(q) => {
+          const attempt = myAttempt(q);
+          if (!me) return null;
+          if (attempt) {
+            return (
+              <QuizReviewDialog
+                quiz={q}
+                attempt={attempt}
+                trigger={
+                  <Button variant="outline" size="sm">
+                    <Eye className="h-4 w-4" />
+                    مراجعة إجاباتي
+                  </Button>
+                }
+              />
+            );
+          }
+          return (
+            <TakeQuizDialog
+              quiz={q}
+              studentId={me.id}
+              onSuccess={refetch}
+              trigger={
+                <Button size="sm">
+                  <Play className="h-4 w-4" />
+                  بدء الاختبار
+                </Button>
+              }
+            />
+          );
+        }}
+      />
+    </div>
+  );
+}
