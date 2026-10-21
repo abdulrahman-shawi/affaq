@@ -53,6 +53,11 @@ export type Session = Prisma.SessionModel
  */
 export type Attendance = Prisma.AttendanceModel
 /**
+ * Model AttendanceArchive
+ * 
+ */
+export type AttendanceArchive = Prisma.AttendanceArchiveModel
+/**
  * Model Assignment
  * 
  */

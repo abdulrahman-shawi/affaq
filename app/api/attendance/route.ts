@@ -17,26 +17,69 @@ export async function GET(req: Request) {
     const sessionId = searchParams.get("sessionId");
     const studentId = searchParams.get("studentId");
 
-    const attendance = await prisma.attendance.findMany({
-      where: {
-        ...(sessionId ? { sessionId } : {}),
-        ...(studentId ? { studentId } : {}),
-        ...(scope
-          ? {
-              session: {
+    // الحضور الحي (للحصص القائمة) + الأرشيف (لحصص حُذفت) — الاثنان يُعرضان بنفس الشكل
+    const [attendance, archives] = await Promise.all([
+      prisma.attendance.findMany({
+        where: {
+          ...(sessionId ? { sessionId } : {}),
+          ...(studentId ? { studentId } : {}),
+          ...(scope
+            ? {
+                session: {
+                  teacherId: { in: scope.visibleTeacherIds },
+                  grade: { in: scope.classOrders },
+                },
+              }
+            : {}),
+        },
+        include: {
+          student: { include: { user: true } },
+          session: true,
+        },
+        orderBy: { session: { date: "desc" } },
+      }),
+      prisma.attendanceArchive.findMany({
+        where: {
+          ...(sessionId ? { sessionId } : {}),
+          ...(studentId ? { studentId } : {}),
+          ...(scope
+            ? {
                 teacherId: { in: scope.visibleTeacherIds },
                 grade: { in: scope.classOrders },
-              },
-            }
-          : {}),
+              }
+            : {}),
+        },
+        include: { student: { include: { user: true } } },
+        orderBy: { date: "desc" },
+      }),
+    ]);
+
+    // توحيد شكل السجلات المؤرشفة مع الحية — الأعمدة نفسها تعرضها (session.subject/date)
+    const archivedRows = archives.map((a) => ({
+      id: `archive:${a.id}`,
+      sessionId: a.sessionId,
+      studentId: a.studentId,
+      status: a.status,
+      note: a.note,
+      student: a.student,
+      session: {
+        id: a.sessionId,
+        teacherId: a.teacherId,
+        grade: a.grade,
+        subject: a.subject,
+        date: a.date,
+        zoomLink: null,
+        recordingUrl: null,
       },
-      include: {
-        student: { include: { user: true } },
-        session: true,
-      },
-      orderBy: { session: { date: "desc" } },
-    });
-    return NextResponse.json(attendance);
+    }));
+
+    const merged = [...attendance, ...archivedRows].sort(
+      (x, y) =>
+        new Date(y.session?.date ?? 0).getTime() -
+        new Date(x.session?.date ?? 0).getTime()
+    );
+
+    return NextResponse.json(merged);
   } catch {
     return NextResponse.json({ error: "فشل في تحميل الحضور" }, { status: 500 });
   }

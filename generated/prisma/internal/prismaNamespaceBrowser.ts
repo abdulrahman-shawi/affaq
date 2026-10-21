@@ -58,6 +58,7 @@ export const ModelName = {
   Payment: 'Payment',
   Session: 'Session',
   Attendance: 'Attendance',
+  AttendanceArchive: 'AttendanceArchive',
   Assignment: 'Assignment',
   Submission: 'Submission',
   Grade: 'Grade',
@@ -188,6 +189,22 @@ export const AttendanceScalarFieldEnum = {
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
+
+
+export const AttendanceArchiveScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  sessionId: 'sessionId',
+  subject: 'subject',
+  grade: 'grade',
+  date: 'date',
+  teacherId: 'teacherId',
+  status: 'status',
+  note: 'note',
+  archivedAt: 'archivedAt'
+} as const
+
+export type AttendanceArchiveScalarFieldEnum = (typeof AttendanceArchiveScalarFieldEnum)[keyof typeof AttendanceArchiveScalarFieldEnum]
 
 
 export const AssignmentScalarFieldEnum = {

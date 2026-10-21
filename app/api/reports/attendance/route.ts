@@ -35,17 +35,45 @@ export async function GET(req: Request) {
     const from = new Date(year, monthIndex - 1, 1);
     const to = new Date(year, monthIndex, 1);
 
-    const records = await prisma.attendance.findMany({
-      where: {
-        session: { date: { gte: from, lt: to } },
-        ...(classId ? { student: { classId } } : {}),
-      },
-      include: {
-        student: { include: { user: true, class: true } },
-        session: true,
-      },
-      orderBy: { session: { date: "asc" } },
-    });
+    // الحضور الحي + المؤرشف (حصص حُذفت بعد ساعتين) — تقرير واحد يجمعهما
+    const [liveRecords, archivedRecords] = await Promise.all([
+      prisma.attendance.findMany({
+        where: {
+          session: { date: { gte: from, lt: to } },
+          ...(classId ? { student: { classId } } : {}),
+        },
+        include: {
+          student: { include: { user: true, class: true } },
+          session: true,
+        },
+      }),
+      prisma.attendanceArchive.findMany({
+        where: {
+          date: { gte: from, lt: to },
+          ...(classId ? { student: { classId } } : {}),
+        },
+        include: { student: { include: { user: true, class: true } } },
+      }),
+    ]);
+
+    const records = [
+      ...liveRecords.map((r) => ({
+        studentId: r.studentId,
+        student: r.student,
+        subject: r.session.subject,
+        date: r.session.date,
+        status: r.status,
+        note: r.note,
+      })),
+      ...archivedRecords.map((a) => ({
+        studentId: a.studentId,
+        student: a.student,
+        subject: a.subject,
+        date: a.date,
+        status: a.status,
+        note: a.note,
+      })),
+    ].sort((x, y) => x.date.getTime() - y.date.getTime());
 
     const workbook = newWorkbook();
 
@@ -124,10 +152,10 @@ export async function GET(req: Request) {
 
     for (const record of records) {
       details.addRow([
-        formatDate(record.session.date),
+        formatDate(record.date),
         record.student.user.name,
         record.student.class?.name ?? "بدون صف",
-        record.session.subject,
+        record.subject,
         STATUS_LABELS[record.status] ?? record.status,
         record.note ?? "",
       ]);

@@ -404,6 +404,7 @@ export const ModelName = {
   Payment: 'Payment',
   Session: 'Session',
   Attendance: 'Attendance',
+  AttendanceArchive: 'AttendanceArchive',
   Assignment: 'Assignment',
   Submission: 'Submission',
   Grade: 'Grade',
@@ -437,7 +438,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "supervisorTeacher" | "timetableSlot" | "quiz" | "quizQuestion" | "quizAttempt" | "notification" | "siteSettings" | "chatMessage" | "chatReaction" | "showcasePost"
+    modelProps: "user" | "parent" | "student" | "teacher" | "payment" | "session" | "attendance" | "attendanceArchive" | "assignment" | "submission" | "grade" | "message" | "messageClass" | "messageRecipient" | "classLevel" | "subject" | "supervisorTeacher" | "timetableSlot" | "quiz" | "quizQuestion" | "quizAttempt" | "notification" | "siteSettings" | "chatMessage" | "chatReaction" | "showcasePost"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -956,6 +957,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AttendanceCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AttendanceCountAggregateOutputType> | number
+        }
+      }
+    }
+    AttendanceArchive: {
+      payload: Prisma.$AttendanceArchivePayload<ExtArgs>
+      fields: Prisma.AttendanceArchiveFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AttendanceArchiveFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AttendanceArchiveFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>
+        }
+        findFirst: {
+          args: Prisma.AttendanceArchiveFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AttendanceArchiveFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>
+        }
+        findMany: {
+          args: Prisma.AttendanceArchiveFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>[]
+        }
+        create: {
+          args: Prisma.AttendanceArchiveCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>
+        }
+        createMany: {
+          args: Prisma.AttendanceArchiveCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AttendanceArchiveCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>[]
+        }
+        delete: {
+          args: Prisma.AttendanceArchiveDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>
+        }
+        update: {
+          args: Prisma.AttendanceArchiveUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>
+        }
+        deleteMany: {
+          args: Prisma.AttendanceArchiveDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AttendanceArchiveUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AttendanceArchiveUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>[]
+        }
+        upsert: {
+          args: Prisma.AttendanceArchiveUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceArchivePayload>
+        }
+        aggregate: {
+          args: Prisma.AttendanceArchiveAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAttendanceArchive>
+        }
+        groupBy: {
+          args: Prisma.AttendanceArchiveGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttendanceArchiveGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AttendanceArchiveCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttendanceArchiveCountAggregateOutputType> | number
         }
       }
     }
@@ -2426,6 +2501,22 @@ export const AttendanceScalarFieldEnum = {
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
 
 
+export const AttendanceArchiveScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  sessionId: 'sessionId',
+  subject: 'subject',
+  grade: 'grade',
+  date: 'date',
+  teacherId: 'teacherId',
+  status: 'status',
+  note: 'note',
+  archivedAt: 'archivedAt'
+} as const
+
+export type AttendanceArchiveScalarFieldEnum = (typeof AttendanceArchiveScalarFieldEnum)[keyof typeof AttendanceArchiveScalarFieldEnum]
+
+
 export const AssignmentScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -2925,6 +3016,7 @@ export type GlobalOmitConfig = {
   payment?: Prisma.PaymentOmit
   session?: Prisma.SessionOmit
   attendance?: Prisma.AttendanceOmit
+  attendanceArchive?: Prisma.AttendanceArchiveOmit
   assignment?: Prisma.AssignmentOmit
   submission?: Prisma.SubmissionOmit
   grade?: Prisma.GradeOmit

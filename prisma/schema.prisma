@@ -78,6 +78,7 @@ model Student {
 
   payments     Payment[]
   attendance   Attendance[]
+  attendanceArchives AttendanceArchive[]
   submissions  Submission[]
   grades       Grade[]
   quizAttempts QuizAttempt[]
@@ -135,6 +136,26 @@ model Attendance {
   student   Student  @relation(fields: [studentId], references: [id])
   status    String   // "present", "absent", "late"
   note      String?
+}
+
+// أرشيف حضور — لقطة من سجل حضور الحصة تبقى محفوظة حتى بعد حذف الحصة نفسها
+// (حذف الحصص بعد ساعتين عبر cron). sessionId مرجعية فقط بلا علاقة فعلية.
+model AttendanceArchive {
+  id         String   @id @default(uuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  sessionId  String
+  subject    String   // المادة وقت الحصة
+  grade      Int      // رتبة الصف وقت الحصة
+  date       DateTime // تاريخ الحصة
+  teacherId  String?  // معرف المعلم وقت الحصة
+  status     String   // "present", "absent", "late"
+  note       String?
+  archivedAt DateTime @default(now())
+
+  // أرشفة idempotent — إعادة تشغيل الحذف لا تكرر السجل
+  @@unique([sessionId, studentId])
+  @@index([studentId, date])
 }
 
 model Assignment {
