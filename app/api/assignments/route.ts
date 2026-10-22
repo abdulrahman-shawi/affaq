@@ -14,7 +14,11 @@ export async function GET() {
 
     // الطالب يرى واجبات صفّه فقط (grade = ClassLevel.order المخزّن،
     // ويشمل فرق الدوام المسائي +100)
-    let where: { grade: number } | undefined;
+    // المعلم يرى واجبات صفوفه ومواده المرتبطة به فقط
+    let where:
+      | { grade: number }
+      | { grade: { in: number[] }; subject: { in: string[] } }
+      | undefined;
     let submissionsInclude: true | { where: { studentId: string } } = true;
     if (sessionUser.role === "student") {
       const student = await prisma.student.findUnique({
@@ -27,6 +31,18 @@ export async function GET() {
       where = { grade: student.class.order };
       // لا نُرجع تسليمات الزملاء — تسليم الطالب نفسه فقط
       submissionsInclude = { where: { studentId: student.id } };
+    } else if (sessionUser.role === "teacher") {
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+        select: {
+          classes: { select: { order: true } },
+          subjects: { select: { name: true } },
+        },
+      });
+      const classOrders = teacher?.classes.map((c) => c.order) ?? [];
+      const subjectNames = teacher?.subjects.map((s) => s.name) ?? [];
+      // in: [] يُرجع نتيجة فارغة — معلم بلا صفوف/مواد مرتبطة لا يرى شيئًا
+      where = { grade: { in: classOrders }, subject: { in: subjectNames } };
     }
 
     const assignments = await prisma.assignment.findMany({
