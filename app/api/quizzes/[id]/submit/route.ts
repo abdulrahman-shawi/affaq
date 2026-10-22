@@ -78,6 +78,9 @@ export async function POST(
           quizId: quiz.id,
           studentId,
           answers: normalized,
+          // القيمة الابتدائية 0 لكل سؤال — درجات الكتابية يستبدلها التصحيح اليدوي.
+          // لا نعتمد على افتراضي قاعدة البيانات لأنه أُزيل من العمود (NOT NULL بلا default)
+          essayScores: quiz.questions.map(() => 0),
           score,
           maxScore,
           graded: !hasEssay,

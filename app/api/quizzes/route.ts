@@ -16,6 +16,19 @@ export async function GET() {
     // المشرف يرى اختبارات صفوفه (منشورة ومسودات) ضمن نطاق معلماته
     const supervisorScope = await getSupervisorScope(sessionUser);
 
+    // المعلم يرى الاختبارات التي أنشأها فقط
+    let teacherId: string | undefined;
+    if (sessionUser.role === "teacher") {
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+        select: { id: true },
+      });
+      if (!teacher) {
+        return NextResponse.json([]);
+      }
+      teacherId = teacher.id;
+    }
+
     const quizzes = await prisma.quiz.findMany({
       // الطالب يرى الاختبارات المنشورة فقط — المسودات للمعلم والمدير
       where: sessionUser.role === "student"
@@ -25,7 +38,9 @@ export async function GET() {
               teacherId: { in: supervisorScope.visibleTeacherIds },
               grade: { in: supervisorScope.classOrders },
             }
-          : {},
+          : teacherId
+            ? { teacherId }
+            : {},
       include: {
         teacher: { include: { user: true } },
         questions: true,
