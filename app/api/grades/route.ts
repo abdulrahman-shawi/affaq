@@ -105,3 +105,85 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "فشل في رصد الدرجة" }, { status: 500 });
   }
 }
+
+// تعديل درجة محفوظة — المعلم صفوفه، والمشرف نطاقه، والمدير بلا تقييد
+// درجات التسليمات (submissionId مملوء) تُعدّل من صفحة التسليمات كي تبقى
+// متزامنة مع درجة التسليم نفسه
+export async function PATCH(req: Request) {
+  try {
+    const sessionUser = await getSessionUser();
+    if (
+      !sessionUser ||
+      !["admin", "supervisor", "teacher"].includes(sessionUser.role)
+    ) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { id, score, maxScore, note } = body;
+
+    if (!id || score === undefined || !maxScore) {
+      return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
+    }
+
+    const existing = await prisma.grade.findUnique({
+      where: { id },
+      include: { student: { select: { classId: true } } },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "الدرجة غير موجودة" }, { status: 404 });
+    }
+    if (existing.submissionId) {
+      return NextResponse.json(
+        { error: "درجات التسليمات تُعدّل من صفحة التسليمات" },
+        { status: 400 }
+      );
+    }
+
+    // المشرف يُحصر بصفوف إشرافه وموادّه المقيّدة، والمعلم بصفوفه
+    const supervisorScope = await getSupervisorScope(sessionUser);
+    if (supervisorScope) {
+      const classId = existing.student.classId;
+      const inUnrestricted =
+        !!classId && supervisorScope.unrestrictedClassIds.includes(classId);
+      const inRestricted =
+        !!classId &&
+        supervisorScope.restrictedClassIds.includes(classId) &&
+        supervisorScope.restrictedSubjectNames.includes(existing.subject);
+      if (!inUnrestricted && !inRestricted) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
+    } else if (sessionUser.role === "teacher") {
+      const teacherScoped = (await getTeacherClassIds(sessionUser)) ?? [];
+      if (
+        !existing.student.classId ||
+        !teacherScoped.includes(existing.student.classId)
+      ) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
+    }
+
+    const s = Number(score);
+    const m = Number(maxScore);
+    if (!Number.isFinite(s) || !Number.isFinite(m) || m <= 0 || s < 0 || s > m) {
+      return NextResponse.json(
+        { error: "الدرجة يجب أن تكون بين 0 والدرجة العظمى" },
+        { status: 400 }
+      );
+    }
+
+    const grade = await prisma.grade.update({
+      where: { id },
+      data: {
+        score: s,
+        maxScore: m,
+        note: typeof note === "string" && note.trim() ? note.trim() : null,
+      },
+      include: { student: { include: { user: true } } },
+    });
+
+    return NextResponse.json(grade);
+  } catch {
+    return NextResponse.json({ error: "فشل في تعديل الدرجة" }, { status: 500 });
+  }
+}

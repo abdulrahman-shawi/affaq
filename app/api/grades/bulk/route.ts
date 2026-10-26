@@ -6,7 +6,14 @@ import { getTeacherClassIds } from "@/app/lib/teacherScope";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_TYPES = new Set(["quiz", "exam", "homework", "manual"]);
+const ALLOWED_TYPES = new Set([
+  "quiz",
+  "exam",
+  "homework",
+  "manual",
+  "dictation",
+  "memorization",
+]);
 
 // رصد جماعي من شبكة الإدخال اليدوي — للمعلم (صفوفه) والمشرف (نطاقه) والمدير
 export async function POST(req: Request) {
@@ -28,6 +35,7 @@ export async function POST(req: Request) {
         type: string;
         score: number;
         maxScore: number;
+        note?: string;
       }[];
     };
 
@@ -103,6 +111,8 @@ export async function POST(req: Request) {
     // نستثني درجات التسليمات والاختبارات (submissionId مملوء) فلا نمسّها
     const count = await prisma.$transaction(async (tx) => {
       for (const e of entries) {
+        const note =
+          typeof e.note === "string" && e.note.trim() ? e.note.trim() : null;
         const existing = await tx.grade.findFirst({
           where: {
             studentId: e.studentId,
@@ -115,7 +125,11 @@ export async function POST(req: Request) {
         if (existing) {
           await tx.grade.update({
             where: { id: existing.id },
-            data: { score: Number(e.score), maxScore: Number(e.maxScore) },
+            data: {
+              score: Number(e.score),
+              maxScore: Number(e.maxScore),
+              note,
+            },
           });
         } else {
           await tx.grade.create({
@@ -125,6 +139,7 @@ export async function POST(req: Request) {
               type: e.type,
               score: Number(e.score),
               maxScore: Number(e.maxScore),
+              note,
             },
           });
         }

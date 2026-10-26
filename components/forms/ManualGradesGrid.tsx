@@ -15,7 +15,9 @@ import {
 import type { ClassLevelDTO, GradeDTO, StudentDTO } from "@/types";
 
 const GRADE_TYPES = [
-  { value: "manual", label: "رصد يدوي" },
+  { value: "manual", label: "تسميع" },
+  { value: "dictation", label: "إملاء" },
+  { value: "memorization", label: "مذاكرة" },
   { value: "exam", label: "اختبار" },
   { value: "quiz", label: "اختبار قصير" },
   { value: "homework", label: "واجب" },
@@ -25,8 +27,9 @@ const selectClassName =
   "flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 /**
- * شبكة رصد يدوي شبيهة بـ Excel: الصفوف طلاب الصف، والأعمدة موادّه.
- * لكل مادة درجة عظمى في رأس العمود، والنوع موحّد للشبكة من قائمة فوقها.
+ * شبكة إضافة درجات شبيهة بـ Excel: الصفوف طلاب الصف، والأعمدة موادّه.
+ * لكل مادة درجة عظمى في رأس العمود، والنوع موحّد للشبكة من قائمة فوقها،
+ * وعمود «ملاحظات» يرفع ملاحظة الطالب ويُرفقها بكل درجة معبّأة له.
  * الحفظ يرسل الخلايا غير الفارغة دفعة واحدة إلى POST /api/grades/bulk،
  * وإعادة الرصد لنفس (طالب، مادة، نوع) تحدّث السجل بدل تكراره.
  */
@@ -40,6 +43,8 @@ export default function ManualGradesGrid() {
   const [type, setType] = useState("manual");
   // نصوص خام لإتاحة الإفراغ أثناء الكتابة: studentId → subject → الدرجة
   const [cells, setCells] = useState<Record<string, Record<string, string>>>({});
+  // ملاحظة لكل طالب — تُرفق بكل درجة معبّأة لنفس الطالب عند الحفظ
+  const [notes, setNotes] = useState<Record<string, string>>({});
   const [maxScores, setMaxScores] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,18 +91,22 @@ export default function ManualGradesGrid() {
     if (!classId) {
       setCells({});
       setMaxScores({});
+      setNotes({});
       return;
     }
     const classStudentIds = new Set(classStudents.map((s) => s.id));
     const nextCells: Record<string, Record<string, string>> = {};
     const nextMax: Record<string, string> = {};
+    const nextNotes: Record<string, string> = {};
     for (const g of grades) {
       if (g.type !== type || !classStudentIds.has(g.studentId)) continue;
       (nextCells[g.studentId] ??= {})[g.subject] = String(g.score);
       if (!(g.subject in nextMax)) nextMax[g.subject] = String(g.maxScore);
+      if (g.note && !(g.studentId in nextNotes)) nextNotes[g.studentId] = g.note;
     }
     setCells(nextCells);
     setMaxScores(nextMax);
+    setNotes(nextNotes);
     setError(null);
   }, [classId, type, grades, classStudents]);
 
@@ -160,6 +169,7 @@ export default function ManualGradesGrid() {
           type,
           score,
           maxScore,
+          note: notes[student.id] ?? "",
         });
       }
     }
@@ -287,6 +297,9 @@ export default function ManualGradesGrid() {
                       </div>
                     </TableHead>
                   ))}
+                  <TableHead className="sticky left-0 top-0 z-20 min-w-44 border-s border-border bg-background text-center">
+                    ملاحظات
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -320,6 +333,20 @@ export default function ManualGradesGrid() {
                         />
                       </TableCell>
                     ))}
+                    <TableCell className="sticky left-0 z-10 min-w-44 border-s border-border bg-background p-1">
+                      <Input
+                        value={notes[student.id] ?? ""}
+                        onChange={(e) =>
+                          setNotes((prev) => ({
+                            ...prev,
+                            [student.id]: e.target.value,
+                          }))
+                        }
+                        placeholder="ملاحظة (اختياري)"
+                        aria-label={`ملاحظة ${student.user?.name ?? ""}`}
+                        className="h-8"
+                      />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -327,7 +354,9 @@ export default function ManualGradesGrid() {
           </div>
           <p className="text-xs text-muted-foreground">
             الخلايا الفارغة لا تُغيّر شيئًا عند الحفظ — اكتب الدرجة ثم Enter
-            للانتقال للطالب التالي. إعادة الرصد لنفس النوع تحدّث الدرجة السابقة.
+            للانتقال للطالب التالي. إعادة الرصد لنفس النوع تحدّث الدرجة السابقة،
+            وتُرفق الملاحظة المكتوبة في عمود «ملاحظات» بكل درجة معبّأة لنفس
+            الطالب.
           </p>
         </>
       )}

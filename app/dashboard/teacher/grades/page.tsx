@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ClipboardList, Percent, Table2, Trophy, Users } from "lucide-react";
-import DataTable from "@/components/tables/DataTable";
+import { ClipboardList, Pencil, Percent, Table2, Trophy, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import DataTable, { type Column } from "@/components/tables/DataTable";
 import { gradeColumns } from "@/components/tables/Columns";
+import EditGradeForm from "@/components/forms/EditGradeForm";
 import ManualGradesGrid from "@/components/forms/ManualGradesGrid";
 import StatCard from "@/components/shared/StatCard";
 import type { GradeDTO } from "@/types";
@@ -47,8 +49,31 @@ export default function TeacherGradesPage() {
 
   const tabs = [
     { key: "log", label: "سجل الدرجات", icon: ClipboardList },
-    { key: "manual", label: "رصد يدوي", icon: Table2 },
+    { key: "manual", label: "إضافة درجة", icon: Table2 },
   ] as const;
+
+  // زر تعديل لكل صف — لتصحيح درجة محفوظة بعد اكتشاف خطأ فيها لاحقًا
+  const columns = useMemo<Column<GradeDTO>[]>(
+    () => [
+      ...gradeColumns(),
+      {
+        header: "إجراء",
+        cell: (g) => (
+          <EditGradeForm
+            grade={g}
+            onSuccess={refetch}
+            trigger={
+              <Button variant="outline" size="sm">
+                <Pencil className="h-4 w-4" />
+                تعديل
+              </Button>
+            }
+          />
+        ),
+      },
+    ],
+    [refetch]
+  );
 
   return (
     <div className="space-y-4">
@@ -107,7 +132,7 @@ export default function TeacherGradesPage() {
           </div>
 
           <DataTable
-            columns={gradeColumns()}
+            columns={columns}
             data={grades}
             loading={loading}
             emptyTitle="لا توجد درجات"

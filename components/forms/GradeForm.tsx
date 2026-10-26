@@ -39,7 +39,7 @@ export default function GradeForm({
     classId: "",
     studentId: "",
     subject: "",
-    type: "quiz" as "quiz" | "exam" | "homework" | "manual",
+    type: "quiz" as "quiz" | "exam" | "homework" | "manual" | "dictation" | "memorization",
     score: 0,
     maxScore: 100,
     note: "",
@@ -199,14 +199,16 @@ export default function GradeForm({
                     onChange={(e) =>
                       setForm({
                         ...form,
-                        type: e.target.value as "quiz" | "exam" | "homework" | "manual",
+                        type: e.target.value as "quiz" | "exam" | "homework" | "manual" | "dictation" | "memorization",
                       })
                     }
                   >
+                    <option value="manual">تسميع</option>
+                    <option value="dictation">إملاء</option>
+                    <option value="memorization">مذاكرة</option>
                     <option value="quiz">اختبار قصير</option>
                     <option value="exam">اختبار</option>
                     <option value="homework">واجب</option>
-                    <option value="manual">رصد يدوي</option>
                   </select>
                 </div>
               </div>

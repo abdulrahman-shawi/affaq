@@ -269,7 +269,9 @@ const gradeTypeLabels: Record<string, string> = {
   quiz: "اختبار قصير",
   exam: "اختبار",
   homework: "واجب",
-  manual: "رصد يدوي",
+  manual: "تسميع",
+  dictation: "إملاء",
+  memorization: "مذاكرة",
 };
 
 export function gradeColumns(): Column<GradeDTO>[] {
