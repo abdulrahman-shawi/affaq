@@ -24,6 +24,16 @@ export async function GET(req: Request) {
     const teacherScoped = supervisorScope
       ? null
       : await getTeacherClassIds(sessionUser);
+    // المعلم يرى درجات مواده المرتبطة به فقط ضمن صفوفه —
+    // بلا هذا الفلتر يظهر له رصد معلمي المواد الأخرى في صفوفه
+    let teacherSubjectNames: string[] | null = null;
+    if (teacherScoped) {
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+        select: { subjects: { select: { name: true } } },
+      });
+      teacherSubjectNames = teacher?.subjects.map((s) => s.name) ?? [];
+    }
 
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get("studentId");
@@ -48,7 +58,10 @@ export async function GET(req: Request) {
               ],
             }
           : teacherScoped
-            ? { student: { classId: { in: teacherScoped } } }
+            ? {
+                student: { classId: { in: teacherScoped } },
+                subject: { in: teacherSubjectNames ?? [] },
+              }
             : {}),
       },
       include: { student: { include: { user: true } } },
@@ -106,6 +119,31 @@ export async function POST(req: Request) {
   }
 }
 
+// نطاق تعديل/حذف الدرجة: المدير بلا تقييد، والمشرف بصفوف إشرافه وموادّه
+// المقيّدة، والمعلم بصفوفه
+async function canManageGrade(
+  sessionUser: { id: string; role: string },
+  grade: { subject: string; student: { classId: string | null } }
+): Promise<boolean> {
+  const supervisorScope = await getSupervisorScope(sessionUser);
+  if (supervisorScope) {
+    const classId = grade.student.classId;
+    return (
+      (!!classId && supervisorScope.unrestrictedClassIds.includes(classId)) ||
+      (!!classId &&
+        supervisorScope.restrictedClassIds.includes(classId) &&
+        supervisorScope.restrictedSubjectNames.includes(grade.subject))
+    );
+  }
+  if (sessionUser.role === "teacher") {
+    const teacherScoped = (await getTeacherClassIds(sessionUser)) ?? [];
+    return (
+      !!grade.student.classId && teacherScoped.includes(grade.student.classId)
+    );
+  }
+  return sessionUser.role === "admin";
+}
+
 // تعديل درجة محفوظة — المعلم صفوفه، والمشرف نطاقه، والمدير بلا تقييد
 // درجات التسليمات (submissionId مملوء) تُعدّل من صفحة التسليمات كي تبقى
 // متزامنة مع درجة التسليم نفسه
@@ -141,26 +179,8 @@ export async function PATCH(req: Request) {
     }
 
     // المشرف يُحصر بصفوف إشرافه وموادّه المقيّدة، والمعلم بصفوفه
-    const supervisorScope = await getSupervisorScope(sessionUser);
-    if (supervisorScope) {
-      const classId = existing.student.classId;
-      const inUnrestricted =
-        !!classId && supervisorScope.unrestrictedClassIds.includes(classId);
-      const inRestricted =
-        !!classId &&
-        supervisorScope.restrictedClassIds.includes(classId) &&
-        supervisorScope.restrictedSubjectNames.includes(existing.subject);
-      if (!inUnrestricted && !inRestricted) {
-        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
-      }
-    } else if (sessionUser.role === "teacher") {
-      const teacherScoped = (await getTeacherClassIds(sessionUser)) ?? [];
-      if (
-        !existing.student.classId ||
-        !teacherScoped.includes(existing.student.classId)
-      ) {
-        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
-      }
+    if (!(await canManageGrade(sessionUser, existing))) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
     const s = Number(score);
@@ -185,5 +205,46 @@ export async function PATCH(req: Request) {
     return NextResponse.json(grade);
   } catch {
     return NextResponse.json({ error: "فشل في تعديل الدرجة" }, { status: 500 });
+  }
+}
+
+// حذف درجة محفوظة نهائيًا — بنفس نطاق صلاحيات التعديل
+export async function DELETE(req: Request) {
+  try {
+    const sessionUser = await getSessionUser();
+    if (
+      !sessionUser ||
+      !["admin", "supervisor", "teacher"].includes(sessionUser.role)
+    ) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
+    }
+
+    const existing = await prisma.grade.findUnique({
+      where: { id },
+      include: { student: { select: { classId: true } } },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "الدرجة غير موجودة" }, { status: 404 });
+    }
+    if (existing.submissionId) {
+      return NextResponse.json(
+        { error: "درجات التسليمات تُعدّل من صفحة التسليمات" },
+        { status: 400 }
+      );
+    }
+    if (!(await canManageGrade(sessionUser, existing))) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    }
+
+    await prisma.grade.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "فشل في حذف الدرجة" }, { status: 500 });
   }
 }

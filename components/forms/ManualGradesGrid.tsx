@@ -12,7 +12,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { ClassLevelDTO, GradeDTO, StudentDTO } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
+import type {
+  ClassLevelDTO,
+  GradeDTO,
+  StudentDTO,
+  TeacherDTO,
+} from "@/types";
 
 const GRADE_TYPES = [
   { value: "manual", label: "تسميع" },
@@ -35,9 +41,11 @@ const selectClassName =
  */
 export default function ManualGradesGrid() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
   const [students, setStudents] = useState<StudentDTO[]>([]);
   const [grades, setGrades] = useState<GradeDTO[]>([]);
+  const [teachers, setTeachers] = useState<TeacherDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [classId, setClassId] = useState("");
   const [type, setType] = useState("manual");
@@ -61,18 +69,22 @@ export default function ManualGradesGrid() {
   useEffect(() => {
     (async () => {
       try {
-        const [classesRes, studentsRes, gradesRes] = await Promise.all([
-          fetch("/api/classes"),
-          fetch("/api/students"),
-          fetch("/api/grades"),
-        ]);
+        const [classesRes, studentsRes, gradesRes, teachersRes] =
+          await Promise.all([
+            fetch("/api/classes"),
+            fetch("/api/students"),
+            fetch("/api/grades"),
+            fetch("/api/teachers"),
+          ]);
         setClasses(classesRes.ok ? await classesRes.json() : []);
         setStudents(studentsRes.ok ? await studentsRes.json() : []);
         setGrades(gradesRes.ok ? await gradesRes.json() : []);
+        setTeachers(teachersRes.ok ? await teachersRes.json() : []);
       } catch {
         setClasses([]);
         setStudents([]);
         setGrades([]);
+        setTeachers([]);
       } finally {
         setLoading(false);
       }
@@ -80,7 +92,20 @@ export default function ManualGradesGrid() {
   }, []);
 
   const selectedClass = classes.find((c) => c.id === classId);
-  const classSubjects = selectedClass?.subjects ?? [];
+  // أعمدة الشبكة = مواد المعلم المرتبطة به فقط، لا كل مواد الصف —
+  // نطابِق معرّفات مواده مع مواد الصف المختار
+  const teacherSubjectIds = useMemo(() => {
+    if (!user) return null;
+    const me = teachers.find((t) => t.userId === user.id);
+    return new Set((me?.subjects ?? []).map((s) => s.id));
+  }, [teachers, user]);
+  const classSubjects = useMemo(
+    () =>
+      (selectedClass?.subjects ?? []).filter(
+        (s) => teacherSubjectIds === null || teacherSubjectIds.has(s.id)
+      ),
+    [selectedClass, teacherSubjectIds]
+  );
   const classStudents = useMemo(
     () => students.filter((s) => s.classId === classId),
     [students, classId]
@@ -297,7 +322,7 @@ export default function ManualGradesGrid() {
                       </div>
                     </TableHead>
                   ))}
-                  <TableHead className="sticky left-0 top-0 z-20 min-w-44 border-s border-border bg-background text-center">
+                  <TableHead className="top-0 z-20 min-w-32 border-s border-border bg-background text-center lg:sticky lg:left-0 lg:min-w-44">
                     ملاحظات
                   </TableHead>
                 </TableRow>
@@ -333,7 +358,7 @@ export default function ManualGradesGrid() {
                         />
                       </TableCell>
                     ))}
-                    <TableCell className="sticky left-0 z-10 min-w-44 border-s border-border bg-background p-1">
+                    <TableCell className="z-10 min-w-32 border-s border-border bg-background p-1 lg:sticky lg:left-0 lg:min-w-44">
                       <Input
                         value={notes[student.id] ?? ""}
                         onChange={(e) =>

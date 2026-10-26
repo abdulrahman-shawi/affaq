@@ -1,16 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ClipboardList, Pencil, Percent, Table2, Trophy, Users } from "lucide-react";
+import { ClipboardList, Pencil, Percent, Table2, Trash2, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable, { type Column } from "@/components/tables/DataTable";
 import { gradeColumns } from "@/components/tables/Columns";
 import EditGradeForm from "@/components/forms/EditGradeForm";
 import ManualGradesGrid from "@/components/forms/ManualGradesGrid";
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import StatCard from "@/components/shared/StatCard";
+import { useToast } from "@/components/ui/toaster";
 import type { GradeDTO } from "@/types";
 
 export default function TeacherGradesPage() {
+  const { toast } = useToast();
   const [grades, setGrades] = useState<GradeDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"log" | "manual">("log");
@@ -59,16 +62,44 @@ export default function TeacherGradesPage() {
       {
         header: "إجراء",
         cell: (g) => (
-          <EditGradeForm
-            grade={g}
-            onSuccess={refetch}
-            trigger={
-              <Button variant="outline" size="sm">
-                <Pencil className="h-4 w-4" />
-                تعديل
-              </Button>
-            }
-          />
+          <div className="flex items-center gap-2">
+            <EditGradeForm
+              grade={g}
+              onSuccess={refetch}
+              trigger={
+                <Button variant="outline" size="sm">
+                  <Pencil className="h-4 w-4" />
+                  تعديل
+                </Button>
+              }
+            />
+            <ConfirmDialog
+              title="حذف الدرجة"
+              description={`سيتم حذف درجة ${g.student?.user?.name ?? "—"} في مادة ${g.subject} نهائيًا ولا يمكن التراجع.`}
+              confirmLabel="حذف نهائي"
+              onConfirm={async () => {
+                const res = await fetch(`/api/grades?id=${g.id}`, {
+                  method: "DELETE",
+                });
+                const body = await res.json().catch(() => null);
+                if (!res.ok) {
+                  toast({
+                    variant: "destructive",
+                    title: body?.error ?? "فشل في حذف الدرجة",
+                  });
+                } else {
+                  toast({ variant: "success", title: "تم حذف الدرجة" });
+                }
+                refetch();
+              }}
+              trigger={
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                  حذف
+                </Button>
+              }
+            />
+          </div>
         ),
       },
     ],
