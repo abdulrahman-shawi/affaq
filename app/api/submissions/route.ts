@@ -12,24 +12,63 @@ export async function GET() {
     if (!sessionUser) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
+
+    // المعلم يرى تسليمات صفوفه ومواده المرتبطة به فقط — بنفس منطق /api/assignments
+    type SubmissionsWhere =
+      | {
+          assignment: {
+            grade: { in: number[] };
+            subject: { in: string[] };
+          };
+        }
+      | {
+          OR: (
+            | { student: { classId: { in: string[] } } }
+            | {
+                student: { classId: { in: string[] } };
+                assignment: { subject: { in: string[] } };
+              }
+          )[];
+        };
+    let where: SubmissionsWhere | undefined;
+    if (sessionUser.role === "teacher") {
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+        select: {
+          classes: { select: { order: true } },
+          subjects: { select: { name: true } },
+        },
+      });
+      const classOrders = teacher?.classes.map((c) => c.order) ?? [];
+      const subjectNames = teacher?.subjects.map((s) => s.name) ?? [];
+      // in: [] يُرجع نتيجة فارغة — معلم بلا صفوف/مواد مرتبطة لا يرى شيئًا
+      where = {
+        assignment: {
+          grade: { in: classOrders },
+          subject: { in: subjectNames },
+        },
+      };
+    }
+
     const scope = await getSupervisorScope(sessionUser);
+    if (scope) {
+      where = {
+        OR: [
+          {
+            student: { classId: { in: scope.unrestrictedClassIds } },
+          },
+          {
+            student: { classId: { in: scope.restrictedClassIds } },
+            assignment: {
+              subject: { in: scope.restrictedSubjectNames },
+            },
+          },
+        ],
+      };
+    }
 
     const submissions = await prisma.submission.findMany({
-      where: scope
-        ? {
-            OR: [
-              {
-                student: { classId: { in: scope.unrestrictedClassIds } },
-              },
-              {
-                student: { classId: { in: scope.restrictedClassIds } },
-                assignment: {
-                  subject: { in: scope.restrictedSubjectNames },
-                },
-              },
-            ],
-          }
-        : undefined,
+      where,
       include: {
         student: { include: { user: true } },
         assignment: true,
