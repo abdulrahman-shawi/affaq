@@ -29,6 +29,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { classId, entries } = body as {
       classId?: string;
+      name?: string;
       entries?: {
         studentId: string;
         subject: string;
@@ -42,6 +43,11 @@ export async function POST(req: Request) {
     if (!classId || !Array.isArray(entries) || entries.length === 0) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
+
+    // اسم الملف المشترك لكل الدرجات المرسلة — يفرَّغ ويقتطع لحد معقول
+    const trimmedName =
+      typeof body.name === "string" ? body.name.trim().slice(0, 200) : "";
+    const gradeName = trimmedName || null;
 
     // المشرف يُحصر بصفوف الإشراف، والمعلم بصفوفه
     const supervisorScope = await getSupervisorScope(sessionUser);
@@ -107,8 +113,9 @@ export async function POST(req: Request) {
       }
     }
 
-    // إعادة الرصد لنفس (طالب، مادة، نوع) تحدّث السجل ولا تكرّره —
-    // نستثني درجات التسليمات والاختبارات (submissionId مملوء) فلا نمسّها
+    // إعادة الرصد لنفس (طالب، مادة، نوع، اسم) تحدّث السجل ولا تكرّره —
+    // الاسم يفصل ملفات التقييم المتعددة من نفس النوع عن بعضها،
+    // ونستثني درجات التسليمات والاختبارات (submissionId مملوء) فلا نمسّها
     const count = await prisma.$transaction(async (tx) => {
       for (const e of entries) {
         const note =
@@ -118,6 +125,7 @@ export async function POST(req: Request) {
             studentId: e.studentId,
             subject: e.subject,
             type: e.type,
+            name: gradeName,
             submissionId: null,
           },
           select: { id: true },
@@ -140,6 +148,7 @@ export async function POST(req: Request) {
               score: Number(e.score),
               maxScore: Number(e.maxScore),
               note,
+              name: gradeName,
             },
           });
         }

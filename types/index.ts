@@ -237,6 +237,7 @@ export interface GradeDTO {
   maxScore: number;
   date: string;
   note?: string | null;
+  name?: string | null;
 }
 
 export interface MessageSenderDTO {

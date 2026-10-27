@@ -43,6 +43,7 @@ export async function GET(req: Request) {
     sheet.columns = [
       { width: 20 },
       { width: 14 },
+      { width: 24 },
       { width: 10 },
       { width: 10 },
       { width: 18 },
@@ -55,13 +56,14 @@ export async function GET(req: Request) {
     sheet.addRow(["تاريخ الإصدار", formatDate(new Date())]);
     sheet.addRow([]);
 
-    const header = sheet.addRow(["المادة", "النوع", "الدرجة", "من", "التاريخ", "ملاحظة"]);
+    const header = sheet.addRow(["المادة", "النوع", "اسم الدرجة", "الدرجة", "من", "التاريخ", "ملاحظة"]);
     styleHeaderRow(header);
 
     for (const grade of student.grades) {
       sheet.addRow([
         grade.subject,
         TYPE_LABELS[grade.type] ?? grade.type,
+        grade.name ?? "",
         grade.score,
         grade.maxScore,
         formatDate(grade.date),

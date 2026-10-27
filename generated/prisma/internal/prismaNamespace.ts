@@ -2554,6 +2554,7 @@ export const GradeScalarFieldEnum = {
   maxScore: 'maxScore',
   date: 'date',
   note: 'note',
+  name: 'name',
   submissionId: 'submissionId'
 } as const
 

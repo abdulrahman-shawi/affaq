@@ -88,9 +88,7 @@ export async function POST(req: Request) {
 
     if (!studentId || !subject || !type || score === undefined || !maxScore) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
-    }
-
-    // المشرف والمعلم يرصدان درجات طلاب صفوفهم فقط
+    }    // المشرف والمعلم يرصدان درجات طلاب صفوفهم فقط
     if (scoped) {
       const student = await prisma.student.findUnique({
         where: { id: studentId },
@@ -101,6 +99,11 @@ export async function POST(req: Request) {
       }
     }
 
+    const gradeName =
+      typeof body.name === "string" && body.name.trim()
+        ? body.name.trim().slice(0, 200)
+        : null;
+
     const grade = await prisma.grade.create({
       data: {
         studentId,
@@ -109,6 +112,7 @@ export async function POST(req: Request) {
         score: Number(score),
         maxScore: Number(maxScore),
         note: note || null,
+        name: gradeName,
       },
       include: { student: { include: { user: true } } },
     });

@@ -45,6 +45,7 @@ export type GradeMinAggregateOutputType = {
   maxScore: number | null
   date: Date | null
   note: string | null
+  name: string | null
   submissionId: string | null
 }
 
@@ -57,6 +58,7 @@ export type GradeMaxAggregateOutputType = {
   maxScore: number | null
   date: Date | null
   note: string | null
+  name: string | null
   submissionId: string | null
 }
 
@@ -69,6 +71,7 @@ export type GradeCountAggregateOutputType = {
   maxScore: number
   date: number
   note: number
+  name: number
   submissionId: number
   _all: number
 }
@@ -93,6 +96,7 @@ export type GradeMinAggregateInputType = {
   maxScore?: true
   date?: true
   note?: true
+  name?: true
   submissionId?: true
 }
 
@@ -105,6 +109,7 @@ export type GradeMaxAggregateInputType = {
   maxScore?: true
   date?: true
   note?: true
+  name?: true
   submissionId?: true
 }
 
@@ -117,6 +122,7 @@ export type GradeCountAggregateInputType = {
   maxScore?: true
   date?: true
   note?: true
+  name?: true
   submissionId?: true
   _all?: true
 }
@@ -216,6 +222,7 @@ export type GradeGroupByOutputType = {
   maxScore: number
   date: Date
   note: string | null
+  name: string | null
   submissionId: string | null
   _count: GradeCountAggregateOutputType | null
   _avg: GradeAvgAggregateOutputType | null
@@ -251,6 +258,7 @@ export type GradeWhereInput = {
   maxScore?: Prisma.FloatFilter<"Grade"> | number
   date?: Prisma.DateTimeFilter<"Grade"> | Date | string
   note?: Prisma.StringNullableFilter<"Grade"> | string | null
+  name?: Prisma.StringNullableFilter<"Grade"> | string | null
   submissionId?: Prisma.StringNullableFilter<"Grade"> | string | null
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   submission?: Prisma.XOR<Prisma.SubmissionNullableScalarRelationFilter, Prisma.SubmissionWhereInput> | null
@@ -265,6 +273,7 @@ export type GradeOrderByWithRelationInput = {
   maxScore?: Prisma.SortOrder
   date?: Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
   submissionId?: Prisma.SortOrderInput | Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
   submission?: Prisma.SubmissionOrderByWithRelationInput
@@ -283,6 +292,7 @@ export type GradeWhereUniqueInput = Prisma.AtLeast<{
   maxScore?: Prisma.FloatFilter<"Grade"> | number
   date?: Prisma.DateTimeFilter<"Grade"> | Date | string
   note?: Prisma.StringNullableFilter<"Grade"> | string | null
+  name?: Prisma.StringNullableFilter<"Grade"> | string | null
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   submission?: Prisma.XOR<Prisma.SubmissionNullableScalarRelationFilter, Prisma.SubmissionWhereInput> | null
 }, "id" | "submissionId">
@@ -296,6 +306,7 @@ export type GradeOrderByWithAggregationInput = {
   maxScore?: Prisma.SortOrder
   date?: Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
   submissionId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.GradeCountOrderByAggregateInput
   _avg?: Prisma.GradeAvgOrderByAggregateInput
@@ -316,6 +327,7 @@ export type GradeScalarWhereWithAggregatesInput = {
   maxScore?: Prisma.FloatWithAggregatesFilter<"Grade"> | number
   date?: Prisma.DateTimeWithAggregatesFilter<"Grade"> | Date | string
   note?: Prisma.StringNullableWithAggregatesFilter<"Grade"> | string | null
+  name?: Prisma.StringNullableWithAggregatesFilter<"Grade"> | string | null
   submissionId?: Prisma.StringNullableWithAggregatesFilter<"Grade"> | string | null
 }
 
@@ -327,6 +339,7 @@ export type GradeCreateInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
   student: Prisma.StudentCreateNestedOneWithoutGradesInput
   submission?: Prisma.SubmissionCreateNestedOneWithoutGradeRecordInput
 }
@@ -340,6 +353,7 @@ export type GradeUncheckedCreateInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
   submissionId?: string | null
 }
 
@@ -351,6 +365,7 @@ export type GradeUpdateInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   student?: Prisma.StudentUpdateOneRequiredWithoutGradesNestedInput
   submission?: Prisma.SubmissionUpdateOneWithoutGradeRecordNestedInput
 }
@@ -364,6 +379,7 @@ export type GradeUncheckedUpdateInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -376,6 +392,7 @@ export type GradeCreateManyInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
   submissionId?: string | null
 }
 
@@ -387,6 +404,7 @@ export type GradeUpdateManyMutationInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type GradeUncheckedUpdateManyInput = {
@@ -398,6 +416,7 @@ export type GradeUncheckedUpdateManyInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -425,6 +444,7 @@ export type GradeCountOrderByAggregateInput = {
   maxScore?: Prisma.SortOrder
   date?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   submissionId?: Prisma.SortOrder
 }
 
@@ -442,6 +462,7 @@ export type GradeMaxOrderByAggregateInput = {
   maxScore?: Prisma.SortOrder
   date?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   submissionId?: Prisma.SortOrder
 }
 
@@ -454,6 +475,7 @@ export type GradeMinOrderByAggregateInput = {
   maxScore?: Prisma.SortOrder
   date?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   submissionId?: Prisma.SortOrder
 }
 
@@ -544,6 +566,7 @@ export type GradeCreateWithoutStudentInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
   submission?: Prisma.SubmissionCreateNestedOneWithoutGradeRecordInput
 }
 
@@ -555,6 +578,7 @@ export type GradeUncheckedCreateWithoutStudentInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
   submissionId?: string | null
 }
 
@@ -596,6 +620,7 @@ export type GradeScalarWhereInput = {
   maxScore?: Prisma.FloatFilter<"Grade"> | number
   date?: Prisma.DateTimeFilter<"Grade"> | Date | string
   note?: Prisma.StringNullableFilter<"Grade"> | string | null
+  name?: Prisma.StringNullableFilter<"Grade"> | string | null
   submissionId?: Prisma.StringNullableFilter<"Grade"> | string | null
 }
 
@@ -607,6 +632,7 @@ export type GradeCreateWithoutSubmissionInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
   student: Prisma.StudentCreateNestedOneWithoutGradesInput
 }
 
@@ -619,6 +645,7 @@ export type GradeUncheckedCreateWithoutSubmissionInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
 }
 
 export type GradeCreateOrConnectWithoutSubmissionInput = {
@@ -645,6 +672,7 @@ export type GradeUpdateWithoutSubmissionInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   student?: Prisma.StudentUpdateOneRequiredWithoutGradesNestedInput
 }
 
@@ -657,6 +685,7 @@ export type GradeUncheckedUpdateWithoutSubmissionInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type GradeCreateManyStudentInput = {
@@ -667,6 +696,7 @@ export type GradeCreateManyStudentInput = {
   maxScore: number
   date?: Date | string
   note?: string | null
+  name?: string | null
   submissionId?: string | null
 }
 
@@ -678,6 +708,7 @@ export type GradeUpdateWithoutStudentInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submission?: Prisma.SubmissionUpdateOneWithoutGradeRecordNestedInput
 }
 
@@ -689,6 +720,7 @@ export type GradeUncheckedUpdateWithoutStudentInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -700,6 +732,7 @@ export type GradeUncheckedUpdateManyWithoutStudentInput = {
   maxScore?: Prisma.FloatFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submissionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -714,6 +747,7 @@ export type GradeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   maxScore?: boolean
   date?: boolean
   note?: boolean
+  name?: boolean
   submissionId?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   submission?: boolean | Prisma.Grade$submissionArgs<ExtArgs>
@@ -728,6 +762,7 @@ export type GradeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   maxScore?: boolean
   date?: boolean
   note?: boolean
+  name?: boolean
   submissionId?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   submission?: boolean | Prisma.Grade$submissionArgs<ExtArgs>
@@ -742,6 +777,7 @@ export type GradeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   maxScore?: boolean
   date?: boolean
   note?: boolean
+  name?: boolean
   submissionId?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   submission?: boolean | Prisma.Grade$submissionArgs<ExtArgs>
@@ -756,10 +792,11 @@ export type GradeSelectScalar = {
   maxScore?: boolean
   date?: boolean
   note?: boolean
+  name?: boolean
   submissionId?: boolean
 }
 
-export type GradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "subject" | "type" | "score" | "maxScore" | "date" | "note" | "submissionId", ExtArgs["result"]["grade"]>
+export type GradeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "subject" | "type" | "score" | "maxScore" | "date" | "note" | "name" | "submissionId", ExtArgs["result"]["grade"]>
 export type GradeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   submission?: boolean | Prisma.Grade$submissionArgs<ExtArgs>
@@ -788,6 +825,7 @@ export type $GradePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     maxScore: number
     date: Date
     note: string | null
+    name: string | null
     submissionId: string | null
   }, ExtArgs["result"]["grade"]>
   composites: {}
@@ -1222,6 +1260,7 @@ export interface GradeFieldRefs {
   readonly maxScore: Prisma.FieldRef<"Grade", 'Float'>
   readonly date: Prisma.FieldRef<"Grade", 'DateTime'>
   readonly note: Prisma.FieldRef<"Grade", 'String'>
+  readonly name: Prisma.FieldRef<"Grade", 'String'>
   readonly submissionId: Prisma.FieldRef<"Grade", 'String'>
 }
     

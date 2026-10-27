@@ -279,6 +279,7 @@ export function gradeColumns(): Column<GradeDTO>[] {
     { header: "الطالب", cell: (g) => g.student?.user?.name ?? "—" },
     { header: "المادة", cell: (g) => g.subject },
     { header: "النوع", cell: (g) => gradeTypeLabels[g.type] ?? g.type },
+    { header: "اسم الدرجة", cell: (g) => g.name ?? "—" },
     { header: "الدرجة", cell: (g) => `${g.score} / ${g.maxScore}` },
     { header: "التاريخ", cell: (g) => formatDate(g.date) },
     { header: "ملاحظة", cell: (g) => g.note ?? "—" },

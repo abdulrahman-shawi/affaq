@@ -36,8 +36,10 @@ const selectClassName =
  * شبكة إضافة درجات شبيهة بـ Excel: الصفوف طلاب الصف، والأعمدة موادّه.
  * لكل مادة درجة عظمى في رأس العمود، والنوع موحّد للشبكة من قائمة فوقها،
  * وعمود «ملاحظات» يرفع ملاحظة الطالب ويُرفقها بكل درجة معبّأة له.
- * الحفظ يرسل الخلايا غير الفارغة دفعة واحدة إلى POST /api/grades/bulk،
- * وإعادة الرصد لنفس (طالب، مادة، نوع) تحدّث السجل بدل تكراره.
+ * لكل عملية حفظ «اسم» (مثل «اختبار الوحدة الأولى») يجعل الدرجات المحفوظة
+ * معًا ملفًا واحدًا: يظهر الاسم في السجل، وإعادة فتحه بنفس الاسم تعبّئ
+ * شبكته المحفوظة للتعديل، وإعادة الرصد بنفس الاسم تحدّث ملفه بدل تكراره.
+ * الحفظ يرسل الخلايا غير الفارغة دفعة واحدة إلى POST /api/grades/bulk.
  */
 export default function ManualGradesGrid() {
   const { toast } = useToast();
@@ -49,6 +51,8 @@ export default function ManualGradesGrid() {
   const [loading, setLoading] = useState(true);
   const [classId, setClassId] = useState("");
   const [type, setType] = useState("manual");
+  // اسم ملف الدرجات — مشترك لكل الخلايا المحفوظة في الضغطة الواحدة
+  const [name, setName] = useState("");
   // نصوص خام لإتاحة الإفراغ أثناء الكتابة: studentId → subject → الدرجة
   const [cells, setCells] = useState<Record<string, Record<string, string>>>({});
   // ملاحظة لكل طالب — تُرفق بكل درجة معبّأة لنفس الطالب عند الحفظ
@@ -110,8 +114,21 @@ export default function ManualGradesGrid() {
     () => students.filter((s) => s.classId === classId),
     [students, classId]
   );
+  // أسماء الملفات المحفوظة مسبقًا لنفس الصف والنوع — اقتراحات عند كتابة الاسم
+  // ليفتح المعلم ملفًا سابقًا ويعدّل درجاته بدل إنشاء ملف جديد
+  const existingNames = useMemo(() => {
+    if (!classId) return [];
+    const classStudentIds = new Set(classStudents.map((s) => s.id));
+    const names = new Set<string>();
+    for (const g of grades) {
+      if (g.type !== type || !g.name || !classStudentIds.has(g.studentId)) continue;
+      names.add(g.name);
+    }
+    return Array.from(names);
+  }, [grades, type, classId, classStudents]);
 
-  // تعبئة مبدئية من الدرجات المحفوظة لنفس النوع عند تغيّر الصف أو النوع أو بعد الحفظ
+  // تعبئة مبدئية من الدرجات المحفوظة لنفس (الصف، النوع، الاسم) عند تغيّر أيٍّ منها
+  // أو بعد الحفظ — فتح اسم محفوظ يعبّئ شبكته كملف واحد قابل للتعديل
   useEffect(() => {
     if (!classId) {
       setCells({});
@@ -120,11 +137,13 @@ export default function ManualGradesGrid() {
       return;
     }
     const classStudentIds = new Set(classStudents.map((s) => s.id));
+    const nameKey = name.trim();
     const nextCells: Record<string, Record<string, string>> = {};
     const nextMax: Record<string, string> = {};
     const nextNotes: Record<string, string> = {};
     for (const g of grades) {
       if (g.type !== type || !classStudentIds.has(g.studentId)) continue;
+      if ((g.name ?? "") !== nameKey) continue;
       (nextCells[g.studentId] ??= {})[g.subject] = String(g.score);
       if (!(g.subject in nextMax)) nextMax[g.subject] = String(g.maxScore);
       if (g.note && !(g.studentId in nextNotes)) nextNotes[g.studentId] = g.note;
@@ -133,7 +152,7 @@ export default function ManualGradesGrid() {
     setMaxScores(nextMax);
     setNotes(nextNotes);
     setError(null);
-  }, [classId, type, grades, classStudents]);
+  }, [classId, type, name, grades, classStudents]);
 
   const maxFor = (subject: string) => {
     const raw = maxScores[subject];
@@ -175,6 +194,11 @@ export default function ManualGradesGrid() {
 
   async function handleSave() {
     setError(null);
+    const fileName = name.trim();
+    if (!fileName) {
+      setError("اكتب اسمًا للدرجة أولًا — يجمع الدرجات المحفوظة معًا في ملف واحد");
+      return;
+    }
     const entries = [];
     for (const student of classStudents) {
       for (const subject of classSubjects) {
@@ -205,13 +229,13 @@ export default function ManualGradesGrid() {
       const res = await fetch("/api/grades/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ classId, entries }),
+        body: JSON.stringify({ classId, name: fileName, entries }),
       });
       const body = await res.json().catch(() => null);
       if (!res.ok) throw new Error(body?.error ?? "فشل في حفظ الدرجات");
       toast({
         variant: "success",
-        title: `تم حفظ ${body.count} درجة`,
+        title: `تم حفظ ${body.count} درجة في «${fileName}»`,
       });
       await refetchGrades();
     } catch (err) {
@@ -255,9 +279,25 @@ export default function ManualGradesGrid() {
             ))}
           </select>
         </div>
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium">اسم الدرجة</label>
+          <Input
+            list="grade-file-names"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="مثال: اختبار الوحدة الأولى"
+            className="w-60"
+            disabled={loading}
+          />
+          <datalist id="grade-file-names">
+            {existingNames.map((n) => (
+              <option key={n} value={n} />
+            ))}
+          </datalist>
+        </div>
         <Button
           onClick={handleSave}
-          disabled={!classId || filledCount === 0 || saving}
+          disabled={!classId || !name.trim() || filledCount === 0 || saving}
           className="ms-auto"
         >
           <Save className="h-4 w-4" />
@@ -379,9 +419,11 @@ export default function ManualGradesGrid() {
           </div>
           <p className="text-xs text-muted-foreground">
             الخلايا الفارغة لا تُغيّر شيئًا عند الحفظ — اكتب الدرجة ثم Enter
-            للانتقال للطالب التالي. إعادة الرصد لنفس النوع تحدّث الدرجة السابقة،
-            وتُرفق الملاحظة المكتوبة في عمود «ملاحظات» بكل درجة معبّأة لنفس
-            الطالب.
+            للانتقال للطالب التالي. كل عملية حفظ تُخزَّن تحت «اسم الدرجة» كملف
+            واحد: اختر اسمًا محفوظًا من الاقتراحات لفتح ملفه وتعديل درجاته،
+            وإعادة الرصد بنفس الاسم تحدّث درجاته بدل تكرارها. تغيّر الاسم أو
+            النوع أو الصف يُعيد تحميل الشبكة من الملف المطابق. تُرفق الملاحظة
+            المكتوبة في عمود «ملاحظات» بكل درجة معبّأة لنفس الطالب.
           </p>
         </>
       )}
