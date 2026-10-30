@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, ClipboardList, Star, TrendingUp } from "lucide-react";
-import DataTable from "@/components/tables/DataTable";
-import { gradeColumns } from "@/components/tables/Columns";
+import DataTable, { type Column } from "@/components/tables/DataTable";
+import { gradeLogColumns } from "@/components/tables/Columns";
+import GradeDetailsDialog from "@/components/shared/GradeDetailsDialog";
 import StatCard from "@/components/shared/StatCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudents } from "@/hooks/useStudents";
@@ -31,6 +32,20 @@ export default function StudentGradesPage() {
   const myGrades = useMemo(
     () => grades.filter((g) => g.studentId === me?.id),
     [grades, me]
+  );
+
+  // أعمدة مختصرة (اسم/نوع/تاريخ) + إجراءات (تفاصيل) + ملاحظة —
+  // بقية تفاصيل الدرجة تظهر في حوار التفاصيل
+  const columns = useMemo<Column<GradeDTO>[]>(
+    () => [
+      ...gradeLogColumns(),
+      {
+        header: "إجراءات",
+        cell: (g) => <GradeDetailsDialog grade={g} />,
+      },
+      { header: "ملاحظة", cell: (g) => g.note ?? "—" },
+    ],
+    []
   );
 
   // ملخص درجات الطالب من قائمة myGrades نفسها (النسب = score / maxScore)
@@ -91,7 +106,7 @@ export default function StudentGradesPage() {
         </div>
       )}
       <DataTable
-        columns={gradeColumns()}
+        columns={columns}
         data={myGrades}
         loading={loading}
         emptyTitle="لا توجد درجات بعد"

@@ -248,9 +248,20 @@ const attendanceVariants: Record<string, "success" | "destructive" | "warning"> 
   late: "warning",
 };
 
-export function attendanceColumns(): Column<AttendanceDTO>[] {
+export function attendanceColumns(options?: {
+  /** خريطة ترتيب الصف → اسمه — بدونها يُعرض رقم الصف */
+  classNames?: Map<number, string>;
+}): Column<AttendanceDTO>[] {
+  const classNames = options?.classNames;
   return [
     { header: "الطالب", cell: (a) => a.student?.user?.name ?? "—" },
+    {
+      header: "الصف",
+      cell: (a) =>
+        a.session?.grade === undefined || a.session?.grade === null
+          ? "—"
+          : classNames?.get(a.session.grade) ?? `الصف ${a.session.grade}`,
+    },
     { header: "المادة", cell: (a) => a.session?.subject ?? "—" },
     { header: "التاريخ", cell: (a) => formatDate(a.session?.date) },
     {
@@ -283,6 +294,24 @@ export function gradeColumns(): Column<GradeDTO>[] {
     { header: "الدرجة", cell: (g) => `${g.score} / ${g.maxScore}` },
     { header: "التاريخ", cell: (g) => formatDate(g.date) },
     { header: "ملاحظة", cell: (g) => g.note ?? "—" },
+  ];
+}
+
+// اسم الدرجة المعروض — للدرجات القديمة بلا اسم يُشتق اسم من نوعها ومادتها
+// كي لا تظهر بشرطة وتبدو خالية
+export function gradeDisplayName(g: GradeDTO): string {
+  if (g.name?.trim()) return g.name;
+  const typeLabel = gradeTypeLabels[g.type];
+  return typeLabel ? `${typeLabel} ${g.subject}` : `درجة ${g.subject}`;
+}
+
+// أعمدة سجل الدرجات المختصرة في صفحتي المعلم والطالب —
+// بقية التفاصيل (الطالب/المادة/الدرجة) تُعرض في حوار التفاصيل
+export function gradeLogColumns(): Column<GradeDTO>[] {
+  return [
+    { header: "اسم الدرجة", cell: (g) => gradeDisplayName(g) },
+    { header: "نوع الدرجة", cell: (g) => gradeTypeLabels[g.type] ?? g.type },
+    { header: "التاريخ", cell: (g) => formatDate(g.date) },
   ];
 }
 

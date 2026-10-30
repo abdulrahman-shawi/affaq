@@ -4,10 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ClipboardList, Pencil, Percent, Table2, Trash2, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable, { type Column } from "@/components/tables/DataTable";
-import { gradeColumns } from "@/components/tables/Columns";
+import { gradeLogColumns } from "@/components/tables/Columns";
 import EditGradeForm from "@/components/forms/EditGradeForm";
 import ManualGradesGrid from "@/components/forms/ManualGradesGrid";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import GradeDetailsDialog from "@/components/shared/GradeDetailsDialog";
 import StatCard from "@/components/shared/StatCard";
 import { useToast } from "@/components/ui/toaster";
 import type { GradeDTO } from "@/types";
@@ -55,14 +56,16 @@ export default function TeacherGradesPage() {
     { key: "manual", label: "إضافة درجة", icon: Table2 },
   ] as const;
 
-  // زر تعديل لكل صف — لتصحيح درجة محفوظة بعد اكتشاف خطأ فيها لاحقًا
+  // أعمدة مختصرة (اسم/نوع/تاريخ) + إجراءات (تفاصيل/تعديل/حذف) + ملاحظة —
+  // بقية تفاصيل الدرجة تظهر في حوار التفاصيل
   const columns = useMemo<Column<GradeDTO>[]>(
     () => [
-      ...gradeColumns(),
+      ...gradeLogColumns(),
       {
-        header: "إجراء",
+        header: "إجراءات",
         cell: (g) => (
           <div className="flex items-center gap-2">
+            <GradeDetailsDialog grade={g} />
             <EditGradeForm
               grade={g}
               onSuccess={refetch}
@@ -102,6 +105,7 @@ export default function TeacherGradesPage() {
           </div>
         ),
       },
+      { header: "ملاحظة", cell: (g) => g.note ?? "—" },
     ],
     [refetch]
   );

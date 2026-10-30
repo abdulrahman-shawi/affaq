@@ -72,6 +72,7 @@ export const roleNav: Record<Role, NavItem[]> = {
     { href: "/dashboard/teacher", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/dashboard/teacher/students", label: "طلابي", icon: GraduationCap },
     { href: "/dashboard/teacher/sessions", label: "الحصص", icon: BookOpen },
+    { href: "/dashboard/teacher/attendance", label: "الحضور", icon: CalendarCheck },
     { href: "/dashboard/teacher/timetable", label: "الجدول الأسبوعي", icon: CalendarDays },
     { href: "/dashboard/teacher/assignments", label: "الواجبات", icon: FileText },
     { href: "/dashboard/teacher/quizzes", label: "الاختبارات", icon: ClipboardCheck },

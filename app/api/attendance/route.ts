@@ -17,6 +17,15 @@ export async function GET(req: Request) {
     const sessionId = searchParams.get("sessionId");
     const studentId = searchParams.get("studentId");
 
+    // المعلم يُحصر بحصصه هو فقط — حضور طلاب صفوفه ومواده المرتبطة به
+    const teacher =
+      !scope && sessionUser.role === "teacher"
+        ? await prisma.teacher.findUnique({
+            where: { userId: sessionUser.id },
+            select: { id: true },
+          })
+        : null;
+
     // الحضور الحي (للحصص القائمة) + الأرشيف (لحصص حُذفت) — الاثنان يُعرضان بنفس الشكل
     const [attendance, archives] = await Promise.all([
       prisma.attendance.findMany({
@@ -30,7 +39,9 @@ export async function GET(req: Request) {
                   grade: { in: scope.classOrders },
                 },
               }
-            : {}),
+            : teacher
+              ? { session: { teacherId: teacher.id } }
+              : {}),
         },
         include: {
           student: { include: { user: true } },
@@ -47,7 +58,9 @@ export async function GET(req: Request) {
                 teacherId: { in: scope.visibleTeacherIds },
                 grade: { in: scope.classOrders },
               }
-            : {}),
+            : teacher
+              ? { teacherId: teacher.id }
+              : {}),
         },
         include: { student: { include: { user: true } } },
         orderBy: { date: "desc" },

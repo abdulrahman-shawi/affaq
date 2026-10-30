@@ -38,6 +38,20 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get("studentId");
 
+    // الطالب يُحصر بدرجاته هو فقط ضمن مواد صفه المرتبطة به
+    const studentSelf =
+      !supervisorScope && !teacherScoped && sessionUser.role === "student"
+        ? await prisma.student.findUnique({
+            where: { userId: sessionUser.id },
+            include: { class: { include: { subjects: { select: { name: true } } } } },
+          })
+        : null;
+    if (sessionUser.role === "student" && !studentSelf) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    }
+    const selfSubjectNames =
+      studentSelf?.class?.subjects.map((s) => s.name) ?? [];
+
     const grades = await prisma.grade.findMany({
       where: {
         ...(studentId ? { studentId } : {}),
@@ -63,8 +77,17 @@ export async function GET(req: Request) {
                 subject: { in: teacherSubjectNames ?? [] },
               }
             : {}),
+        // لاحقًا على StudentId القادم من الطالب نفسه — يتجاوز أي قيمة في الاستعلام
+        ...(studentSelf
+          ? {
+              studentId: studentSelf.id,
+              ...(selfSubjectNames.length > 0
+                ? { subject: { in: selfSubjectNames } }
+                : {}),
+            }
+          : {}),
       },
-      include: { student: { include: { user: true } } },
+      include: { student: { include: { user: true, class: true } } },
       orderBy: { date: "desc" },
     });
     return NextResponse.json(grades);
