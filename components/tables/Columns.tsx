@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatCurrency, formatDate, getSubscriptionStatus } from "@/app/lib/utils";
 import { displayOrder } from "@/app/lib/classOrder";
+import { gradeDisplayName } from "@/app/lib/gradeGroups";
 import type {
   StudentDTO,
   TeacherDTO,
@@ -297,23 +298,8 @@ export function gradeColumns(): Column<GradeDTO>[] {
   ];
 }
 
-// اسم الدرجة المعروض — للدرجات القديمة بلا اسم يُشتق اسم من نوعها ومادتها
-// كي لا تظهر بشرطة وتبدو خالية
-export function gradeDisplayName(g: GradeDTO): string {
-  if (g.name?.trim()) return g.name;
-  const typeLabel = gradeTypeLabels[g.type];
-  return typeLabel ? `${typeLabel} ${g.subject}` : `درجة ${g.subject}`;
-}
-
-// أعمدة سجل الدرجات المختصرة في صفحتي المعلم والطالب —
-// بقية التفاصيل (الطالب/المادة/الدرجة) تُعرض في حوار التفاصيل
-export function gradeLogColumns(): Column<GradeDTO>[] {
-  return [
-    { header: "اسم الدرجة", cell: (g) => gradeDisplayName(g) },
-    { header: "نوع الدرجة", cell: (g) => gradeTypeLabels[g.type] ?? g.type },
-    { header: "التاريخ", cell: (g) => formatDate(g.date) },
-  ];
-}
+// اسم الدرجة المعروض — يُستورد من lib/gradeGroups حيث التجميع والاشتقاق معًا
+export { gradeDisplayName };
 
 export function classColumns(): Column<ClassLevelDTO>[] {
   return [

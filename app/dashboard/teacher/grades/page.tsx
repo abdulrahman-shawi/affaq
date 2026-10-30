@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ClipboardList, Pencil, Percent, Table2, Trash2, Trophy, Users } from "lucide-react";
+import { ClipboardList, Percent, Table2, Trash2, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable, { type Column } from "@/components/tables/DataTable";
-import { gradeLogColumns } from "@/components/tables/Columns";
-import EditGradeForm from "@/components/forms/EditGradeForm";
 import ManualGradesGrid from "@/components/forms/ManualGradesGrid";
 import ConfirmDialog from "@/components/shared/ConfirmDialog";
 import GradeDetailsDialog from "@/components/shared/GradeDetailsDialog";
 import StatCard from "@/components/shared/StatCard";
 import { useToast } from "@/components/ui/toaster";
+import { formatDate } from "@/app/lib/utils";
+import { groupGrades, gradeTypeLabels, type GradeGroup } from "@/app/lib/gradeGroups";
 import type { GradeDTO } from "@/types";
 
 export default function TeacherGradesPage() {
@@ -56,34 +56,38 @@ export default function TeacherGradesPage() {
     { key: "manual", label: "إضافة درجة", icon: Table2 },
   ] as const;
 
-  // أعمدة مختصرة (اسم/نوع/تاريخ) + إجراءات (تفاصيل/تعديل/حذف) + ملاحظة —
-  // بقية تفاصيل الدرجة تظهر في حوار التفاصيل
-  const columns = useMemo<Column<GradeDTO>[]>(
+  // الدرجات المرسودة جماعيًا تحت اسم واحد تظهر كصف واحد في السجل —
+  // تفاصيلها (طلابها ودرجاتهم) تفتح من زر التفاصيل
+  const groups = useMemo(() => groupGrades(grades), [grades]);
+
+  // أعمدة مختصرة (اسم/نوع/تاريخ) + إجراءات (تفاصيل/حذف) + ملاحظة —
+  // التعديل لكل طالب يتم داخل حوار التفاصيل
+  const columns = useMemo<Column<GradeGroup>[]>(
     () => [
-      ...gradeLogColumns(),
+      { header: "اسم الدرجة", cell: (gr) => gr.name },
+      { header: "نوع الدرجة", cell: (gr) => gradeTypeLabels[gr.type] ?? gr.type },
+      { header: "التاريخ", cell: (gr) => formatDate(gr.date) },
       {
         header: "إجراءات",
-        cell: (g) => (
+        cell: (gr) => (
           <div className="flex items-center gap-2">
-            <GradeDetailsDialog grade={g} />
-            <EditGradeForm
-              grade={g}
-              onSuccess={refetch}
-              trigger={
-                <Button variant="outline" size="sm">
-                  <Pencil className="h-4 w-4" />
-                  تعديل
-                </Button>
-              }
+            <GradeDetailsDialog
+              grade={gr.items[0]}
+              items={gr.items}
+              canManage
+              onChanged={refetch}
             />
             <ConfirmDialog
               title="حذف الدرجة"
-              description={`سيتم حذف درجة ${g.student?.user?.name ?? "—"} في مادة ${g.subject} نهائيًا ولا يمكن التراجع.`}
+              description={`سيتم حذف "${gr.name}" لـ ${gr.items.length} ${
+                gr.items.length === 1 ? "طالب" : "طلاب"
+              } نهائيًا ولا يمكن التراجع.`}
               confirmLabel="حذف نهائي"
               onConfirm={async () => {
-                const res = await fetch(`/api/grades?id=${g.id}`, {
-                  method: "DELETE",
-                });
+                const res = await fetch(
+                  `/api/grades?ids=${gr.items.map((i) => i.id).join(",")}`,
+                  { method: "DELETE" }
+                );
                 const body = await res.json().catch(() => null);
                 if (!res.ok) {
                   toast({
@@ -105,7 +109,7 @@ export default function TeacherGradesPage() {
           </div>
         ),
       },
-      { header: "ملاحظة", cell: (g) => g.note ?? "—" },
+      { header: "ملاحظة", cell: (gr) => gr.note ?? "—" },
     ],
     [refetch]
   );
@@ -168,7 +172,7 @@ export default function TeacherGradesPage() {
 
           <DataTable
             columns={columns}
-            data={grades}
+            data={groups}
             loading={loading}
             emptyTitle="لا توجد درجات"
             emptyMessage="تظهر هنا الدرجات المرسودة يدويًا ودرجات الاختبارات والواجبات"

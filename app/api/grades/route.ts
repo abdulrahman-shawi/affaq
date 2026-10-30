@@ -235,7 +235,9 @@ export async function PATCH(req: Request) {
   }
 }
 
-// حذف درجة محفوظة نهائيًا — بنفس نطاق صلاحيات التعديل
+// حذف درجة محفوظة نهائيًا — بنفس نطاق صلاحيات التعديل.
+// يقبل id مفردًا أو ids جماعيًا (مفصولة بفواصل) لحذف درجة كاملة
+// رُصدت لعدة طلاب دفعة واحدة
 export async function DELETE(req: Request) {
   try {
     const sessionUser = await getSessionUser();
@@ -247,29 +249,46 @@ export async function DELETE(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-    if (!id) {
+    const idsParam = searchParams.get("ids");
+    const singleId = searchParams.get("id");
+    const ids = idsParam
+      ? idsParam
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : singleId
+        ? [singleId]
+        : [];
+    if (ids.length === 0) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    const existing = await prisma.grade.findUnique({
-      where: { id },
+    const existing = await prisma.grade.findMany({
+      where: { id: { in: ids } },
       include: { student: { select: { classId: true } } },
     });
-    if (!existing) {
+    if (existing.length === 0) {
       return NextResponse.json({ error: "الدرجة غير موجودة" }, { status: 404 });
     }
-    if (existing.submissionId) {
+    // درجات التسليمات تُرفض مفردة (تُدار من صفحة التسليمات) وتُتخطى جماعيًا
+    if (ids.length === 1 && existing[0].submissionId) {
       return NextResponse.json(
         { error: "درجات التسليمات تُعدّل من صفحة التسليمات" },
         { status: 400 }
       );
     }
-    if (!(await canManageGrade(sessionUser, existing))) {
-      return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+    const deletable =
+      ids.length === 1 ? existing : existing.filter((g) => !g.submissionId);
+
+    for (const grade of deletable) {
+      if (!(await canManageGrade(sessionUser, grade))) {
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
     }
 
-    await prisma.grade.delete({ where: { id } });
+    await prisma.grade.deleteMany({
+      where: { id: { in: deletable.map((g) => g.id) } },
+    });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "فشل في حذف الدرجة" }, { status: 500 });
