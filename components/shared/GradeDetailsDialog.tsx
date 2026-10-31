@@ -1,8 +1,8 @@
 "use client";
 
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { useMemo } from "react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -20,9 +19,6 @@ import {
 } from "@/components/ui/table";
 import { formatDate } from "@/app/lib/utils";
 import { gradeDisplayName, gradeTypeLabels } from "@/app/lib/gradeGroups";
-import EditGradeForm from "@/components/forms/EditGradeForm";
-import ConfirmDialog from "@/components/shared/ConfirmDialog";
-import { useToast } from "@/components/ui/toaster";
 import type { GradeDTO } from "@/types";
 
 // ملخص مادة واحدة في ملف الطالب — يُمرر من صفحة الطالب
@@ -33,74 +29,67 @@ export interface SubjectReportRow {
   average: number | null;
 }
 
-function PercentBadge({ score, maxScore }: { score: number; maxScore: number }) {
-  if (maxScore <= 0) return <>—</>;
-  const pct = Math.round((score / maxScore) * 100);
-  return (
-    <Badge variant={pct >= 75 ? "success" : pct >= 50 ? "warning" : "destructive"}>
-      {pct}%
-    </Badge>
-  );
-}
-
-// حوار تفاصيل الدرجة — للمعلم: قائمة طلاب الدرجة ودرجاتهم مع تعديل/حذف لكل طالب،
-// وللطالب: درجته ضمن الدرجة + ملف بجميع مواد صفه ودرجاته
+// عرض ملف الدرجة بنفس تصميم شبكة الرصد (إضافة درجة) لكن للقراءة فقط:
+// الصفوف طلاب الملف، والأعمدة موادّه مع الدرجة العظمى في رأس كل مادة،
+// والخلايا درجات الطلاب، وعمود أخير للملاحظات — بلا أزرار إجراءات.
+// للطالب: يُعرض صفّه وحده — المادة والدرجة فقط
 export default function GradeDetailsDialog({
   grade,
   items,
-  canManage = false,
   subjectsReport,
-  onChanged,
   trigger,
 }: {
   grade: GradeDTO;
-  /** كل سجلات الدرجة (الطلاب) — سجل واحد للدرجات الفردية */
+  /** كل سجلات ملف الدرجة — سجل واحد للدرجات الفردية */
   items: GradeDTO[];
-  /** إظهار أزرار تعديل/حذف لكل طالب — للمعلم */
-  canManage?: boolean;
   /** ملف مواد الصف ودرجاتها — يُمرر من صفحة الطالب */
   subjectsReport?: SubjectReportRow[];
-  onChanged?: () => void;
   trigger?: React.ReactNode;
 }) {
-  const { toast } = useToast();
   const name = gradeDisplayName(grade);
+  // ملف جماعي (عدة طلاب) — نعرض سطر معلومات مختصرًا فوق الشبكة
+  const multi = items.length > 1;
 
-  async function deleteGrade(id: string) {
-    const res = await fetch(`/api/grades?id=${id}`, { method: "DELETE" });
-    const body = await res.json().catch(() => null);
-    if (!res.ok) {
-      toast({ variant: "destructive", title: body?.error ?? "فشل في حذف الدرجة" });
-    } else {
-      toast({ variant: "success", title: "تم حذف الدرجة" });
+  // أعمدة الشبكة = مواد الملف بترتيب ظهورها، مع الدرجة العظمى لكل مادة
+  const subjects = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const g of items) {
+      if (!map.has(g.subject)) map.set(g.subject, g.maxScore);
     }
-    onChanged?.();
-  }
+    return Array.from(map, ([subject, maxScore]) => ({ subject, maxScore }));
+  }, [items]);
 
-  const infoRows: [string, React.ReactNode][] = [
-    ["المادة", grade.subject],
-    ["نوع الدرجة", gradeTypeLabels[grade.type] ?? grade.type],
-    ["التاريخ", formatDate(grade.date)],
-    ["ملاحظة", grade.note ?? "—"],
-  ];
-  // درجة فردية لطالب واحد — نعرض طالبه ودرجته ضمن الملخص
-  if (items.length === 1) {
-    const only = items[0];
-    infoRows.splice(
-      1,
-      0,
-      ["الطالب", only.student?.user?.name ?? "—"],
-      [
-        "الدرجة",
-        <span key="score" className="flex items-center gap-2">
-          {only.score} / {only.maxScore}
-          <PercentBadge score={only.score} maxScore={only.maxScore} />
-        </span>,
-      ]
+  // صفوف الشبكة = طلاب الملف — خلايا كل طالب: مادة → درجة، مع ملاحظته
+  const rows = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        studentId: string;
+        studentName: string;
+        className: string | null;
+        cells: Map<string, number>;
+        note: string | null;
+      }
+    >();
+    for (const g of items) {
+      let row = map.get(g.studentId);
+      if (!row) {
+        row = {
+          studentId: g.studentId,
+          studentName: g.student?.user?.name ?? "—",
+          className: g.student?.class?.name ?? null,
+          cells: new Map(),
+          note: null,
+        };
+        map.set(g.studentId, row);
+      }
+      row.cells.set(g.subject, g.score);
+      if (!row.note && g.note?.trim()) row.note = g.note;
+    }
+    return Array.from(map.values()).sort((a, b) =>
+      a.studentName.localeCompare(b.studentName, "ar")
     );
-  } else {
-    infoRows.splice(1, 0, ["عدد الطلاب", items.length]);
-  }
+  }, [items]);
 
   return (
     <Dialog>
@@ -112,102 +101,102 @@ export default function GradeDetailsDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>تفاصيل الدرجة — {name}</DialogTitle>
+          <DialogTitle>ملف الدرجة — {name}</DialogTitle>
+          {multi && (
+            <p className="text-sm text-muted-foreground">
+              {gradeTypeLabels[grade.type] ?? grade.type} · {formatDate(grade.date)}{" "}
+              · {rows.length} {rows.length === 1 ? "طالب" : "طلاب"}
+            </p>
+          )}
         </DialogHeader>
 
-        <dl className="grid grid-cols-[110px_1fr] gap-x-4 gap-y-3 text-sm">
-          {infoRows.map(([label, value]) => (
-            <div key={label} className="col-span-2 grid grid-cols-subgrid">
-              <dt className="text-muted-foreground">{label}</dt>
-              <dd className="font-medium">{value}</dd>
-            </div>
-          ))}
-        </dl>
-
-        {items.length > 1 && (
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold">طلاب الدرجة ودرجاتهم</h4>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>الطالب</TableHead>
-                  <TableHead>الصف</TableHead>
-                  <TableHead>الدرجة</TableHead>
-                  <TableHead>النسبة</TableHead>
-                  {canManage && (
-                    <TableHead className="w-px">إجراءات</TableHead>
-                  )}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.student?.user?.name ?? "—"}</TableCell>
-                    <TableCell>{item.student?.class?.name ?? "—"}</TableCell>
-                    <TableCell>
-                      {item.score} / {item.maxScore}
-                    </TableCell>
-                    <TableCell>
-                      <PercentBadge score={item.score} maxScore={item.maxScore} />
-                    </TableCell>
-                    {canManage && (
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <EditGradeForm
-                            grade={item}
-                            onSuccess={onChanged}
-                            trigger={
-                              <Button variant="ghost" size="icon" title="تعديل">
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                            }
-                          />
-                          <ConfirmDialog
-                            title="حذف درجة الطالب"
-                            description={`سيتم حذف درجة ${item.student?.user?.name ?? "—"} من "${name}" نهائيًا.`}
-                            confirmLabel="حذف"
-                            onConfirm={() => deleteGrade(item.id)}
-                            trigger={
-                              <Button variant="ghost" size="icon" title="حذف">
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                            }
-                          />
-                        </div>
-                      </TableCell>
-                    )}
-                  </TableRow>
+        <div className="overflow-auto rounded-md border max-h-[70vh]">
+          {/* table مباشرة بدل مكوّن Table كي لا يتداخل غلافاه مع التمرير،
+              وborder-separate لأن border-collapse الافتراضي يعطّل sticky —
+              نفس بنية شبكة الرصد في إضافة الدرجة */}
+          <table className="w-full caption-bottom text-sm border-separate border-spacing-0 min-w-max">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="sticky right-0 top-0 z-20 bg-background min-w-40">
+                  الطالب
+                </TableHead>
+                {subjects.map((s) => (
+                  <TableHead
+                    key={s.subject}
+                    className="sticky top-0 z-10 min-w-32 border-s border-border bg-background text-center"
+                  >
+                    <div className="space-y-1">
+                      <div>{s.subject}</div>
+                      <div className="text-xs font-normal text-muted-foreground">
+                        من {s.maxScore}
+                      </div>
+                    </div>
+                  </TableHead>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+                <TableHead className="top-0 z-20 min-w-32 border-s border-border bg-background text-center lg:sticky lg:left-0 lg:min-w-44">
+                  ملاحظات
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow key={row.studentId} className="hover:bg-transparent">
+                  <TableCell className="sticky right-0 z-10 min-w-40 bg-background font-medium">
+                    {row.studentName}
+                    {row.className && (
+                      <span className="block text-xs font-normal text-muted-foreground">
+                        {row.className}
+                      </span>
+                    )}
+                  </TableCell>
+                  {subjects.map((s) => (
+                    <TableCell
+                      key={s.subject}
+                      className="border-s border-border p-1 text-center"
+                    >
+                      {row.cells.has(s.subject) ? (
+                        row.cells.get(s.subject)
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                  ))}
+                  <TableCell className="z-10 min-w-32 border-s border-border bg-background p-1 lg:sticky lg:left-0 lg:min-w-44">
+                    {row.note ?? <span className="text-muted-foreground">—</span>}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </table>
+        </div>
 
         {subjectsReport && subjectsReport.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-semibold">ملف المواد — جميع مواد صفك ودرجاتك</h4>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>المادة</TableHead>
-                  <TableHead>عدد الدرجات</TableHead>
-                  <TableHead>المعدل</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {subjectsReport.map((row) => (
-                  <TableRow key={row.subject}>
-                    <TableCell className="font-medium">{row.subject}</TableCell>
-                    <TableCell>{row.count}</TableCell>
-                    <TableCell>
-                      {row.average !== null ? `${row.average}%` : "—"}
-                    </TableCell>
+            <div className="overflow-hidden rounded-md border">
+              <table className="w-full caption-bottom text-sm">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>المادة</TableHead>
+                    <TableHead>عدد الدرجات</TableHead>
+                    <TableHead>المعدل</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {subjectsReport.map((row) => (
+                    <TableRow key={row.subject}>
+                      <TableCell className="font-medium">{row.subject}</TableCell>
+                      <TableCell>{row.count}</TableCell>
+                      <TableCell>
+                        {row.average !== null ? `${row.average}%` : "—"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </table>
+            </div>
           </div>
         )}
       </DialogContent>

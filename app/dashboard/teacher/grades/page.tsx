@@ -71,12 +71,7 @@ export default function TeacherGradesPage() {
         header: "إجراءات",
         cell: (gr) => (
           <div className="flex items-center gap-2">
-            <GradeDetailsDialog
-              grade={gr.items[0]}
-              items={gr.items}
-              canManage
-              onChanged={refetch}
-            />
+            <GradeDetailsDialog grade={gr.items[0]} items={gr.items} />
             <ConfirmDialog
               title="حذف الدرجة"
               description={`سيتم حذف "${gr.name}" لـ ${gr.items.length} ${
