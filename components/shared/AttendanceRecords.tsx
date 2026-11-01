@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckCircle2, XCircle, Clock } from "lucide-react";
+import { CheckCircle2, Clock, LayoutGrid, Rows3, XCircle } from "lucide-react";
 import StatCard from "@/components/shared/StatCard";
+import WeeklyAttendanceGrid from "@/components/shared/WeeklyAttendanceGrid";
 import DataTable from "@/components/tables/DataTable";
 import { attendanceColumns } from "@/components/tables/Columns";
 import { useClassNames, formatGrade } from "@/hooks/useClassNames";
-import { formatDate } from "@/app/lib/utils";
+import { formatDate, cn } from "@/app/lib/utils";
 import type { AttendanceDTO } from "@/types";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -26,7 +27,52 @@ const selectClassName =
   "flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 // سجلات حضور مع فلاتر: الحالة + الصف + المادة — تُستخدم في لوحة الأدمن والمعلم
+// العرض الافتراضي: جدول أسبوعي (أحد–خميس) كالجدول الورقي، مع سجل مفصّل كعرض بديل
 export default function AttendanceRecords({
+  attendance,
+  loading,
+}: {
+  attendance: AttendanceDTO[];
+  loading?: boolean;
+}) {
+  const [view, setView] = useState<"grid" | "list">("grid");
+
+  return (
+    <div className="space-y-6">
+      <div className="flex gap-2">
+        {(
+          [
+            { value: "grid", label: "الجدول الأسبوعي", icon: LayoutGrid },
+            { value: "list", label: "السجل المفصّل", icon: Rows3 },
+          ] as const
+        ).map((v) => (
+          <button
+            key={v.value}
+            onClick={() => setView(v.value)}
+            className={cn(
+              "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors",
+              view === v.value
+                ? "bg-blue-600 text-white"
+                : "bg-muted text-muted-foreground hover:bg-accent"
+            )}
+          >
+            <v.icon className="h-4 w-4" />
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      {view === "grid" ? (
+        <WeeklyAttendanceGrid attendance={attendance} loading={loading} />
+      ) : (
+        <DetailedAttendanceList attendance={attendance} loading={loading} />
+      )}
+    </div>
+  );
+}
+
+// السجل المفصّل: كل سجل حضور بجلسته في سطر — مع فلاتر الحالة + الصف + المادة
+function DetailedAttendanceList({
   attendance,
   loading,
 }: {

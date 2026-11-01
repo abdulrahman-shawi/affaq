@@ -45,7 +45,7 @@ export async function GET(req: Request) {
         },
         include: {
           student: { include: { user: true } },
-          session: true,
+          session: { include: { teacher: { include: { user: true } } } },
         },
         orderBy: { session: { date: "desc" } },
       }),
