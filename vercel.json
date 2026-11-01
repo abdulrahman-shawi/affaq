@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/cleanup-sessions",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/attendance-absence",
+      "schedule": "0 15 * * *"
     }
   ]
 }
