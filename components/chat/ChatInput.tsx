@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { ImagePlus, Loader2, Mic, Send, X } from "lucide-react";
 import { useToast } from "@/components/ui/toaster";
@@ -23,7 +23,15 @@ export default function ChatInput({
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [text]);
 
   const doSend = async (input: {
     content?: string;
@@ -141,15 +149,20 @@ export default function ChatInput({
           />
         </div>
 
-        <input
+        <textarea
+          ref={textRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") sendText();
+            if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+              e.preventDefault();
+              sendText();
+            }
           }}
-          placeholder="مراسلة"
+          placeholder="مراسلة (Ctrl+Enter للإرسال)"
           disabled={sending}
-          className="flex-1 rounded-full border bg-background px-4 py-2 text-sm outline-none focus:border-emerald-400 disabled:opacity-60"
+          rows={1}
+          className="max-h-36 flex-1 resize-none overflow-y-auto rounded-2xl border bg-background px-4 py-2 text-sm outline-none focus:border-emerald-400 disabled:opacity-60"
         />
         <button
           type="button"
