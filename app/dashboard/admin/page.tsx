@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -24,168 +24,89 @@ import {
 } from "@/components/ui/card";
 import StudentForm from "@/components/forms/StudentForm";
 import PaymentForm from "@/components/forms/PaymentForm";
-import { useStudents } from "@/hooks/useStudents";
-import { usePayments } from "@/hooks/usePayments";
-import { useAttendance } from "@/hooks/useAttendance";
 import { useNotifications } from "@/hooks/useNotifications";
 import { formatCurrency, formatCurrencyBreakdown, formatDate } from "@/app/lib/utils";
-import type {
-  Currency,
-  QuizDTO,
-  SubmissionDTO,
-  TeacherDTO,
-  TimetableSlotDTO,
-} from "@/types";
+import type { Currency } from "@/types";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-const monthName = new Intl.DateTimeFormat("ar-EG", { month: "long" });
+// نفس أرقام لوحة التحكم السابقة لكن محسوبة في /api/dashboard/summary
+// من استعلامات خفيفة واحدة بدل 8 طلبات تسحب جداول الأكاديمية كاملة
+type DashboardSummary = {
+  studentsCount: number;
+  teachersCount: number;
+  attendanceRate: number;
+  revenueByCurrency: Record<string, number>;
+  monthlyRevenue: { name: string; total: number }[];
+  gradeDistribution: { name: string; count: number }[];
+  expiringStudents: { id: string; name: string; days: number }[];
+  pendingSubmissions: number;
+  todayAbsences: { id: string; name: string; subject: string }[];
+  todaySlots: {
+    id: string;
+    subject: string;
+    teacherName: string | null;
+    className: string | null;
+    startTime: string;
+    endTime: string;
+  }[];
+  recentPayments: {
+    id: string;
+    name: string;
+    amount: number;
+    currency: string;
+    date: string;
+  }[];
+  recentAttempts: {
+    id: string;
+    quizTitle: string;
+    studentName: string;
+    score: number;
+    maxScore: number;
+    submittedAt: string;
+  }[];
+};
+
+const EMPTY_SUMMARY: DashboardSummary = {
+  studentsCount: 0,
+  teachersCount: 0,
+  attendanceRate: 0,
+  revenueByCurrency: {},
+  monthlyRevenue: [],
+  gradeDistribution: [],
+  expiringStudents: [],
+  pendingSubmissions: 0,
+  todayAbsences: [],
+  todaySlots: [],
+  recentPayments: [],
+  recentAttempts: [],
+};
 
 export default function AdminDashboard() {
-  const { students, refetch: refetchStudents } = useStudents();
-  const { payments, refetch: refetchPayments } = usePayments();
-  const { attendance } = useAttendance();
   const { unreadCount } = useNotifications();
-  const [teachers, setTeachers] = useState<TeacherDTO[]>([]);
-  const [submissions, setSubmissions] = useState<SubmissionDTO[]>([]);
-  const [slots, setSlots] = useState<TimetableSlotDTO[]>([]);
-  const [quizzes, setQuizzes] = useState<QuizDTO[]>([]);
+  const [data, setData] = useState<DashboardSummary>(EMPTY_SUMMARY);
 
-  useEffect(() => {
-    fetch("/api/teachers")
-      .then((res) => (res.ok ? res.json() : []))
-      .then(setTeachers)
-      .catch(() => setTeachers([]));
-    fetch("/api/submissions")
-      .then((res) => (res.ok ? res.json() : []))
-      .then(setSubmissions)
-      .catch(() => setSubmissions([]));
-    fetch("/api/timetable")
-      .then((res) => (res.ok ? res.json() : []))
-      .then(setSlots)
-      .catch(() => setSlots([]));
-    fetch("/api/quizzes")
-      .then((res) => (res.ok ? res.json() : []))
-      .then(setQuizzes)
-      .catch(() => setQuizzes([]));
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch("/api/dashboard/summary");
+      if (res.ok) setData(await res.json());
+    } catch {
+      // نبقي القيم الحالية عند تعذر التحديث — كما كانت السلوكيات السابقة
+    }
   }, []);
 
-  // الإيرادات تُجمع لكل عملة على حدة — لا يصح جمع عملات مختلفة في رقم واحد
-  const revenueByCurrency: Partial<Record<Currency, number>> = {};
-  for (const p of payments) {
-    const cur: Currency = p.student?.currency ?? "SAR";
-    revenueByCurrency[cur] = (revenueByCurrency[cur] ?? 0) + p.amount;
-  }
-  const present = attendance.filter((a) => a.status === "present").length;
-  const attendanceRate =
-    attendance.length > 0 ? Math.round((present / attendance.length) * 100) : 0;
-
-  const gradeDistribution = Object.entries(
-    students.reduce<Record<string, number>>((acc, s) => {
-      const key = s.class?.name ?? "بدون صف";
-      acc[key] = (acc[key] ?? 0) + 1;
-      return acc;
-    }, {})
-  ).map(([name, count]) => ({ name, count }));
-
-  // الإيرادات الشهرية لآخر 6 أشهر
-  const monthlyRevenue = useMemo(() => {
-    const now = new Date();
-    const months: { name: string; total: number; start: Date }[] = [];
-    for (let i = 5; i >= 0; i--) {
-      const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      months.push({ name: monthName.format(start), total: 0, start });
-    }
-    for (const payment of payments) {
-      const date = new Date(payment.date);
-      const bucket = months.find(
-        (m) =>
-          m.start.getFullYear() === date.getFullYear() &&
-          m.start.getMonth() === date.getMonth()
-      );
-      if (bucket) bucket.total += payment.amount;
-    }
-    return months.map(({ name, total }) => ({ name, total }));
-  }, [payments]);
-
-  // تنبيهات: اشتراكات تنتهي خلال 7 أيام
-  const expiringStudents = useMemo(() => {
-    const now = Date.now();
-    return students
-      .filter((s) => {
-        if (!s.subEndDate) return false;
-        const days = Math.ceil(
-          (new Date(s.subEndDate).getTime() - now) / DAY_MS
-        );
-        return days >= 0 && days <= 7;
-      })
-      .map((s) => ({
-        id: s.id,
-        name: s.user?.name ?? "طالب",
-        days: Math.ceil(
-          (new Date(s.subEndDate!).getTime() - Date.now()) / DAY_MS
-        ),
-      }))
-      .sort((a, b) => a.days - b.days);
-  }, [students]);
-
-  // تنبيهات: تسليمات بانتظار التقييم
-  const pendingSubmissions = submissions.filter((s) => s.grade == null);
-
-  // تنبيهات: غياب اليوم
-  const todayAbsences = useMemo(() => {
-    const today = new Date().toDateString();
-    return attendance
-      .filter(
-        (a) =>
-          a.status === "absent" &&
-          a.session?.date &&
-          new Date(a.session.date).toDateString() === today
-      )
-      .map((a) => ({
-        id: a.id,
-        name: a.student?.user?.name ?? "طالب",
-        subject: a.session?.subject ?? "",
-      }));
-  }, [attendance]);
-
-  // حصص اليوم من الجدول الأسبوعي
-  const todaySlots = useMemo(() => {
-    const today = new Date().getDay(); // 0=الأحد — يتوافق مع dayOfWeek
-    return slots
-      .filter((s) => s.dayOfWeek === today)
-      .sort((a, b) => a.startTime.localeCompare(b.startTime));
-  }, [slots]);
-
-  // آخر النشاطات
-  const recentPayments = payments.slice(0, 5);
-  const recentAttempts = useMemo(
-    () =>
-      quizzes
-        .flatMap((q) =>
-          (q.attempts ?? []).map((a) => ({
-            id: a.id,
-            quizTitle: q.title,
-            studentName: a.student?.user?.name ?? "طالب",
-            score: a.score,
-            maxScore: a.maxScore,
-            submittedAt: a.submittedAt,
-          }))
-        )
-        .sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
-        .slice(0, 5),
-    [quizzes]
-  );
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const hasAlerts =
-    expiringStudents.length > 0 ||
-    pendingSubmissions.length > 0 ||
-    todayAbsences.length > 0;
+    data.expiringStudents.length > 0 ||
+    data.pendingSubmissions > 0 ||
+    data.todayAbsences.length > 0;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         <StudentForm
-          onSuccess={refetchStudents}
+          onSuccess={load}
           trigger={
             <Button>
               <UserPlus className="h-4 w-4" />
@@ -194,7 +115,7 @@ export default function AdminDashboard() {
           }
         />
         <PaymentForm
-          onSuccess={refetchPayments}
+          onSuccess={load}
           trigger={
             <Button variant="secondary">
               <CreditCard className="h-4 w-4" />
@@ -219,28 +140,30 @@ export default function AdminDashboard() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="الطلاب"
-          value={students.length}
+          value={data.studentsCount}
           icon={GraduationCap}
           iconClassName="text-blue-600"
           iconBgClassName="bg-blue-500/10"
         />
         <StatCard
           title="المعلمون"
-          value={teachers.length}
+          value={data.teachersCount}
           icon={Users}
           iconClassName="text-emerald-600"
           iconBgClassName="bg-emerald-500/10"
         />
         <StatCard
           title="الإيرادات"
-          value={formatCurrencyBreakdown(revenueByCurrency)}
+          value={formatCurrencyBreakdown(
+            data.revenueByCurrency as Partial<Record<Currency, number>>
+          )}
           icon={CreditCard}
           iconClassName="text-amber-600"
           iconBgClassName="bg-amber-500/10"
         />
         <StatCard
           title="نسبة الحضور"
-          value={`${attendanceRate}%`}
+          value={`${data.attendanceRate}%`}
           icon={CalendarCheck}
           iconClassName="text-violet-600"
           iconBgClassName="bg-violet-500/10"
@@ -265,12 +188,12 @@ export default function AdminDashboard() {
               لا توجد تنبيهات حاليًا — كل شيء على ما يرام
             </p>
           )}
-          {expiringStudents.length > 0 && (
+          {data.expiringStudents.length > 0 && (
             <div className="space-y-1">
               <p className="text-sm font-medium">
-                اشتراكات تنتهي خلال 7 أيام ({expiringStudents.length})
+                اشتراكات تنتهي خلال 7 أيام ({data.expiringStudents.length})
               </p>
-              {expiringStudents.map((s) => (
+              {data.expiringStudents.map((s) => (
                 <div
                   key={s.id}
                   className="flex items-center justify-between rounded-md border p-2 text-sm"
@@ -288,21 +211,21 @@ export default function AdminDashboard() {
               ))}
             </div>
           )}
-          {pendingSubmissions.length > 0 && (
+          {data.pendingSubmissions > 0 && (
             <p className="rounded-md border p-2 text-sm">
-              {pendingSubmissions.length}{" "}
-              {pendingSubmissions.length === 1
+              {data.pendingSubmissions}{" "}
+              {data.pendingSubmissions === 1
                 ? "تسليم بانتظار"
                 : "تسليمات بانتظار"}{" "}
               التقييم من المعلمين
             </p>
           )}
-          {todayAbsences.length > 0 && (
+          {data.todayAbsences.length > 0 && (
             <div className="space-y-1">
               <p className="text-sm font-medium">
-                غياب اليوم ({todayAbsences.length})
+                غياب اليوم ({data.todayAbsences.length})
               </p>
-              {todayAbsences.map((a) => (
+              {data.todayAbsences.map((a) => (
                 <p key={a.id} className="rounded-md border p-2 text-sm">
                   {a.name} — {a.subject}
                 </p>
@@ -317,19 +240,19 @@ export default function AdminDashboard() {
           <CardTitle>حصص اليوم</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {todaySlots.length === 0 && (
+          {data.todaySlots.length === 0 && (
             <p className="text-sm text-muted-foreground">
               لا توجد حصص مجدولة اليوم
             </p>
           )}
-          {todaySlots.map((slot) => (
+          {data.todaySlots.map((slot) => (
             <div
               key={slot.id}
               className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3 text-sm"
             >
               <span className="font-medium">{slot.subject}</span>
               <span className="text-muted-foreground">
-                {slot.teacher?.user?.name} — {slot.class?.name}
+                {slot.teacherName ?? "—"} — {slot.className ?? "—"}
               </span>
               <span className="text-muted-foreground" dir="ltr">
                 {slot.startTime} - {slot.endTime}
@@ -343,14 +266,14 @@ export default function AdminDashboard() {
         <StatsChart
           type="bar"
           title="توزيع الطلاب حسب الصف"
-          data={gradeDistribution}
+          data={data.gradeDistribution}
           dataKey="count"
           xKey="name"
         />
         <StatsChart
           type="line"
           title="الإيرادات الشهرية (آخر 6 أشهر)"
-          data={monthlyRevenue}
+          data={data.monthlyRevenue}
           dataKey="total"
           xKey="name"
         />
@@ -362,19 +285,20 @@ export default function AdminDashboard() {
             <CardTitle>آخر المدفوعات</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {recentPayments.length === 0 && (
+            {data.recentPayments.length === 0 && (
               <p className="text-sm text-muted-foreground">
                 لا توجد مدفوعات بعد
               </p>
             )}
-            {recentPayments.map((p) => (
+            {data.recentPayments.map((p) => (
               <div
                 key={p.id}
                 className="flex items-center justify-between rounded-md border p-2 text-sm"
               >
-                <span>{p.student?.user?.name ?? "طالب"}</span>
+                <span>{p.name}</span>
                 <span className="text-muted-foreground">
-                  {formatCurrency(p.amount, p.student?.currency)} — {formatDate(p.date)}
+                  {formatCurrency(p.amount, p.currency as Currency)} —{" "}
+                  {formatDate(p.date)}
                 </span>
               </div>
             ))}
@@ -388,12 +312,12 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {recentAttempts.length === 0 && (
+            {data.recentAttempts.length === 0 && (
               <p className="text-sm text-muted-foreground">
                 لا توجد محاولات بعد
               </p>
             )}
-            {recentAttempts.map((a) => (
+            {data.recentAttempts.map((a) => (
               <div
                 key={a.id}
                 className="flex items-center justify-between rounded-md border p-2 text-sm"
