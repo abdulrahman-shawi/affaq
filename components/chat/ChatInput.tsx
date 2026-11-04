@@ -7,6 +7,39 @@ import { useToast } from "@/components/ui/toaster";
 import AudioRecorder from "@/components/forms/AudioRecorder";
 import type { ChatMessageDTO } from "@/hooks/useChat";
 
+// تصغير الصور قبل الرفع: صور الهاتف تتجاوز عادة 3–10MB ورفعها الخام هو سبب
+// تأخر ظهور الصورة للطرف الآخر (15–30 ثانية)؛ الضغط يختصرها إلى ثوانٍ.
+// الملفات غير الصورية (صوت/فيديو) تمر كما هي دون أي تعديل
+async function compressImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+  if (file.type === "image/gif" || file.type === "image/svg+xml") return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const MAX_DIM = 1600;
+    const scale = Math.min(1, MAX_DIM / Math.max(bitmap.width, bitmap.height));
+    const w = Math.max(1, Math.round(bitmap.width * scale));
+    const h = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close();
+    const keepPng = file.type === "image/png";
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, keepPng ? "image/png" : "image/jpeg", 0.85)
+    );
+    // إن لم نوفّر شيئًا يُذكر نبقي الملف الأصلي
+    if (!blob || blob.size >= file.size) return file;
+    const ext = keepPng ? "png" : "jpg";
+    const base = file.name.replace(/\.[^.]+$/, "") || "image";
+    return new File([blob], `${base}.${ext}`, { type: blob.type });
+  } catch {
+    return file;
+  }
+}
+
 export default function ChatInput({
   replyTo,
   onCancelReply,
@@ -63,7 +96,8 @@ export default function ChatInput({
     if (sending) return;
     setSending(true);
     try {
-      const blob = await upload(file.name, file, {
+      const prepared = await compressImage(file);
+      const blob = await upload(prepared.name, prepared, {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
