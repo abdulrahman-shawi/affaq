@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/app/lib/prisma";
 import { getSessionUser } from "@/app/lib/auth";
 import { isAdminAreaRole } from "@/app/lib/roles";
@@ -20,8 +21,19 @@ export async function GET() {
       (await getSupervisorClassIds(sessionUser)) ??
       (await getTeacherClassIds(sessionUser));
 
+    // الطالب يعرض بياناته هو فقط وولي الأمر يعرض أبناءه فقط في كل صفحاتهما —
+    // فنحصر الاستعلام جانب الخادم: نفس ما يراه المستخدم تمامًا، بحمل أخف بكثير
+    let where: Prisma.StudentWhereInput | undefined = scoped
+      ? { classId: { in: scoped } }
+      : undefined;
+    if (sessionUser.role === "student") {
+      where = { userId: sessionUser.id };
+    } else if (sessionUser.role === "parent") {
+      where = { parent: { userId: sessionUser.id } };
+    }
+
     const students = await prisma.student.findMany({
-      where: scoped ? { classId: { in: scoped } } : undefined,
+      where,
       include: { user: true, parent: { include: { user: true } }, class: true },
       orderBy: { user: { name: "asc" } },
     });

@@ -7,6 +7,11 @@ const withPWA = withPWAInit({
 });
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    // تقليص حجم الحزمة عند أول تحميل — تجميع الواردات المستخدمة فقط
+    optimizePackageImports: ["recharts", "lucide-react"],
+  },
+};
 
 export default withPWA(nextConfig);

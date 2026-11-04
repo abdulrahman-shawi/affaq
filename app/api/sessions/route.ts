@@ -13,6 +13,19 @@ export async function GET() {
     }
     const scope = await getSupervisorScope(sessionUser);
 
+    // الطالب يصفّي حصص صفّه فقط في الواجهة (grade = ترتيب صفه) — نفس النتيجة
+    // بالضبط، لكن الاستعلام جانب الخادم لا يلمس حصص بقية الصفوف
+    let studentGradeWhere = {};
+    if (!scope && sessionUser.role === "student") {
+      const me = await prisma.student.findUnique({
+        where: { userId: sessionUser.id },
+        select: { class: { select: { order: true } } },
+      });
+      studentGradeWhere = me?.class
+        ? { grade: me.class.order }
+        : { id: "__none__" };
+    }
+
     const sessions = await prisma.session.findMany({
       where: scope
         ? {
@@ -22,7 +35,9 @@ export async function GET() {
         : // المعلم يرى حصصه هو فقط
           sessionUser.role === "teacher"
           ? { teacher: { userId: sessionUser.id } }
-          : undefined,
+          : Object.keys(studentGradeWhere).length > 0
+            ? studentGradeWhere
+            : undefined,
       include: { teacher: { include: { user: true } } },
       orderBy: { date: "desc" },
     });

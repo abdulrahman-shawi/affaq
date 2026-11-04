@@ -26,7 +26,15 @@ export async function GET() {
         classId: { in: roomIds },
         ...(teacherIds.length > 0 ? { teacherId: { in: teacherIds } } : {}),
       },
-      orderBy: { createdAt: "desc" },
+      // صف واحد (الأحدث زمنيًا) لكل غرفة بدل جلب كل الرسائل ثم الانتقاء في JS —
+      // النتيجة مطابقة تمامًا لما كان يحدث، بكلفة ثابتة مهما كبر حجم الرسائل
+      distinct: ["classId", "teacherId"],
+      orderBy: [
+        { classId: "asc" },
+        { teacherId: "asc" },
+        { createdAt: "desc" },
+      ],
+      take: rooms.length,
       select: {
         id: true,
         classId: true,

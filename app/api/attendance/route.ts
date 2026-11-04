@@ -27,11 +27,27 @@ export async function GET(req: Request) {
         : null;
 
     // الحضور الحي (للحصص القائمة) + الأرشيف (لحصص حُذفت) — الاثنان يُعرضان بنفس الشكل
+    // الطالب يعرض حضوره هو فقط وولي الأمر حضور أبنائه فقط — فلترة الواجهة نفسها
+    // لكن الاستعلام جانب الخادم لا يلمس بقية السجلات إطلاقًا
+    let roleWhere = {};
+    if (!scope && !teacher) {
+      if (sessionUser.role === "student") {
+        const me = await prisma.student.findUnique({
+          where: { userId: sessionUser.id },
+          select: { id: true },
+        });
+        roleWhere = me ? { studentId: me.id } : { studentId: "__none__" };
+      } else if (sessionUser.role === "parent") {
+        roleWhere = { student: { parent: { userId: sessionUser.id } } };
+      }
+    }
+
     const [attendance, archives] = await Promise.all([
       prisma.attendance.findMany({
         where: {
           ...(sessionId ? { sessionId } : {}),
           ...(studentId ? { studentId } : {}),
+          ...roleWhere,
           ...(scope
             ? {
                 session: {
@@ -53,6 +69,7 @@ export async function GET(req: Request) {
         where: {
           ...(sessionId ? { sessionId } : {}),
           ...(studentId ? { studentId } : {}),
+          ...roleWhere,
           ...(scope
             ? {
                 teacherId: { in: scope.visibleTeacherIds },

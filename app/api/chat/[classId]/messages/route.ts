@@ -142,53 +142,61 @@ export async function POST(
     });
     const dto = chatMessageToDTO(message, sessionUser.id);
 
-    const pusher = getPusher();
-    if (pusher) {
-      await pusher.trigger(
-        chatChannelName(params.classId, teacherId || requestedTeacherId),
-        "new-message",
-        dto
-      );
-    }
+    // البث والإشعارات يتمّان كما قبل تمامًا — لكن في الخلفية بعد إرسال الرد،
+    // فلا ينتظر المرسل انتهاء استدعاء Pusher وإنشاء إشعارات المستلمين
+    void (async () => {
+      try {
+        const pusher = getPusher();
+        if (pusher) {
+          await pusher.trigger(
+            chatChannelName(params.classId, teacherId || requestedTeacherId),
+            "new-message",
+            dto
+          );
+        }
 
-    // إشعار الطرف الآخر: رسالة الطالب تُشعِر معلمات الصف، ورسالة المعلمة/الإدارة تُشعِر الطلاب
-    const classInfo = await prisma.classLevel.findUnique({
-      where: { id: params.classId },
-      select: { name: true },
-    });
-    const fromStudent = sessionUser.role === "student";
-    const recipients = fromStudent
-      ? (
-          await prisma.teacher.findMany({
-            where: {
-              classes: { some: { id: params.classId } },
-              ...(teacherId ? { id: teacherId } : {}),
-            },
-            select: { user: { select: { id: true, role: true } } },
-          })
-        ).map((t) => t.user)
-      : (
-          await prisma.student.findMany({
-            where: { classId: params.classId, status: "active" },
-            select: { user: { select: { id: true, role: true } } },
-          })
-        ).map((s) => s.user);
+        // إشعار الطرف الآخر: رسالة الطالب تُشعِر معلمات الصف، ورسالة المعلمة/الإدارة تُشعِر الطلاب
+        const classInfo = await prisma.classLevel.findUnique({
+          where: { id: params.classId },
+          select: { name: true },
+        });
+        const fromStudent = sessionUser.role === "student";
+        const recipients = fromStudent
+          ? (
+              await prisma.teacher.findMany({
+                where: {
+                  classes: { some: { id: params.classId } },
+                  ...(teacherId ? { id: teacherId } : {}),
+                },
+                select: { user: { select: { id: true, role: true } } },
+              })
+            ).map((t) => t.user)
+          : (
+              await prisma.student.findMany({
+                where: { classId: params.classId, status: "active" },
+                select: { user: { select: { id: true, role: true } } },
+              })
+            ).map((s) => s.user);
 
-    const targets = recipients.filter((u) => u.id !== sessionUser.id);
-    if (targets.length > 0) {
-      await prisma.notification.createMany({
-        data: targets.map((u) => ({
-          userId: u.id,
-          title: `رسالة جديدة في دردشة ${classInfo?.name ?? "الصف"}`,
-          body: content || "صورة",
-          type: "message",
-          link:
-            u.role === "admin" || u.role === "supervisor"
-              ? "/dashboard/admin/chat"
-              : `/dashboard/${u.role}/chat`,
-        })),
-      });
-    }
+        const targets = recipients.filter((u) => u.id !== sessionUser.id);
+        if (targets.length > 0) {
+          await prisma.notification.createMany({
+            data: targets.map((u) => ({
+              userId: u.id,
+              title: `رسالة جديدة في دردشة ${classInfo?.name ?? "الصف"}`,
+              body: content || "صورة",
+              type: "message",
+              link:
+                u.role === "admin" || u.role === "supervisor"
+                  ? "/dashboard/admin/chat"
+                  : `/dashboard/${u.role}/chat`,
+            })),
+          });
+        }
+      } catch (e) {
+        console.error("فشل بث/إشعارات رسالة الدردشة في الخلفية:", e);
+      }
+    })();
 
     return NextResponse.json(dto, { status: 201 });
   } catch {

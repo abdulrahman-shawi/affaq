@@ -17,10 +17,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "بيانات ناقصة" }, { status: 400 });
     }
 
-    const student = await prisma.student.findUnique({
-      where: { userId: sessionUser.id },
-      include: { class: true },
-    });
+    // استعلامان مستقلان يتزامنان بدل التتابع — نفس النتائج ونفس التحققات
+    const [student, session] = await Promise.all([
+      prisma.student.findUnique({
+        where: { userId: sessionUser.id },
+        include: { class: true },
+      }),
+      prisma.session.findUnique({
+        where: { id: sessionId },
+      }),
+    ]);
     if (!student?.classId || !student.class) {
       return NextResponse.json(
         { error: "لم يُسند لك صف بعد" },
@@ -28,9 +34,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-    });
     if (!session) {
       return NextResponse.json({ error: "الحصة غير موجودة" }, { status: 404 });
     }
