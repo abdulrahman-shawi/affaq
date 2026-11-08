@@ -238,6 +238,8 @@ export interface GradeDTO {
   date: string;
   note?: string | null;
   name?: string | null;
+  /** مملوء إن وُلّدت الدرجة من تسليم واجب — تُعدّل من صفحة التسليمات فقط */
+  submissionId?: string | null;
 }
 
 export interface MessageSenderDTO {
