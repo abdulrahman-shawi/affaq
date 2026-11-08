@@ -61,7 +61,7 @@ export default function TeacherGradesPage() {
   const groups = useMemo(() => groupGrades(grades), [grades]);
 
   // أعمدة مختصرة (اسم/نوع/تاريخ) + إجراءات (تفاصيل/حذف) + ملاحظة —
-  // التعديل لكل طالب يتم داخل حوار التفاصيل
+  // التعديل لكل طالب يتم داخل حوار التفاصيل من زر التعديل أسفل الملاحظة
   const columns = useMemo<Column<GradeGroup>[]>(
     () => [
       { header: "اسم الدرجة", cell: (gr) => gr.name },
@@ -71,7 +71,12 @@ export default function TeacherGradesPage() {
         header: "إجراءات",
         cell: (gr) => (
           <div className="flex items-center gap-2">
-            <GradeDetailsDialog grade={gr.items[0]} items={gr.items} />
+            <GradeDetailsDialog
+              grade={gr.items[0]}
+              items={gr.items}
+              editable
+              onChanged={refetch}
+            />
             <ConfirmDialog
               title="حذف الدرجة"
               description={`سيتم حذف "${gr.name}" لـ ${gr.items.length} ${
@@ -106,7 +111,7 @@ export default function TeacherGradesPage() {
       },
       { header: "ملاحظة", cell: (gr) => gr.note ?? "—" },
     ],
-    [refetch]
+    [refetch, toast]
   );
 
   return (
