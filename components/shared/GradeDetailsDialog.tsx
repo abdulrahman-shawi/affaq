@@ -129,9 +129,10 @@ export default function GradeDetailsDialog({
 
   function startEdit(row: GradeRow) {
     const next: Record<string, string> = {};
-    for (const [subject, cell] of row.cells) {
+    // forEach بدل for..of — target قديم لا يدعم تكرار Map مباشرة
+    row.cells.forEach((cell, subject) => {
       if (!cell.locked) next[subject] = String(cell.score);
-    }
+    });
     setDraft(next);
     setDraftNote(row.note ?? "");
     setEditingId(row.studentId);
@@ -145,10 +146,10 @@ export default function GradeDetailsDialog({
 
   async function saveRow(row: GradeRow) {
     // تحقق من كل الدرجات قبل الإرسال
-    for (const [subject, value] of Object.entries(draft)) {
+    for (const subject of Object.keys(draft)) {
       const cell = row.cells.get(subject);
       if (!cell) continue;
-      const n = Number(value);
+      const n = Number(draft[subject]);
       if (!Number.isFinite(n) || n < 0 || n > cell.maxScore) {
         setError(`درجة ${subject} يجب أن تكون بين 0 و ${cell.maxScore}`);
         return;
@@ -160,7 +161,7 @@ export default function GradeDetailsDialog({
     try {
       const note = draftNote.trim() || null;
       const updated: GradeDTO[] = [];
-      for (const [subject, value] of Object.entries(draft)) {
+      for (const subject of Object.keys(draft)) {
         const cell = row.cells.get(subject);
         if (!cell) continue;
         const res = await fetch("/api/grades", {
@@ -168,7 +169,7 @@ export default function GradeDetailsDialog({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             id: cell.id,
-            score: Number(value),
+            score: Number(draft[subject]),
             maxScore: cell.maxScore,
             note,
           }),
