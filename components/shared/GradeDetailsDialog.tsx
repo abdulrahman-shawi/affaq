@@ -22,14 +22,6 @@ import { formatDate } from "@/app/lib/utils";
 import { gradeDisplayName, gradeTypeLabels } from "@/app/lib/gradeGroups";
 import type { GradeDTO } from "@/types";
 
-// ملخص مادة واحدة في ملف الطالب — يُمرر من صفحة الطالب
-export interface SubjectReportRow {
-  subject: string;
-  count: number;
-  /** متوسط نسب الطالب في المادة — null إن لم توجد درجات مدرجة */
-  average: number | null;
-}
-
 interface CellEntry {
   id: string;
   score: number;
@@ -55,7 +47,6 @@ interface GradeRow {
 export default function GradeDetailsDialog({
   grade,
   items,
-  subjectsReport,
   trigger,
   editable = false,
   onChanged,
@@ -63,8 +54,6 @@ export default function GradeDetailsDialog({
   grade: GradeDTO;
   /** كل سجلات ملف الدرجة — سجل واحد للدرجات الفردية */
   items: GradeDTO[];
-  /** ملف مواد الصف ودرجاتها — يُمرر من صفحة الطالب */
-  subjectsReport?: SubjectReportRow[];
   trigger?: React.ReactNode;
   /** إظهار زر تعديل درجات كل طالب — للمعلم والإدارة فقط */
   editable?: boolean;
@@ -361,34 +350,6 @@ export default function GradeDetailsDialog({
 
         {error && (
           <p className="text-sm font-medium text-destructive">{error}</p>
-        )}
-
-        {subjectsReport && subjectsReport.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold">ملف المواد — جميع مواد صفك ودرجاتك</h4>
-            <div className="overflow-hidden rounded-md border">
-              <table className="w-full caption-bottom text-sm">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>المادة</TableHead>
-                    <TableHead>عدد الدرجات</TableHead>
-                    <TableHead>المعدل</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {subjectsReport.map((row) => (
-                    <TableRow key={row.subject}>
-                      <TableCell className="font-medium">{row.subject}</TableCell>
-                      <TableCell>{row.count}</TableCell>
-                      <TableCell>
-                        {row.average !== null ? `${row.average}%` : "—"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </table>
-            </div>
-          </div>
         )}
       </DialogContent>
     </Dialog>
