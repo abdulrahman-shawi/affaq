@@ -3,15 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, ClipboardList, Star, TrendingUp } from "lucide-react";
 import DataTable, { type Column } from "@/components/tables/DataTable";
-import GradeDetailsDialog, {
-  type SubjectReportRow,
-} from "@/components/shared/GradeDetailsDialog";
+import GradeDetailsDialog from "@/components/shared/GradeDetailsDialog";
 import StatCard from "@/components/shared/StatCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudents } from "@/hooks/useStudents";
 import { formatDate } from "@/app/lib/utils";
 import { groupGrades, gradeTypeLabels, type GradeGroup } from "@/app/lib/gradeGroups";
-import type { ClassLevelDTO, GradeDTO } from "@/types";
+import type { GradeDTO } from "@/types";
 
 export default function StudentGradesPage() {
   const { user } = useAuth();
@@ -40,50 +38,8 @@ export default function StudentGradesPage() {
   // درجات الطالب مجمّعة — الدرجة الواحدة (حتى لو رُصدت لعدة طلاب) تظهر كصف واحد
   const groups = useMemo(() => groupGrades(myGrades), [myGrades]);
 
-  // مواد صف الطالب — تُستخدم لبناء ملف "جميع مواد الصف ودرجاته" في حوار التفاصيل
-  const [classSubjects, setClassSubjects] = useState<string[]>([]);
-  useEffect(() => {
-    if (!me?.classId) {
-      setClassSubjects([]);
-      return;
-    }
-    let cancelled = false;
-    fetch("/api/classes")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((classes: ClassLevelDTO[]) => {
-        if (cancelled) return;
-        const mine = classes.find((c) => c.id === me.classId);
-        setClassSubjects(mine?.subjects.map((s) => s.name) ?? []);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [me?.classId]);
-
-  // ملف المواد: كل مادة من مواد صفه (مع درجاته فيها) + أي مادة لها درجات غير مرتبطة بالصف
-  const subjectsReport = useMemo<SubjectReportRow[]>(() => {
-    const build = (subject: string): SubjectReportRow => {
-      const gs = myGrades.filter((g) => g.subject === subject);
-      const scored = gs.filter((g) => g.maxScore > 0);
-      const average = scored.length
-        ? Math.round(
-            scored.reduce((sum, g) => sum + (g.score / g.maxScore) * 100, 0) /
-              scored.length
-          )
-        : null;
-      return { subject, count: gs.length, average };
-    };
-    const extras = Array.from(
-      new Set(
-        myGrades.map((g) => g.subject).filter((s) => !classSubjects.includes(s))
-      )
-    );
-    return [...classSubjects.map(build), ...extras.map(build)];
-  }, [classSubjects, myGrades]);
-
   // أعمدة مختصرة (اسم/نوع/تاريخ) + إجراءات (تفاصيل) + ملاحظة —
-  // التفاصيل تعرض درجته ضمن الدرجة + ملف مواد صفه كاملاً
+  // التفاصيل تعرض درجته ضمن الدرجة (ملف الدرجة)
   const columns = useMemo<Column<GradeGroup>[]>(
     () => [
       { header: "اسم الدرجة", cell: (gr) => gr.name },
@@ -95,13 +51,12 @@ export default function StudentGradesPage() {
           <GradeDetailsDialog
             grade={gr.items[0]}
             items={gr.items}
-            subjectsReport={subjectsReport}
           />
         ),
       },
       { header: "ملاحظة", cell: (gr) => gr.note ?? "—" },
     ],
-    [subjectsReport]
+    []
   );
 
   // ملخص درجات الطالب من قائمة myGrades نفسها (النسب = score / maxScore)
