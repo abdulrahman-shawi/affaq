@@ -115,48 +115,57 @@ export async function POST(req: Request) {
 
     // إعادة الرصد لنفس (طالب، مادة، نوع، اسم) تحدّث السجل ولا تكرّره —
     // الاسم يفصل ملفات التقييم المتعددة من نفس النوع عن بعضها،
-    // ونستثني درجات التسليمات والاختبارات (submissionId مملوء) فلا نمسّها
-    const count = await prisma.$transaction(async (tx) => {
-      for (const e of entries) {
-        const note =
-          typeof e.note === "string" && e.note.trim() ? e.note.trim() : null;
-        const existing = await tx.grade.findFirst({
-          where: {
-            studentId: e.studentId,
-            subject: e.subject,
-            type: e.type,
-            name: gradeName,
-            submissionId: null,
-          },
-          select: { id: true },
-        });
-        if (existing) {
-          await tx.grade.update({
-            where: { id: existing.id },
-            data: {
-              score: Number(e.score),
-              maxScore: Number(e.maxScore),
-              note,
-            },
-          });
-        } else {
-          await tx.grade.create({
-            data: {
-              studentId: e.studentId,
-              subject: e.subject,
-              type: e.type,
-              score: Number(e.score),
-              maxScore: Number(e.maxScore),
-              note,
-              name: gradeName,
-            },
-          });
-        }
-      }
-      return entries.length;
+    // ونستثني درجات التسليمات والاختبارات (submissionId مملوء) فلا نمسّها.
+    // جلب الموجود باستعلام واحد وإنشاء الجديد بـ createMany — استعلامان
+    // لكل مدخل داخل معاملة تفاعلية قد يتجاوزان مهلة المعاملة (5 ثوانٍ)
+    // مع قاعدة بعيدة، خاصة أن الحفظ يرسل خلايا كل الطلاب
+    const entryStudentIds = Array.from(
+      new Set(entries.map((e) => e.studentId))
+    );
+    const existing = await prisma.grade.findMany({
+      where: {
+        studentId: { in: entryStudentIds },
+        name: gradeName,
+        submissionId: null,
+      },
+      select: { id: true, studentId: true, subject: true, type: true },
     });
+    const existingIds = new Map(
+      existing.map((g) => [`${g.studentId}|${g.subject}|${g.type}`, g.id])
+    );
+    const toCreate = [];
+    const updates = [];
+    for (const e of entries) {
+      const note =
+        typeof e.note === "string" && e.note.trim() ? e.note.trim() : null;
+      const data = {
+        score: Number(e.score),
+        maxScore: Number(e.maxScore),
+        note,
+      };
+      const existingId = existingIds.get(
+        `${e.studentId}|${e.subject}|${e.type}`
+      );
+      if (existingId) {
+        updates.push(prisma.grade.update({ where: { id: existingId }, data }));
+      } else {
+        toCreate.push({
+          studentId: e.studentId,
+          subject: e.subject,
+          type: e.type,
+          ...data,
+          name: gradeName,
+        });
+      }
+    }
+    if (toCreate.length > 0) {
+      await prisma.grade.createMany({ data: toCreate });
+    }
+    if (updates.length > 0) {
+      await Promise.all(updates);
+    }
 
-    return NextResponse.json({ count }, { status: 201 });
+    return NextResponse.json({ count: entries.length }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "فشل في حفظ الدرجات" }, { status: 500 });
   }
