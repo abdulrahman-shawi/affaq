@@ -90,14 +90,27 @@ export default function GradeDetailsDialog({
   // ملف جماعي (عدة طلاب) — نعرض سطر معلومات مختصرًا فوق الشبكة
   const multi = items.length > 1;
 
-  // أعمدة الشبكة = مواد الملف بترتيب ظهورها، مع الدرجة العظمى لكل مادة
+  // أعمدة الشبكة = مواد الملف بترتيب ظهورها، مع الدرجة العظمى لكل مادة —
+  // المادة التي كل درجاتها 0 (لم يُرصد لها شيء بعد) لا تُعرض كي لا تملأ
+  // الشبكة أعمدة فارغة، وتظهر تلقائيًا بمجرد رصد أي درجة حقيقية فيها
   const subjects = useMemo(() => {
     const map = new Map<string, number>();
+    const hasReal = new Set<string>();
     for (const g of localItems) {
       if (!map.has(g.subject)) map.set(g.subject, g.maxScore);
+      if (g.score > 0) hasReal.add(g.subject);
     }
-    return Array.from(map, ([subject, maxScore]) => ({ subject, maxScore }));
+    return Array.from(map, ([subject, maxScore]) => ({ subject, maxScore })).filter(
+      (s) => hasReal.has(s.subject)
+    );
   }, [localItems]);
+
+  // أسماء الأعمدة الظاهرة — التعديل من الحوار يقتصر عليها ولا يمس
+  // خلايا المواد المخفية (أصفار لم تُرصد بعد)
+  const visibleSubjectNames = useMemo(
+    () => new Set(subjects.map((s) => s.subject)),
+    [subjects]
+  );
 
   // صفوف الشبكة = طلاب الملف — خلايا كل طالب: مادة → درجتها، مع ملاحظته
   const rows = useMemo<GradeRow[]>(() => {
@@ -131,7 +144,8 @@ export default function GradeDetailsDialog({
     const next: Record<string, string> = {};
     // forEach بدل for..of — target قديم لا يدعم تكرار Map مباشرة
     row.cells.forEach((cell, subject) => {
-      if (!cell.locked) next[subject] = String(cell.score);
+      if (!cell.locked && visibleSubjectNames.has(subject))
+        next[subject] = String(cell.score);
     });
     setDraft(next);
     setDraftNote(row.note ?? "");
