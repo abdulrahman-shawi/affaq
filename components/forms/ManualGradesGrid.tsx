@@ -39,9 +39,16 @@ const selectClassName =
  * لكل عملية حفظ «اسم» (مثل «اختبار الوحدة الأولى») يجعل الدرجات المحفوظة
  * معًا ملفًا واحدًا: يظهر الاسم في السجل، وإعادة فتحه بنفس الاسم تعبّئ
  * شبكته المحفوظة للتعديل، وإعادة الرصد بنفس الاسم تحدّث ملفه بدل تكراره.
- * الحفظ يرسل الخلايا غير الفارغة دفعة واحدة إلى POST /api/grades/bulk.
+ * الحفظ يرسل خلايا كل الطلاب دفعة واحدة إلى POST /api/grades/bulk —
+ * الخلية الفارغة تُرصد بدرجة 0 حتى يظهر الطالب في ملف الدرجة ويمكن
+ * تعديل درجته لاحقًا من حوار التفاصيل.
  */
-export default function ManualGradesGrid() {
+export default function ManualGradesGrid({
+  onSaved,
+}: {
+  /** يُستدعى بعد نجاح الحفظ — الصفحة تنتقل لتاب سجل الدرجات وتحدّثه */
+  onSaved?: () => void;
+}) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [classes, setClasses] = useState<ClassLevelDTO[]>([]);
@@ -203,10 +210,10 @@ export default function ManualGradesGrid() {
     for (const student of classStudents) {
       for (const subject of classSubjects) {
         const raw = cells[student.id]?.[subject.name];
-        if (raw === undefined || raw.trim() === "") continue;
-        const score = Number(raw);
+        const isEmpty = raw === undefined || raw.trim() === "";
+        const score = isEmpty ? 0 : Number(raw);
         const maxScore = maxFor(subject.name);
-        if (!Number.isFinite(score) || score < 0 || score > maxScore) {
+        if (!isEmpty && (!Number.isFinite(score) || score < 0 || score > maxScore)) {
           setError(
             `درجة الطالب ${student.user?.name ?? ""} في ${subject.name} يجب أن تكون بين 0 و ${maxScore}`
           );
@@ -238,6 +245,7 @@ export default function ManualGradesGrid() {
         title: `تم حفظ ${body.count} درجة في «${fileName}»`,
       });
       await refetchGrades();
+      onSaved?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع");
     } finally {
@@ -418,7 +426,8 @@ export default function ManualGradesGrid() {
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
-            الخلايا الفارغة لا تُغيّر شيئًا عند الحفظ — اكتب الدرجة ثم Enter
+            الخلية الفارغة تُرصد بدرجة 0 عند الحفظ فيظهر الطالب في ملف الدرجة
+            ويمكن تعديل درجته لاحقًا من «تفاصيل» الملف — اكتب الدرجة ثم Enter
             للانتقال للطالب التالي. كل عملية حفظ تُخزَّن تحت «اسم الدرجة» كملف
             واحد: اختر اسمًا محفوظًا من الاقتراحات لفتح ملفه وتعديل درجاته،
             وإعادة الرصد بنفس الاسم تحدّث درجاته بدل تكرارها. تغيّر الاسم أو
