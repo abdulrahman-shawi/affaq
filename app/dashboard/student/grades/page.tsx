@@ -39,7 +39,8 @@ export default function StudentGradesPage() {
   const groups = useMemo(() => groupGrades(myGrades), [myGrades]);
 
   // أعمدة مختصرة (اسم/نوع/تاريخ) + إجراءات (تفاصيل) + ملاحظة —
-  // التفاصيل تعرض درجته ضمن الدرجة (ملف الدرجة)
+  // التفاصيل تعرض درجته ضمن الدرجة (ملف الدرجة) — وتُخفى المواد التي
+  // درجته فيها 0 فلا تظهر له إلا المواد التي لها علامات
   const columns = useMemo<Column<GradeGroup>[]>(
     () => [
       { header: "اسم الدرجة", cell: (gr) => gr.name },
@@ -47,9 +48,15 @@ export default function StudentGradesPage() {
       { header: "التاريخ", cell: (gr) => formatDate(gr.date) },
       {
         header: "إجراءات",
-        cell: (gr) => (
-          <GradeDetailsDialog grade={gr.items[0]} items={gr.items} />
-        ),
+        cell: (gr) => {
+          const scored = gr.items.filter((i) => i.score > 0);
+          return (
+            <GradeDetailsDialog
+              grade={scored[0] ?? gr.items[0]}
+              items={scored}
+            />
+          );
+        },
       },
       { header: "ملاحظة", cell: (gr) => gr.note ?? "—" },
     ],
