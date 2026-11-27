@@ -27,11 +27,13 @@ export async function GET(req: Request) {
     // المعلم يرى درجات مواده المرتبطة به فقط ضمن صفوفه —
     // بلا هذا الفلتر يظهر له رصد معلمي المواد الأخرى في صفوفه
     let teacherSubjectNames: string[] | null = null;
+    let teacherId: string | null = null;
     if (teacherScoped) {
       const teacher = await prisma.teacher.findUnique({
         where: { userId: sessionUser.id },
-        select: { subjects: { select: { name: true } } },
+        select: { id: true, subjects: { select: { name: true } } },
       });
+      teacherId = teacher?.id ?? null;
       teacherSubjectNames = teacher?.subjects.map((s) => s.name) ?? [];
     }
 
@@ -75,6 +77,9 @@ export async function GET(req: Request) {
             ? {
                 student: { classId: { in: teacherScoped } },
                 subject: { in: teacherSubjectNames ?? [] },
+                // الدرجات التي رصدها هو + القديمة غير المنسوبة (بلا راصد) —
+                // ملفات معلم آخر لنفس الصف والمادة لا تظهر في سجله
+                OR: [{ teacherId }, { teacherId: null }],
               }
             : {}),
         // لاحقًا على StudentId القادم من الطالب نفسه — يتجاوز أي قيمة في الاستعلام

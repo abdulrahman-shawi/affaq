@@ -174,6 +174,7 @@ export async function PATCH(req: Request) {
         include: { student: { include: { user: true } }, assignment: true },
       }),
       // تقييم الواجب يظهر في صفحة الدرجات — upsert يحدّث السجل عند إعادة التقييم بدل تكراره
+      // الدرجة تُنسب لمعلم الواجب صاحب التسليم فتظهر في سجله وحده
       prisma.grade.upsert({
         where: { submissionId: id },
         create: {
@@ -184,6 +185,7 @@ export async function PATCH(req: Request) {
           maxScore: max,
           note: existing.assignment.title,
           submissionId: id,
+          teacherId: existing.assignment.teacherId,
         },
         update: { score, maxScore: max },
       }),

@@ -2555,7 +2555,8 @@ export const GradeScalarFieldEnum = {
   date: 'date',
   note: 'note',
   name: 'name',
-  submissionId: 'submissionId'
+  submissionId: 'submissionId',
+  teacherId: 'teacherId'
 } as const
 
 export type GradeScalarFieldEnum = (typeof GradeScalarFieldEnum)[keyof typeof GradeScalarFieldEnum]

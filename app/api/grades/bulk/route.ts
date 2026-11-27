@@ -67,6 +67,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
     }
 
+    // منسوب الرصد — درجات المعلم الجديدة تُنسب له فتظهر في سجله وحده
+    // (الإدارة/المشرف يبقى الرصد بلا منسوب فيظهر لكل معلمي الصف والمادة)
+    let creatorTeacherId: string | null = null;
+    if (sessionUser.role === "teacher") {
+      const creator = await prisma.teacher.findUnique({
+        where: { userId: sessionUser.id },
+        select: { id: true },
+      });
+      creatorTeacherId = creator?.id ?? null;
+    }
+
     const classLevel = await prisma.classLevel.findUnique({
       where: { id: classId },
       include: { subjects: true, students: true },
@@ -142,6 +153,9 @@ export async function POST(req: Request) {
         score: Number(e.score),
         maxScore: Number(e.maxScore),
         note,
+        // نسب الرصد للمعلم منشئه — إعادة الحفظ بلا منسوب (إدارة/مشرف)
+        // لا تمسّ المنسوب القائم
+        ...(creatorTeacherId ? { teacherId: creatorTeacherId } : {}),
       };
       const existingId = existingIds.get(
         `${e.studentId}|${e.subject}|${e.type}`
