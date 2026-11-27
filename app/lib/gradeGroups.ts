@@ -17,8 +17,9 @@ export function gradeDisplayName(g: GradeDTO): string {
   return typeLabel ? `${typeLabel} ${g.subject}` : `درجة ${g.subject}`;
 }
 
-// مجمّع درجات — الدرجات المرسودة جماعيًا تحت اسم واحد (رصد الشبكة) تظهر في
-// سجل الدرجات كصف واحد، وحوار التفاصيل يعرض طلابها ودرجاتهم
+// مجمّع درجات — الدرجات المرسودة جماعيًا في ملف واحد (نفس الاسم والنوع
+// والصف) تظهر في سجل الدرجات كصف واحد، وحوار التفاصيل يعرض طلابها
+// ودرجاتهم. ملف بنفس الاسم لكن بنوع أو صف مختلف يظهر كصف مستقل
 export interface GradeGroup {
   key: string;
   /** اسم الدرجة المعروض — المخزن أو المشتق للدرجات بلا اسم */
@@ -35,7 +36,12 @@ export function groupGrades(grades: GradeDTO[]): GradeGroup[] {
   const map = new Map<string, GradeGroup>();
   for (const g of grades) {
     const storedName = g.name?.trim();
-    const key = storedName ? `name:${storedName}` : `id:${g.id}`;
+    // المفتاح = الاسم + النوع + صف الطالب — ملفان بنفس الاسم لكن بنوع أو
+    // صف مختلف يبقيان منفصلين في السجل، فلا تتداخل درجاتهما في العرض
+    // ولا يحذف حذفُ أحدهما درجاتِ الآخر
+    const key = storedName
+      ? `name:${storedName}|${g.type}|${g.student?.classId ?? ""}`
+      : `id:${g.id}`;
     const current = map.get(key);
     if (!current) {
       map.set(key, {

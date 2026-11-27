@@ -56,7 +56,7 @@ export default function TeacherGradesPage() {
     { key: "manual", label: "إضافة درجة", icon: Table2 },
   ] as const;
 
-  // الدرجات المرسودة جماعيًا تحت اسم واحد تظهر كصف واحد في السجل —
+  // الدرجات المرسودة في ملف واحد (اسم + نوع + صف) تظهر كصف واحد في السجل —
   // تفاصيلها (طلابها ودرجاتهم) تفتح من زر التفاصيل
   const groups = useMemo(() => groupGrades(grades), [grades]);
 
